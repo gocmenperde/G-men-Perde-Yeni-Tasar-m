@@ -52,3 +52,7 @@ NEXT_PUBLIC_SITE_URL = "https://31e6bd26-6b0b-467e-ac7c-d9cf108b0130-00-3w474q76
 NEXTAUTH_URL = "https://31e6bd26-6b0b-467e-ac7c-d9cf108b0130-00-3w474q76l9n52.sisko.replit.dev"
 PORT = "3000"
 CONTACT_EMAIL = "muhammedemint76@gmail.com"
+
+[[ports]]
+localPort = 5000
+externalPort = 80

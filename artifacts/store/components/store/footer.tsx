@@ -22,17 +22,18 @@ const LINKS_SHOP = [
   { href: "/products",                    label: "Tüm Ürünler" },
   { href: "/products?featured=true",      label: "Öne Çıkanlar" },
    { href: "/products?sale=true",          label: "Kampanyalar" },
-  { href: "/kategori/kirtasiye",               label: "Kalemler" },
-  { href: "/kategori/kareli-defter",           label: "Defterler & Ajandalar" },
-  { href: "/kategori/sulu-boyalar",                  label: "Sanat Malzemeleri" },
-  { href: "/kategori/tahta-kalemleri-ve-gerecleri", label: "Okul Gereçleri" },
+  { href: "/kategori/tul-perde",                label: "Tül Perdeler" },
+  { href: "/kategori/fonperdeler",              label: "Fon Perdeler" },
+  { href: "/kategori/stor-perde",               label: "Stor Perdeler" },
+  { href: "/kategori/zebra-perde",              label: "Zebra Perdeler" },
+  { href: "/kategori/plise-perde",              label: "Plise Perdeler" },
 ];
 
 const LINKS_INFO = [
   { href: "/about",        label: "Hakkımızda" },
   { href: "/contact",      label: "İletişim" },
   { href: "/faq",          label: "Sık Sorulan Sorular" },
-  { href: "/kirtasiye",    label: "Kırtasiye Rehberi" },
+  { href: "/measure-guide", label: "Ölçü Rehberi" },
   { href: "/delivery",     label: "Teslimat Bilgileri" },
   { href: "/privacy",      label: "Gizlilik Politikası" },
   { href: "/terms",        label: "Kullanım Şartları" },
@@ -45,7 +46,7 @@ export default function Footer({ settings }: { settings?: FooterSettings | null 
   const address   = settings?.address         ?? "Bağlarbaşı Mah. Mümin Gençoğlu Cad. 1. Sarıgül Sok. No:3/A Osmangazi/Bursa";
   const whatsapp  = settings?.whatsapp        ?? "905462851826";
   const instagram = settings?.socialInstagram ?? "https://instagram.com";
-  const siteName  = settings?.siteName        ?? "Göçmen Kırtasiye";
+  const siteName  = settings?.siteName        ?? "Göçmen Perde";
 
   const whatsappHref  = `https://wa.me/${whatsapp.replace(/\D/g, "")}`;
   const instagramHref = instagram.startsWith("http") ? instagram : `https://instagram.com/${instagram}`;
@@ -83,12 +84,12 @@ export default function Footer({ settings }: { settings?: FooterSettings | null 
               GÖÇMEN
             </span>
              <span className="mt-1 text-[10px] font-extrabold uppercase tracking-[.28em] text-[#E5B96F]">
-               Kitap & Kırtasiye
+                Perde & Ev Tekstili
             </span>
           </Link>
 
            <p className="mb-6 max-w-[250px] text-[13px] leading-6 text-[#B7C5C1]">
-            1993'ten bu yana Bursa Osmangazi'nin güvenilir kırtasiyesi. Orijinal ürünler, uygun fiyatlar.
+             1993'ten bu yana Bursa Osmangazi'nin güvenilir perdecisi. Özel ölçü, profesyonel dikim ve montaj.
           </p>
 
           {/* Contact info */}

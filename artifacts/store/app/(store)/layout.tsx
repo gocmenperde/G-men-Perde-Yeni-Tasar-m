@@ -44,7 +44,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
         />
         <Navbar
           logoUrl={settings?.logoUrl ?? null}
-          siteName={settings?.siteName ?? "Göçmen Kırtasiye"}
+          siteName={settings?.siteName ?? "Göçmen Perde"}
           categories={menuCategories}
         />
       </div>
@@ -65,7 +65,7 @@ export default async function StoreLayout({ children }: { children: React.ReactN
         <MobileBottomNav />
       </Suspense>
       <BackToTop />
-      <WhatsAppFAB whatsapp={settings?.whatsapp} />
+      <WhatsAppFAB whatsapp={settings?.whatsapp} siteName={settings?.siteName} />
       <CookieConsent />
     </div>
   );

@@ -1,6 +1,6 @@
 // Merkezi SEO kelime kütüphanesi — tüm sayfalarda kullanılır
 
-export const SITE_NAME = "Göçmen Kırtasiye";
+export const SITE_NAME = "Göçmen Perde";
 export const SITE_URL = "https://www.gocmenkirtasiye.com.tr";
 export const PHONE = "+905462851826";
 export const ADDRESS = "Bursa, Türkiye";
@@ -21,25 +21,19 @@ export const TURKIYE_SEHIRLER = [
 
 // --- Ürün kategorileri ---
 export const URUN_KATEGORILERI = [
-  "kalem", "defter", "silgi", "makas", "cetvel", "pergel",
-  "boya", "boyama", "bant", "yapıştırıcı", "dosya", "klasör",
-  "zımba", "kalemtıraş", "okul çantası", "kalemlik", "not defteri",
-  "çizim malzemeleri", "sanat malzemeleri", "resim malzemeleri",
-  "okul seti", "öğrenci malzemeleri", "sanat seti", "çizim seti",
+  "tül perde", "fon perde", "stor perde", "zebra perde", "plise perde",
+  "güneşlik", "örme tül perde", "koltuk örtüsü", "perde dikimi",
+  "özel ölçü perde", "blackout perde", "perde montajı",
 ];
 
 // --- Marka listesi ---
 export const MARKALAR = [
-  "faber castell", "staedtler", "pelikan", "bic", "pilot",
-  "rotring", "pentel", "lyra", "giotto", "koh-i-noor",
-  "derwent", "moleskine", "oxford", "mead", "leuchtturm",
-  "winsor newton", "maped", "conte", "prismacolor", "caran d'ache",
+  "göçmen perde", "göçmen perde bursa", "bursa perdeci",
 ];
 
 // --- Hedef kitle ---
 export const HEDEF_KITLE = [
-  "ilkokul", "ortaokul", "lise", "üniversite", "anaokulu",
-  "öğrenci", "öğretmen", "ofis", "sanatçı", "çocuk",
+  "ev sahipleri", "iç mimarlar", "ofisler", "salon", "yatak odası",
 ];
 
 // --- Tüm anahtar kelime kombinasyonları ---
@@ -52,6 +46,35 @@ export function generateKeywords(options?: {
   sku?: string | null;
 }): string[] {
   const base = [
+    // Marka + perde hizmeti
+    "göçmen perde",
+    "gocmen perde",
+    "göçmen perde bursa",
+    "göçmen perde osmangazi",
+    "göçmen perde iletişim",
+    "bursa perdeci",
+    "bursa perde fiyatları",
+
+    // Perde ürünleri ve hizmetleri
+    "perde modelleri",
+    "perde fiyatları",
+    "perde satın al",
+    "online perde",
+    "özel ölçü perde",
+    "ücretsiz ölçü perde",
+    "perde dikimi",
+    "perde montajı",
+    "perde keşif hizmeti",
+    "tül perde",
+    "fon perde",
+    "stor perde",
+    "zebra perde",
+    "plise perde",
+    "güneşlik perde",
+    "blackout perde",
+    "salon perde modelleri",
+    "yatak odası perde modelleri",
+
     // Marka + şehir
     "göçmen kırtasiye",
     "gocmen kirtasiye",
@@ -477,22 +500,24 @@ export function generateKeywords(options?: {
     );
   }
 
-  return [...new Set([...base, ...extras])];
+  return [...new Set([...base, ...extras])].filter(
+    (keyword) => !/(kırtasiye|kirtasiye|kalem|defter|okul|öğrenci|boya|ofis malzemeleri)/i.test(keyword),
+  );
 }
 
 // LocalBusiness JSON-LD şeması
 export const LOCAL_BUSINESS_JSONLD = {
   "@context": "https://schema.org",
-  "@type": "StationeryStore",
+  "@type": "HomeGoodsStore",
   "@id": `${SITE_URL}/#business`,
   name: SITE_NAME,
-  alternateName: ["Göçmen Kırtasiye Bursa", "Gocmen Kirtasiye", "Göçmen Kırtasiye Online"],
+  alternateName: ["Göçmen Perde Bursa", "Gocmen Perde", "Göçmen Perde Online"],
   url: SITE_URL,
   telephone: PHONE,
   email: "muhammedemint76@gmail.com",
   foundingDate: "1993",
   description:
-    "1993'ten bu yana Bursa Osmangazi'nde faaliyet gösteren Göçmen Kırtasiye; kalem, defter, boya, sanat malzemeleri, okul ve ofis gereçlerinde Türkiye geneline hızlı kargo ile online satış yapmaktadır.",
+    "1993'ten bu yana Bursa Osmangazi'nde faaliyet gösteren Göçmen Perde; tül, fon, zebra, stor ve plise perdelerde özel ölçü, dikim ve montaj hizmeti sunmaktadır.",
   image: `${SITE_URL}/og-image.svg`,
   logo: {
     "@type": "ImageObject",
@@ -536,15 +561,14 @@ export const LOCAL_BUSINESS_JSONLD = {
   ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
-    name: "Kırtasiye Ürün Kataloğu",
+    name: "Perde Ürün Kataloğu",
     itemListElement: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Kalemler" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Defterler" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Boyalar" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Sanat Malzemeleri" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ofis Malzemeleri" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Okul Çantaları" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Resim Malzemeleri" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Tül Perdeler" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Fon Perdeler" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Stor Perdeler" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Zebra Perdeler" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Plise Perdeler" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ücretsiz Ölçü ve Montaj" } },
     ],
   },
   sameAs: [
@@ -560,7 +584,7 @@ export const WEBSITE_JSONLD = {
   "@id": `${SITE_URL}/#website`,
   url: SITE_URL,
   name: SITE_NAME,
-  description: "Türkiye'nin Online Kırtasiye Mağazası",
+  description: "Bursa'nın online perde mağazası",
   inLanguage: "tr-TR",
   potentialAction: {
     "@type": "SearchAction",

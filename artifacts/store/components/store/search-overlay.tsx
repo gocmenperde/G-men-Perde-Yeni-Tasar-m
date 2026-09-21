@@ -257,7 +257,7 @@ export default function SearchOverlay({
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-bold text-[var(--ink)] group-hover:text-[var(--gold)]">{result.name}</p>
                         <p className="mt-1 truncate text-xs text-[var(--ink-muted)]">
-                          {result.brand?.name ?? (typeof result.category === "string" ? result.category : result.category?.name ?? "Göçmen Kırtasiye")}
+                          {result.brand?.name ?? (typeof result.category === "string" ? result.category : result.category?.name ?? "Göçmen Perde")}
                         </p>
                       </div>
                       <div className="shrink-0 text-right">

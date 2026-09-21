@@ -1,10 +1,11 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import slugify from "slugify";
 import { db } from "@/lib/db";
 import { isAdminAuthorized, unauthorizedResponse } from "@/lib/require-admin";
 import { revalidateProductCatalog } from "@/lib/storefront-revalidation";
 import { GOCMEN_CATEGORIES, GOCMEN_MEASURE_GUIDE, GOCMEN_PRODUCTS } from "@/data/gocmen-catalog";
+import { getDefaultHomepageSections, serializeHomepageConfig } from "@/lib/homepage-config";
 
 export const dynamic = "force-dynamic";
 
@@ -45,7 +46,90 @@ function productSlug(product: (typeof GOCMEN_PRODUCTS)[number]) {
   return slugify(product.id || product.name, { lower: true, strict: true, locale: "tr" });
 }
 
-export async function POST(req: Request) {
+const CURTAIN_BANNERS = [
+  {
+    title: "Yaşam alanınıza doğru perdeyi seçin",
+    subtitle: "Tül, fon, zebra, stor ve plise modellerini keşfedin.",
+    badge: "GÖÇMEN PERDE",
+    ctaText: "Perdeleri keşfet",
+    ctaHref: "/products",
+    cta2Text: "Ücretsiz ölçü",
+    cta2Href: "/contact",
+    gradient: "amber",
+  },
+  {
+    title: "Pencerenize tam uyum sağlayan çözümler",
+    subtitle: "Bursa içi ücretsiz keşif ve doğru ölçü desteği.",
+    badge: "ÖZEL ÖLÇÜ",
+    ctaText: "Ölçü iste",
+    ctaHref: "/contact",
+    cta2Text: "Kategoriler",
+    cta2Href: "/products",
+    gradient: "emerald",
+  },
+  {
+    title: "Tül, fon, zebra, stor ve plise",
+    subtitle: "1993'ten beri Bursa'nın güvenilir perdecisi.",
+    badge: "PERDE KOLEKSİYONU",
+    ctaText: "Koleksiyonu gör",
+    ctaHref: "/products",
+    cta2Text: "Hikâyemiz",
+    cta2Href: "/about",
+    gradient: "rose",
+  },
+] as const;
+
+function curtainHomepageJson(productIds: string[], bannerProductIds: Record<string, string[]>) {
+  const sections = getDefaultHomepageSections().map((section) => {
+    const updates: Partial<typeof section> =
+      section.id === "brandSignature"
+        ? {
+            title: "Bursa'dan seçilmiş perdeler.",
+            subtitle: "Özel ölçü, profesyonel dikim ve montaj için güvenilir adres.",
+          }
+        : section.id === "editorShelf"
+          ? {
+              title: "Öne çıkan perde modelleri",
+              subtitle: "Yaşam alanınıza uyum sağlayan seçili perde modelleri.",
+            }
+          : section.id === "categories"
+            ? {
+                title: "Perdede aradığın her şey.",
+                subtitle: "İhtiyacına en uygun perde kategorisini keşfet.",
+              }
+            : section.id === "featured"
+              ? {
+                  title: "Çok tercih edilen perdeler",
+                  subtitle: "Göçmen Perde koleksiyonundan öne çıkan ürünleri keşfedin.",
+                }
+              : section.id === "dailyDeal"
+                ? {
+                    title: "Bugünün perde fırsatı",
+                    subtitle: "Seçili perde modellerinde avantaj. Ölçünüzü alıp inceleyin.",
+                  }
+                : section.id === "discovery"
+                  ? {
+                      title: "İhtiyacına göre perdeyi seç",
+                      subtitle: "Salon, yatak odası ve gün ışığı için doğru kategoriyi keşfet.",
+                    }
+                  : section.id === "perks"
+                    ? {
+                        title: "Perde alışverişinin her adımı özenli.",
+                        subtitle: "Göçmen Perde deneyiminin arkasındaki özen.",
+                      }
+                    : section.id === "new"
+                      ? {
+                          title: "Yeni perde modelleri",
+                          subtitle: "Koleksiyona yeni katılan perde seçkilerini keşfedin.",
+                        }
+                      : {};
+    return { ...section, ...updates };
+  });
+
+  return serializeHomepageConfig(sections, bannerProductIds);
+}
+
+export async function POST(req: NextRequest) {
   if (!await isAdminAuthorized(req)) return unauthorizedResponse();
 
   let created = 0;
@@ -55,6 +139,7 @@ export async function POST(req: Request) {
 
   try {
     const categoryIds = new Map<string, string>();
+    const productIds = new Map<string, string>();
     for (const category of GOCMEN_CATEGORIES) {
       const record = await db.category.upsert({
         where: { slug: category.key },
@@ -96,11 +181,12 @@ export async function POST(req: Request) {
 
       try {
         const existing = await db.product.findUnique({ where: { slug }, select: { id: true } });
-        await db.product.upsert({
+        const saved = await db.product.upsert({
           where: { slug },
           update: data,
           create: data,
         });
+        productIds.set(source.id, saved.id);
         if (existing) updated += 1;
         else created += 1;
       } catch (error) {
@@ -109,10 +195,45 @@ export async function POST(req: Request) {
       }
     }
 
+    const existingSettings = await db.siteSettings.findUnique({
+      where: { id: "global" },
+      select: { popularSetsJson: true },
+    });
+    const bannerProductIds: Record<string, string[]> = {};
+    const featuredSources = GOCMEN_PRODUCTS.filter((product) => product.isFeatured).slice(0, CURTAIN_BANNERS.length);
+
+    for (const [index, bannerInput] of CURTAIN_BANNERS.entries()) {
+      const source = featuredSources[index] ?? GOCMEN_PRODUCTS[index];
+      const banner = await db.banner.findFirst({ where: { title: bannerInput.title } });
+      const bannerData = {
+        ...bannerInput,
+        imageUrl: source?.image ?? null,
+        darkText: false,
+        isActive: true,
+        order: index,
+      };
+      const savedBanner = banner
+        ? await db.banner.update({ where: { id: banner.id }, data: bannerData })
+        : await db.banner.create({ data: bannerData });
+      const selectedProductId = source ? productIds.get(source.id) : undefined;
+      bannerProductIds[savedBanner.id] = selectedProductId ? [selectedProductId] : [];
+    }
+
+    const currentHomepage = existingSettings?.popularSetsJson ?? "";
+    const shouldConfigureHomepage =
+      !currentHomepage ||
+      /kitap|kırtasiye|kirtasiye|okur kulübü|çalışma masası/i.test(currentHomepage);
+    const popularSetsJson = shouldConfigureHomepage
+      ? curtainHomepageJson(
+          featuredSources.map((source) => productIds.get(source.id)).filter((id): id is string => Boolean(id)),
+          bannerProductIds,
+        )
+      : existingSettings?.popularSetsJson;
+
     await db.siteSettings.upsert({
       where: { id: "global" },
-      update: BRAND_SETTINGS,
-      create: { id: "global", ...BRAND_SETTINGS },
+      update: { ...BRAND_SETTINGS, ...(popularSetsJson ? { popularSetsJson } : {}) },
+      create: { id: "global", ...BRAND_SETTINGS, popularSetsJson },
     });
 
     revalidateProductCatalog();

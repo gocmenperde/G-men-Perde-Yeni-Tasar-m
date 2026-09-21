@@ -13,10 +13,10 @@ const BASE_URL = (
 const WEBSITE_JSONLD = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "Göçmen Kırtasiye",
+  name: "Göçmen Perde",
   url: BASE_URL,
   description:
-    "Bursa'da 1993'ten bu yana kalem, defter, sanat malzemeleri ve okul gereçlerinde güvenilir kırtasiye mağazası.",
+    "Bursa'da 1993'ten bu yana tül, fon, zebra, stor ve plise perdelerde güvenilir perde mağazası.",
   potentialAction: {
     "@type": "SearchAction",
     target: {
@@ -29,13 +29,13 @@ const WEBSITE_JSONLD = {
 
 const LOCAL_BUSINESS_JSONLD = {
   "@context": "https://schema.org",
-  "@type": "StationeryStore",
+  "@type": "HomeGoodsStore",
   "@id": `${BASE_URL}/#business`,
-  name: "Göçmen Kırtasiye",
-  alternateName: ["Göçmen Kırtasiye Bursa", "Gocmen Kirtasiye", "Göçmen Kırtasiye Online"],
+  name: "Göçmen Perde",
+  alternateName: ["Göçmen Perde Bursa", "Gocmen Perde", "Göçmen Perde Online"],
   foundingDate: "1993",
   description:
-    "1993'ten bu yana Bursa Osmangazi'nde faaliyet gösteren Göçmen Kırtasiye; kalem, defter, boya, sanat malzemeleri, okul ve ofis gereçlerinde Türkiye geneline hızlı kargo ile online satış yapmaktadır.",
+    "1993'ten bu yana Bursa Osmangazi'nde faaliyet gösteren Göçmen Perde; tül, fon, zebra, stor ve plise perdelerde özel ölçü, dikim ve montaj hizmeti sunmaktadır.",
   url: BASE_URL,
   logo: {
     "@type": "ImageObject",
@@ -84,18 +84,16 @@ const LOCAL_BUSINESS_JSONLD = {
   priceRange: "₺–₺₺",
   currenciesAccepted: "TRY",
   paymentAccepted: "Kredi Kartı, Banka Kartı, Havale/EFT",
-  hasMap: "https://maps.google.com/?q=Göçmen+Kırtasiye+Bursa",
+  hasMap: "https://maps.google.com/?q=Göçmen+Perde+Bursa",
   hasOfferCatalog: {
     "@type": "OfferCatalog",
-    name: "Kırtasiye Ürün Kataloğu",
+    name: "Perde Ürün Kataloğu",
     itemListElement: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Kalemler", description: "Tükenmez, dolma, keçeli, fosforlu ve kurşun kalem çeşitleri" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Defterler", description: "Spiralli, kareli, çizgili, noktalı A4/A5 defter çeşitleri" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Boyalar", description: "Sulu boya, guaj, akrilik, pastel ve kuru boya setleri" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Sanat Malzemeleri", description: "Tuval, fırça, palet, resim defteri ve çizim malzemeleri" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Okul Gereçleri", description: "Kalemtıraş, silgi, cetvel, pergel seti, okul çantası" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ofis Malzemeleri", description: "Dosya, klasör, zımba, ataç, not kağıdı, yazıcı kağıdı" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Teknik Çizim", description: "Rotring, Staedtler teknik kalem, pergel seti, çizim tahtası" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Tül Perdeler", description: "Pileli ve özel ölçü tül perde modelleri" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Fon Perdeler", description: "Salon ve yatak odası için fon perde modelleri" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Stor ve Zebra Perdeler", description: "Güneş kontrolü sağlayan m² fiyatlı perde çözümleri" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Plise Perdeler", description: "Modern pencereler için plise perde koleksiyonu" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ölçü ve Montaj", description: "Bursa içi ücretsiz ölçü ve profesyonel montaj hizmeti" } },
     ],
   },
   aggregateRating: {

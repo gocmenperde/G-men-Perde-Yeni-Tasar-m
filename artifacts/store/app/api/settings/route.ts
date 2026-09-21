@@ -10,7 +10,7 @@ export async function GET() {
     return NextResponse.json(
       {
         data: {
-          siteName: settings?.siteName ?? "Göçmen Kırtasiye",
+          siteName: settings?.siteName ?? "Göçmen Perde",
           logoUrl: getPublicImageUrl(settings?.logoUrl),
           faviconUrl: getPublicImageUrl(settings?.faviconUrl),
           phone: settings?.phone ?? null,
@@ -33,6 +33,6 @@ export async function GET() {
       },
     );
   } catch {
-    return NextResponse.json({ data: { siteName: "Göçmen Kırtasiye", logoUrl: null } });
+    return NextResponse.json({ data: { siteName: "Göçmen Perde", logoUrl: null } });
   }
 }

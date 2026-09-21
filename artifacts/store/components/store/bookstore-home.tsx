@@ -31,7 +31,7 @@ import { parseHomepageConfig, type HomepageSection } from "@/lib/homepage-config
 
 type Product = any;
 
-const CATEGORY_ICONS = [Trophy, PenLine, BookOpen, GraduationCap, Palette, BriefcaseBusiness, Heart, Tag];
+const CATEGORY_ICONS = [Ruler, Sparkles, ShieldCheck, Heart, Gift, Tag, Truck, Star];
 const CATEGORY_COLORS = ["#c49a3a", "#b88b2f", "#d1ae58", "#9f7a2c", "#d9bd78", "#8b6b2c", "#c6a45a", "#a98536"];
 
 type Banner = {
@@ -127,52 +127,52 @@ function BookBanner({
   const productById = new Map(products.map((product) => [product.id, product]));
   const fallbackSlides = [
     {
-      id: "fallback-classics",
-      eyebrow: "CAN YAYINLARI",
-      title: "Seçili klasiklerde",
-      accent: "%50 indirim",
-      description: "Kütüphanenize iyi kitaplar ekleyin.",
-      className: "book-banner--wine",
-      ctaText: "Keşfet",
-      ctaHref: "/products?featured=true",
+      id: "fallback-curtain",
+      eyebrow: "GÖÇMEN PERDE",
+      title: "Yaşam alanınıza",
+      accent: "doğru perdeyi seçin",
+      description: "Özel ölçü, profesyonel dikim ve montaj hizmeti.",
+      className: "book-banner--amber",
+      ctaText: "Perdeleri keşfet",
+      ctaHref: "/products",
       imageUrl: null,
-      cta2Text: null,
-      cta2Href: null,
+      cta2Text: "Ücretsiz ölçü",
+      cta2Href: "/contact",
       darkText: false,
     },
     {
-      id: "fallback-new",
-      eyebrow: "YENİ GELENLER",
-      title: "Okuma keyfinize",
-      accent: "yeni bir sayfa",
-      description: "Editörün seçtiği en yeni kitaplar.",
-      className: "book-banner--red",
-      ctaText: "Keşfet",
+      id: "fallback-measure",
+      eyebrow: "ÖZEL ÖLÇÜ",
+      title: "Pencerenize tam",
+      accent: "uyum sağlayan çözümler",
+      description: "Bursa içi ücretsiz keşif ve doğru ölçü desteği.",
+      className: "book-banner--emerald",
+      ctaText: "Ölçü iste",
       ctaHref: "/products",
       imageUrl: null,
-      cta2Text: null,
-      cta2Href: null,
+      cta2Text: "Kategoriler",
+      cta2Href: "/products",
       darkText: false,
     },
     {
-      id: "fallback-stationery",
-      eyebrow: "GÖÇMEN KIRTASİYE",
-      title: "Düşün, üret,",
-      accent: "başla.",
-      description: "Okul ve ofis için seçilmiş ürünler.",
-      className: "book-banner--coral",
-      ctaText: "Keşfet",
+      id: "fallback-collection",
+      eyebrow: "PERDE KOLEKSİYONU",
+      title: "Tül, fon, zebra",
+      accent: "stor ve plise",
+      description: "Bursa'nın 1993'ten beri güvenilir perdecisi.",
+      className: "book-banner--rose",
+      ctaText: "Koleksiyonu gör",
       ctaHref: "/products",
       imageUrl: null,
-      cta2Text: null,
-      cta2Href: null,
+      cta2Text: "Hikâyemiz",
+      cta2Href: "/about",
       darkText: false,
     },
   ];
   const slides: BannerSlide[] = banners.length
     ? banners.map((banner) => ({
         ...banner,
-        eyebrow: banner.badge || "GÖÇMEN KIRTASİYE",
+        eyebrow: banner.badge || "GÖÇMEN PERDE",
         accent: banner.subtitle || "",
         description: banner.subtitle ? "" : "Seçili ürünleri keşfedin.",
         className: `book-banner--${banner.gradient || "amber"}`,
@@ -319,12 +319,12 @@ function BookBanner({
 
 function CategoryRail({ categories, section }: { categories: any[]; section: HomepageSection }) {
   const curated = [
-    { label: "TOP 500", keywords: [], href: "/products?featured=true" },
-    { label: "Kalem", keywords: ["kalem"] },
-    { label: "Defter", keywords: ["defter", "ajanda"] },
-    { label: "Çocuk", keywords: ["çocuk", "okul"] },
-    { label: "Sanat", keywords: ["sanat", "boya", "resim"] },
-    { label: "Ofis", keywords: ["ofis", "dosya"] },
+    { label: "Öne çıkanlar", keywords: [], href: "/products?featured=true" },
+    { label: "Tül perde", keywords: ["tül perde", "tul-perde"] },
+    { label: "Fon perde", keywords: ["fon perde", "fonperdeler"] },
+    { label: "Stor perde", keywords: ["stor perde", "stor-perde"] },
+    { label: "Zebra perde", keywords: ["zebra perde", "zebra-perde"] },
+    { label: "Plise perde", keywords: ["plise perde", "plise-perde"] },
   ];
 
   const links = curated.map((item, index) => {
@@ -581,7 +581,7 @@ function BookShelfShowcase({ products, section }: { products: Product[]; section
 
 function StationeryEdit({ categories, products, section }: { categories: any[]; products: Product[]; section: HomepageSection }) {
   const stationeryCategories = categories
-    .filter((category) => /kalem|defter|ajanda|boya|sanat|ofis|okul|kırtasiye|kirtasiye/i.test(`${category.name} ${category.slug}`))
+    .filter((category) => /tül|tul|fon|stor|zebra|plise|güneşlik|guneslik|koltuk|örme|orme/i.test(`${category.name} ${category.slug}`))
     .slice(0, 4);
   const categoryCards = (stationeryCategories.length ? stationeryCategories : categories).slice(0, 4);
   if (!categoryCards.length) return null;
@@ -589,11 +589,11 @@ function StationeryEdit({ categories, products, section }: { categories: any[]; 
   const icons = [PenLine, Palette, BriefcaseBusiness, Gift];
 
   return (
-    <section className="book-stationery-edit" aria-label="Kırtasiye seçkileri">
+    <section className="book-stationery-edit" aria-label="Perde seçkileri">
       <div className="book-section-width">
         <div className="book-stationery-edit__top">
           <div>
-            <span className="book-kicker">Masa başı günlüğü</span>
+            <span className="book-kicker">Perde seçkileri</span>
             <h2>{section.title}</h2>
             <p>{section.subtitle}</p>
           </div>
@@ -667,7 +667,7 @@ function DailyDeal({ products, newProducts, section }: { products: Product[]; ne
           </Link>
           <div className="book-deal__product">
             <strong>{deal.name}</strong>
-            <small>{deal.brand?.name || "Göçmen Kırtasiye"}</small>
+            <small>{deal.brand?.name || "Göçmen Perde"}</small>
             <div className="book-deal__price">
               <del>{money(deal.comparePrice)}</del>
               <b>{money(deal.price)}</b>
@@ -897,10 +897,10 @@ function ProductShowcase({
   if (!tabbedProducts.length) return null;
 
   const tabs = variant === "favorites"
-    ? ["İlgi Görenler", "Çok Kaydedilenler", "Avantajlı Seçkiler"]
-    : ["Taze Gelenler", "Çalışma Masası", "Okula Hazır"];
-  const kicker = variant === "favorites" ? "Okur kulübü" : "Yeni raflar";
-  const badge = variant === "favorites" ? "Çok konuşulan" : "Yeni keşif";
+    ? ["İlgi Görenler", "Çok Kaydedilenler", "Avantajlı Perdeler"]
+    : ["Yeni Modeller", "Salon Seçkisi", "Özel Ölçü"];
+  const kicker = variant === "favorites" ? "Göçmen Perde seçkisi" : "Yeni perde modelleri";
+  const badge = variant === "favorites" ? "Çok tercih edilen" : "Yeni keşif";
 
   return (
     <section className={`book-showcase book-showcase--${variant}`}>

@@ -23,7 +23,7 @@ const BASE_URL = (
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getCachedSettings();
   const faviconUrl = settings?.faviconUrl ?? null;
-  const siteName = settings?.siteName ?? "Göçmen Kırtasiye";
+  const siteName = settings?.siteName ?? "Göçmen Perde";
 
   return {
     metadataBase: new URL(BASE_URL),

@@ -5,31 +5,31 @@ const BASE_URL = (
 ).replace(/\/$/, "");
 
 export const metadata: Metadata = {
-  title: "Hakkımızda | Göçmen Kırtasiye — 1993'ten Bu Yana Bursa'nın Kırtasiye Uzmanı",
+  title: "Hakkımızda | Göçmen Perde — 1993'ten Bu Yana Bursa'nın Güvenilir Perdecisi",
   description:
-    "Göçmen Kırtasiye, 1993 yılında Bursa Osmangazi'nde kurulmuş kırtasiye mağazasıdır. 30 yılı aşkın deneyimimizle kalem, defter, boya, sanat malzemeleri ve okul gereçlerinde Türkiye geneline hizmet veriyoruz.",
+    "Göçmen Perde, 1993 yılında Bursa Osmangazi'nde kurulmuş perde mağazasıdır. 30 yılı aşkın deneyimimizle özel ölçü, dikim ve montaj hizmeti veriyoruz.",
   keywords: [
-    "göçmen kırtasiye hakkında",
-    "göçmen kırtasiye tarihçe",
-    "bursa kırtasiye mağazası",
-    "1993 kırtasiye bursa",
-    "osmangazi kırtasiye",
-    "güvenilir kırtasiye sitesi",
-    "türkiye kırtasiye mağazası",
+    "göçmen perde hakkında",
+    "göçmen perde tarihçe",
+    "bursa perde mağazası",
+    "1993 perde bursa",
+    "osmangazi perdeci",
+    "güvenilir perde mağazası",
+    "özel ölçü perde",
   ],
   openGraph: {
-    title: "Hakkımızda | Göçmen Kırtasiye",
+    title: "Hakkımızda | Göçmen Perde",
     description:
-      "1993'ten bu yana Bursa Osmangazi'nde hizmet veren Göçmen Kırtasiye. 30+ yıllık deneyimle kalem, defter, boya ve sanat malzemeleri.",
+      "1993'ten bu yana Bursa Osmangazi'nde hizmet veren Göçmen Perde. 30+ yıllık deneyimle özel ölçü, dikim ve montaj.",
     url: `${BASE_URL}/about`,
-    siteName: "Göçmen Kırtasiye",
+    siteName: "Göçmen Perde",
     locale: "tr_TR",
-    images: [{ url: `${BASE_URL}/og-image.svg`, width: 1200, height: 630, alt: "Göçmen Kırtasiye Hakkında" }],
+    images: [{ url: `${BASE_URL}/og-image.svg`, width: 1200, height: 630, alt: "Göçmen Perde Hakkında" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Hakkımızda | Göçmen Kırtasiye",
-    description: "1993'ten bu yana Bursa'nın güvenilir kırtasiye mağazası.",
+    title: "Hakkımızda | Göçmen Perde",
+    description: "1993'ten bu yana Bursa'nın güvenilir perde mağazası.",
   },
   alternates: { canonical: `${BASE_URL}/about` },
   robots: { index: true, follow: true },
@@ -38,17 +38,17 @@ export const metadata: Metadata = {
 const aboutJsonLd = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  name: "Göçmen Kırtasiye Hakkında",
+  name: "Göçmen Perde Hakkında",
   url: `${BASE_URL}/about`,
-  description: "Bursa'da 1993'ten bu yana faaliyet gösteren Göçmen Kırtasiye hakkında bilgiler",
+  description: "Bursa'da 1993'ten bu yana faaliyet gösteren Göçmen Perde hakkında bilgiler",
   mainEntity: {
-    "@type": "StationeryStore",
+    "@type": "HomeGoodsStore",
     "@id": `${BASE_URL}/#business`,
-    name: "Göçmen Kırtasiye",
+    name: "Göçmen Perde",
     foundingDate: "1993",
     url: BASE_URL,
     description:
-      "Bursa Osmangazi'nde 1993'ten bu yana faaliyet gösteren Göçmen Kırtasiye; kalem, defter, boya, sanat malzemeleri ve okul gereçlerinde Türkiye geneline online satış yapmaktadır.",
+      "Bursa Osmangazi'nde 1993'ten bu yana faaliyet gösteren Göçmen Perde; tül, fon, zebra, stor ve plise perdelerde özel ölçü, dikim ve montaj hizmeti sunmaktadır.",
     numberOfEmployees: { "@type": "QuantitativeValue", value: 5 },
     address: {
       "@type": "PostalAddress",
@@ -57,7 +57,7 @@ const aboutJsonLd = {
       addressRegion: "Bursa",
       addressCountry: "TR",
     },
-    award: "30+ Yıllık Kırtasiye Deneyimi",
+    award: "30+ Yıllık Perde Deneyimi",
   },
 };
 

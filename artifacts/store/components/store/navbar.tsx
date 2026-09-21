@@ -83,7 +83,7 @@ interface NavbarProps {
   categories?: { id: string; name: string; slug: string; image?: string | null; _count?: { products: number } }[];
 }
 
-export default function Navbar({ logoUrl = null, siteName = "Göçmen Kırtasiye", categories = [] }: NavbarProps = {}) {
+export default function Navbar({ logoUrl = null, siteName = "Göçmen Perde", categories = [] }: NavbarProps = {}) {
   const itemCount = useCartStore((state) => state.itemCount());
   const wishCount = useWishlistStore((state) => state.count());
   const [hydrated, setHydrated] = useState(false);
@@ -129,6 +129,9 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Kırtasiye
   const navTone = (href: string) => pathname === href ? "bg-[var(--gold-pale)] text-[var(--navy)]" : "text-[var(--ink-muted)] hover:bg-[var(--surface-muted)] hover:text-[var(--navy)]";
   const accountHref = session ? "/account" : "/login";
   const firstName = session?.user?.name?.trim().split(/\s+/)[0];
+  const brandDescriptor = siteName?.toLocaleLowerCase("tr-TR").includes("perde")
+    ? "Perde & Ev Tekstili"
+    : "Kitap & Kırtasiye";
   const menuCategories: NonNullable<NavbarProps["categories"]> = categories.length
     ? categories.slice(0, 12)
     : MENU_GROUPS.map(({ label, href }) => ({ id: href, name: label, slug: href.split("/").pop() ?? "" }));
@@ -152,13 +155,13 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Kırtasiye
             <button type="button" onClick={() => setMenuOpen((open) => !open)} className="book-mobile-icon" aria-label={menuOpen ? "Menüyü kapat" : "Menüyü aç"} aria-expanded={menuOpen}>
               <NavIcon icon={menuOpen ? X : Menu} hydrated={hydrated} size={23} />
             </button>
-            <Link href="/" className="book-mobile-logo" aria-label={siteName ?? "Göçmen Kırtasiye"}>
+            <Link href="/" className="book-mobile-logo" aria-label={siteName ?? "Göçmen Perde"}>
               {logoUrl ? (
                 <Image src={logoUrl} alt={`${siteName} logo`} width={68} height={34} unoptimized priority />
               ) : (
                 <span className="book-mobile-logo__fallback-mark" aria-hidden="true"><NavIcon icon={PenLine} hydrated={hydrated} size={18} /></span>
               )}
-              <span className="book-mobile-logo__copy"><b>Göçmen</b><small>Kitap &amp; Kırtasiye</small></span>
+               <span className="book-mobile-logo__copy"><b>Göçmen</b><small>{brandDescriptor}</small></span>
             </Link>
             <div className="book-mobile-actions">
               <Link href={accountHref} className="book-mobile-icon" aria-label={session ? "Hesabım" : "Giriş yap"}><NavIcon icon={User} hydrated={hydrated} size={21} /></Link>
@@ -174,7 +177,7 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Kırtasiye
           <Link
             href="/"
              className="book-brand-lockup group flex min-w-0 shrink-0 items-center gap-2.5"
-             aria-label="Göçmen Kitap & Kırtasiye"
+              aria-label={siteName ?? "Göçmen Perde"}
           >
             {logoUrl ? (
                <div suppressHydrationWarning className="book-brand-mark flex h-9 w-[50px] items-center rounded-lg border border-[var(--line)] bg-[var(--surface-elevated)] px-1.5 sm:w-auto sm:max-w-[118px]">
@@ -191,7 +194,7 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Kırtasiye
              <span suppressHydrationWarning className="book-brand-copy min-w-0 leading-none">
                <strong className="block font-display text-[14px] tracking-[.02em] text-[var(--navy)] sm:text-[16px]">Göçmen</strong>
               <small className="mt-1 block whitespace-nowrap text-[7px] font-extrabold tracking-[.08em] text-[var(--ink-muted)] sm:text-[8px] sm:tracking-[.12em]">
-                Kitap &amp; Kırtasiye
+                 {brandDescriptor}
               </small>
             </span>
              <span suppressHydrationWarning className="book-brand-rule" aria-hidden="true" />
@@ -263,7 +266,7 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Kırtasiye
             </button>
 
             <div className="book-mobile-account-card">
-              <span className="book-mobile-account-card__eyebrow">{session ? "Hesabım" : "Göçmen Kırtasiye"}</span>
+              <span className="book-mobile-account-card__eyebrow">{session ? "Hesabım" : "Göçmen Perde"}</span>
               <strong>{session && firstName ? `Hoş geldin, ${firstName}` : "İlham veren raflara hoş geldin"}</strong>
               <Link href={accountHref} onClick={() => setMenuOpen(false)}>
                 {session ? "Profil ve siparişlerim →" : "Giriş yap veya hesap oluştur →"}

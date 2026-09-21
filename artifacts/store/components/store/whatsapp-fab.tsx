@@ -10,7 +10,7 @@ const QUICK_MESSAGES = [
   { label: "Kargo Takip", msg: "Merhaba, sipariş takibi hakkında bilgi almak istiyorum." },
 ];
 
-export default function WhatsAppFAB({ whatsapp }: { whatsapp?: string | null }) {
+export default function WhatsAppFAB({ whatsapp, siteName = "Göçmen Perde" }: { whatsapp?: string | null; siteName?: string | null }) {
   const [open, setOpen] = useState(false);
   const number = (whatsapp ?? "905462851826").replace(/\D/g, "");
 
@@ -39,7 +39,7 @@ export default function WhatsAppFAB({ whatsapp }: { whatsapp?: string | null }) 
                 </div>
                 <div>
                   <p className="text-white font-bold text-sm leading-none">WhatsApp</p>
-                  <p className="text-white/80 text-xs mt-0.5">Göçmen Kırtasiye</p>
+                   <p className="text-white/80 text-xs mt-0.5">{siteName}</p>
                 </div>
               </div>
               <button onClick={() => setOpen(false)} className="text-white/80 hover:text-white transition-colors">

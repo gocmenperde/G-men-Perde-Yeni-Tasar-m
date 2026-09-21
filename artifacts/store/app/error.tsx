@@ -37,7 +37,7 @@ export default function RootError({
         {/* Brand badge */}
         <div className="inline-flex items-center gap-2 bg-white border border-[#E8E0D5] text-zinc-500 text-[11px] font-bold uppercase tracking-[0.16em] px-3.5 py-1.5 rounded-full mb-5 shadow-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
-          Göçmen Kırtasiye
+          Göçmen Perde
         </div>
 
         <h1 className="text-2xl font-black text-zinc-900 mb-3 leading-tight">

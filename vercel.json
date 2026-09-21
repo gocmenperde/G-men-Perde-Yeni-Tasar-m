@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd artifacts/store && for migration in prisma/migrations/*/migration.sql; do pnpm exec prisma db execute --file $migration; done && for migrationDir in prisma/migrations/*; do pnpm exec prisma migrate resolve --applied $(basename $migrationDir); done && cd ../.. && pnpm --filter @workspace/store build",
+  "buildCommand": "node scripts/initialize-imported-db.mjs && pnpm --filter @workspace/store build",
   "framework": "nextjs",
   "installCommand": "pnpm install --no-frozen-lockfile --filter . --filter @workspace/store... --reporter=append-only",
   "outputDirectory": "artifacts/store/.next"

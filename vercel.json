@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm --filter @workspace/store build",
+  "buildCommand": "node scripts/inspect-imported-db.mjs && pnpm --filter @workspace/store build",
   "framework": "nextjs",
   "installCommand": "pnpm install --no-frozen-lockfile --filter . --filter @workspace/store... --reporter=append-only",
   "outputDirectory": "artifacts/store/.next"

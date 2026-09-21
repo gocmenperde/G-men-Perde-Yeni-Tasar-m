@@ -94,6 +94,18 @@ export async function PUT(
         ...(body.sku !== undefined && { sku: body.sku || null }),
         ...(barcode !== undefined && { barcode }),
         ...(body.tags && { tags: body.tags }),
+        ...(body.unit !== undefined && { unit: body.unit || null }),
+        ...(body.isMeter !== undefined && { isMeter: Boolean(body.isMeter) }),
+        ...(body.isSquareMeter !== undefined && { isSquareMeter: Boolean(body.isSquareMeter) }),
+        ...(body.requiresWidth !== undefined && { requiresWidth: Boolean(body.requiresWidth) }),
+        ...(body.requiresHeight !== undefined && { requiresHeight: Boolean(body.requiresHeight) }),
+        ...(body.features !== undefined && { features: body.features || null }),
+        ...(body.badge !== undefined && { badge: body.badge || null }),
+        ...(body.shippingFee !== undefined && { shippingFee: body.shippingFee == null ? null : Number(body.shippingFee) }),
+        ...(body.shippingNote !== undefined && { shippingNote: body.shippingNote || null }),
+        ...(body.serialNumber !== undefined && { serialNumber: body.serialNumber || null }),
+        ...(body.specs !== undefined && { specs: body.specs }),
+        ...(body.care !== undefined && { care: body.care }),
       },
     });
     // IndexNow: güncellenen ürün URL'sini ve ürün listesi görünümünü bildir.

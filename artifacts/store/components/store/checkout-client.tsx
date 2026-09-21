@@ -231,7 +231,11 @@ export default function CheckoutClient() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          items: items.map((i) => ({ productId: i.id, quantity: i.quantity })),
+          items: items.map((i) => ({
+            productId: i.productId ?? i.id,
+            quantity: i.quantity,
+            dimensions: i.dimensions ?? null,
+          })),
           couponCode: couponApplied || undefined,
           shipping,
           ...addressPayload,

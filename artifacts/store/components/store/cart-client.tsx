@@ -172,6 +172,12 @@ export default function CartClient() {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-zinc-900 text-sm leading-tight line-clamp-2">{item.name}</h3>
                     <p className="text-[#B8973E] text-xs font-bold mt-0.5">₺{item.price.toLocaleString("tr-TR")} / adet</p>
+                    {item.dimensions && (
+                      <p className="mt-1 text-xs text-zinc-500">
+                        Ölçü: {item.dimensions.width ? `${item.dimensions.width} m en` : ""}
+                        {item.dimensions.height ? ` × ${item.dimensions.height} m boy` : ""}
+                      </p>
+                    )}
                     <div className="flex items-center gap-2 mt-3">
                       <div className="flex items-center border border-zinc-100 rounded-xl overflow-hidden bg-zinc-50">
                          <button onClick={() => updateQty(item.id, item.quantity - 1)} className="touch-target px-3 py-2 hover:bg-zinc-100 transition-colors text-zinc-600" aria-label={`${item.name} miktarını azalt`}>

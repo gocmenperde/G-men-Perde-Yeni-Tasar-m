@@ -1,0 +1,65 @@
+[
+  {
+    "key": "carsaf",
+    "label": "Çarşaflar",
+    "desc": "Uyku çarşafları",
+    "icon": "fas fa-bed",
+    "image": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472086/gocmenperde/gocmenperde/1774941769022-cat-0c205a66-96b0-47ce-845c-527320655af1-IMG_1826.webp"
+  },
+  {
+    "key": "tul-perde",
+    "label": "Tül Perdeler",
+    "desc": "Pileli tül perde modelleri",
+    "icon": "fas fa-wind",
+    "image": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472088/gocmenperde/gocmenperde/1774942003017-cat-bf27470e-c08d-4bb4-9e30-e566c5011aaa-IMG_1833.jpg"
+  },
+  {
+    "key": "plise-perde",
+    "label": "Plise Perdeler",
+    "desc": "Plise perde çeşitleri (m² fiyatlı)",
+    "icon": "fas fa-border-all",
+    "image": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472085/gocmenperde/gocmenperde/1774941735219-cat-42dc129d-b47f-4bf3-862d-50f2f82d837a-IMG_1828.png"
+  },
+  {
+    "key": "stor-perde",
+    "label": "Stor Perdeler",
+    "desc": "Stor perde koleksiyonu (m² fiyatlı)",
+    "icon": "fas fa-up-down",
+    "image": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472086/gocmenperde/gocmenperde/1774941831646-cat-8b5824d5-1427-46c1-9119-4e4758e1028f-IMG_1829.webp"
+  },
+  {
+    "key": "zebra-perde",
+    "label": "Zebra Perdeler",
+    "desc": "Zebra perde koleksiyonu (m² fiyatlı)",
+    "icon": "fas fa-grip-lines",
+    "image": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472087/gocmenperde/gocmenperde/1774941844858-cat-74509096-ac8b-4511-9738-07ec5c3e8c6b-IMG_1830.png"
+  },
+  {
+    "key": "koltuk",
+    "label": "Koltuk Örtüleri",
+    "desc": "Koltuk ve kanepe örtüleri",
+    "icon": "fas fa-couch",
+    "image": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472084/gocmenperde/gocmenperde/1774901271412-cat-3ea20fbc-d043-4ace-9a44-c85479f2d08f-IMG_1819.jpg"
+  },
+  {
+    "key": "ormetulperde",
+    "label": "Örme Tül Perde",
+    "desc": "",
+    "icon": "fas fa-border-all",
+    "image": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472081/gocmenperde/gocmenperde/1774898972205-cat-ea138205-6daa-4042-80a4-db011294d13e-IMG_1648.png"
+  },
+  {
+    "key": "guneslik",
+    "label": "Güneşlik",
+    "desc": "",
+    "icon": "fas fa-window-maximize",
+    "image": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472083/gocmenperde/gocmenperde/1774900623824-cat-16eb03c8-c4b4-4b95-b95d-b9a05051e2dc-IMG_1818.webp"
+  },
+  {
+    "key": "fonperdeler",
+    "label": "Fon Perdeler",
+    "desc": "",
+    "icon": "fas fa-window-maximize",
+    "image": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472087/gocmenperde/gocmenperde/1774941944610-cat-f82778b4-32fe-4088-ab22-32a39d2bb273-IMG_1832.webp"
+  }
+]

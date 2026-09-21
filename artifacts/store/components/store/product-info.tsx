@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ShoppingCart, Heart, Minus, Plus, Package, PackageSearch, Headphones, Truck, Shield, Star, Check, AlertTriangle,
+  ShoppingCart, Heart, Minus, Plus, Package, PackageSearch, Headphones, Truck, Shield, Star, Check, AlertTriangle, Ruler,
   CreditCard, ChevronDown, Copy, CheckCheck, Flame,
 } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
@@ -27,6 +27,8 @@ export default function ProductInfo({ product }: { product: any }) {
   const [showInstallment, setShowInstallment] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showDesktopBar, setShowDesktopBar] = useState(false);
+  const [width, setWidth] = useState("");
+  const [height, setHeight] = useState("");
   const ctaRef = useRef<HTMLDivElement>(null);
 
   const copyBarcode = useCallback(() => {
@@ -127,16 +129,48 @@ export default function ProductInfo({ product }: { product: any }) {
     : null;
   const reviewCount = validRatings.length;
 
+  const needsMeasurement = Boolean(
+    product.requiresWidth || product.requiresHeight || product.isMeter || product.isSquareMeter,
+  );
+  const widthValue = Number(width.replace(",", "."));
+  const heightValue = Number(height.replace(",", "."));
+  const hasWidth = !product.requiresWidth || (Number.isFinite(widthValue) && widthValue > 0);
+  const hasHeight = !product.requiresHeight || (Number.isFinite(heightValue) && heightValue > 0);
+  const area = widthValue > 0 && heightValue > 0 ? widthValue * heightValue : 0;
+  const measuredUnitPrice =
+    product.isSquareMeter && area > 0
+      ? Number(product.price) * area
+      : product.isMeter && widthValue > 0
+        ? Number(product.price) * widthValue
+        : Number(product.price);
+
   const handleAdd = () => {
     if ((product.stock ?? 0) < 1) { toast.error("Bu ürün stokta yok."); return; }
+    if (!hasWidth || !hasHeight) {
+      toast.error("Sipariş için ürün ölçülerini girin.");
+      return;
+    }
+    const measurement = needsMeasurement
+      ? {
+          ...(widthValue > 0 ? { width: widthValue } : {}),
+          ...(heightValue > 0 ? { height: heightValue } : {}),
+          ...(area > 0 ? { area: Number(area.toFixed(2)) } : {}),
+          unit: product.isSquareMeter ? "m²" : product.isMeter ? "mt" : product.unit ?? "adet",
+        }
+      : undefined;
+    const itemId = measurement
+      ? `${product.id}:${measurement.width ?? ""}:${measurement.height ?? ""}`
+      : product.id;
     addItem({
-      id: product.id,
+      id: itemId,
+      productId: product.id,
       slug: product.slug,
       name: product.name,
-      price: Number(product.price),
+      price: measuredUnitPrice,
       image: product.images?.[0] ?? "",
       quantity: qty,
       stock: product.stock ?? 0,
+      dimensions: measurement,
     });
     toast.success(`${qty} adet sepete eklendi!`);
     setAdded(true);
@@ -144,8 +178,19 @@ export default function ProductInfo({ product }: { product: any }) {
   };
 
   const phone = "905462851826";
-  const waMsg = encodeURIComponent(`Merhaba, "${product.name}" ürününü sipariş etmek istiyorum.`);
+  const waMsg = encodeURIComponent(
+    `Merhaba, "${product.name}" ürününü sipariş etmek istiyorum.${measurementForMessage()}`,
+  );
   const waHref = `https://wa.me/${phone}?text=${waMsg}`;
+
+  function measurementForMessage() {
+    if (!needsMeasurement) return "";
+    const parts = [
+      widthValue > 0 ? ` En: ${widthValue} m` : "",
+      heightValue > 0 ? ` Boy: ${heightValue} m` : "",
+    ].filter(Boolean);
+    return parts.length ? ` Ölçüler:${parts.join(",")}` : "";
+  }
 
   const QtySelector = ({ compact = false }: { compact?: boolean }) => (
     <div className={`flex items-center rounded-xl border border-[#E8E0D5] bg-[#FAF7F2] overflow-hidden ${compact ? "h-11" : "h-12"}`}>
@@ -298,6 +343,51 @@ export default function ProductInfo({ product }: { product: any }) {
       )}
 
       {/* Stock */}
+      {needsMeasurement && (
+        <div className="rounded-2xl border border-[var(--gold-light)]/50 bg-[var(--gold-pale)]/45 p-4">
+          <div className="mb-3 flex items-center gap-2">
+            <Ruler className="h-4 w-4 text-[var(--gold)]" aria-hidden="true" />
+            <div>
+              <p className="text-sm font-extrabold text-[var(--navy)]">Özel ölçünüzü girin</p>
+              <p className="text-xs text-[var(--ink-muted)]">
+                Fiyat {product.isSquareMeter ? "m²" : product.isMeter ? "metre" : "ürün"} üzerinden hesaplanır.
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {(product.requiresWidth || product.isMeter || product.isSquareMeter) && (
+              <label className="text-xs font-bold text-[var(--navy)]">
+                En (m)
+                <input
+                  inputMode="decimal"
+                  value={width}
+                  onChange={(event) => setWidth(event.target.value)}
+                  placeholder="Örn. 2.40"
+                  className="mt-1.5 w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold-light)]"
+                />
+              </label>
+            )}
+            {(product.requiresHeight || product.isSquareMeter) && (
+              <label className="text-xs font-bold text-[var(--navy)]">
+                Boy (m)
+                <input
+                  inputMode="decimal"
+                  value={height}
+                  onChange={(event) => setHeight(event.target.value)}
+                  placeholder="Örn. 2.60"
+                  className="mt-1.5 w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold-light)]"
+                />
+              </label>
+            )}
+          </div>
+          {((product.isSquareMeter && area > 0) || (product.isMeter && widthValue > 0)) && (
+            <p className="mt-3 text-xs font-bold text-[var(--gold)]">
+              Hesaplanan ürün tutarı: ₺{measuredUnitPrice.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className="flex items-center gap-2">
         <div className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${product.stock === 0 ? "bg-red-500" : product.stock <= 10 ? "bg-amber-500 animate-pulse" : "bg-green-500"}`} />
         <span className={`text-sm font-semibold ${product.stock === 0 ? "text-red-500" : product.stock <= 10 ? "text-amber-600" : "text-green-600"}`}>

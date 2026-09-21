@@ -14,6 +14,7 @@ import { ChevronRight } from "lucide-react";
 import ComparisonBar from "@/components/store/comparison-bar";
 import { getProductBySlug, getRelatedProducts } from "@/lib/storefront-product";
 import { getPublicImageUrl } from "@/lib/image-url";
+import MeasureGuide from "@/components/store/measure-guide";
 
 // Ürün sayfaları request-time render edilir; zorunlu statik/ISR üretimi
 // crawler'ın her yeni slug için ISR write oluşturmasını engeller.
@@ -393,6 +394,9 @@ export default async function ProductDetailPage({
             <div className="border-t border-[#E8E0D5] pt-4">
               <ShareButtons name={product.name} slug={product.slug} />
             </div>
+            {(product.requiresWidth || product.requiresHeight || product.isMeter || product.isSquareMeter) && (
+              <MeasureGuide />
+            )}
           </div>
         </div>
 

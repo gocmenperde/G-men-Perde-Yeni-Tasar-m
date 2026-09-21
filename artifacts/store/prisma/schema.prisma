@@ -101,6 +101,18 @@ model Product {
   tags            String[]
   metaTitle       String?
   metaDescription String?
+  unit            String?
+  isMeter         Boolean     @default(false)
+  isSquareMeter   Boolean     @default(false)
+  requiresWidth   Boolean     @default(false)
+  requiresHeight  Boolean     @default(false)
+  features        String?
+  badge           String?
+  shippingFee     Decimal?    @db.Decimal(10, 2)
+  shippingNote    String?
+  serialNumber    String?
+  specs           Json?
+  care            Json?
   categoryId      String?
   brandId         String?
   category        Category?   @relation(fields: [categoryId], references: [id])
@@ -123,6 +135,7 @@ model Product {
   @@index([isActive, comparePrice])
   @@index([isActive, price])
   @@index([barcode])
+  @@index([isMeter, isSquareMeter])
 }
 
 model Order {
@@ -157,6 +170,7 @@ model OrderItem {
   productId String
   quantity  Int
   price     Decimal @db.Decimal(10, 2)
+  dimensions Json?
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   product   Product @relation(fields: [productId], references: [id])
 }

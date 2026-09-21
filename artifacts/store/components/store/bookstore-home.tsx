@@ -20,6 +20,7 @@ import {
   Tag,
   Truck,
   Trophy,
+  Ruler,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import ProductImage from "@/components/store/product-image";
@@ -683,10 +684,10 @@ function DailyDeal({ products, newProducts, section }: { products: Product[]; ne
 
 function PremiumDiscovery({ categories, section }: { categories: any[]; section: HomepageSection }) {
   const modes = [
-    { title: "Ders zamanı", note: "Okula hazırlan", keywords: ["okul", "defter"], Icon: GraduationCap, accent: "#b1872f" },
-    { title: "Çizim modu", note: "Renkleri aç", keywords: ["sanat", "boya", "resim"], Icon: Palette, accent: "#8f6b28" },
-    { title: "Masa başı", note: "Ofisini düzenle", keywords: ["ofis", "dosya"], Icon: BriefcaseBusiness, accent: "#c69e43" },
-    { title: "Hediye seçkisi", note: "İlham verenler", keywords: ["kalem", "hediye"], Icon: Gift, accent: "#a57b2b" },
+    { title: "Salon", note: "Zarif ışık dengesi", keywords: ["tul-perde", "fonperdeler"], Icon: Heart, accent: "#b1872f" },
+    { title: "Yatak odası", note: "Daha iyi uyku", keywords: ["stor-perde", "guneslik"], Icon: ShieldCheck, accent: "#8f6b28" },
+    { title: "Gün ışığı", note: "Pratik kontrol", keywords: ["zebra-perde", "plise-perde"], Icon: Sparkles, accent: "#c69e43" },
+    { title: "Dekorasyon", note: "Son dokunuş", keywords: ["koltuk", "fonperdeler"], Icon: Gift, accent: "#a57b2b" },
   ];
 
   return (
@@ -721,8 +722,8 @@ function PremiumDiscovery({ categories, section }: { categories: any[]; section:
 
 function PremiumPerks({ section }: { section: HomepageSection }) {
   const perks = [
-    { title: "Özenli paketleme", note: "Her sipariş, kitap ve kırtasiye ürünlerine uygun hazırlanır.", Icon: ShieldCheck },
-    { title: "Hızlı gönderim", note: "Türkiye'nin her yerine güvenli ve hızlı teslimat.", Icon: Truck },
+    { title: "Ücretsiz ölçü", note: "Bursa içi keşif ve doğru ölçü desteği.", Icon: Ruler },
+    { title: "Profesyonel montaj", note: "Ölçüden kuruluma kadar özenli uygulama.", Icon: Truck },
     { title: "1993'ten beri", note: "Bursa'dan üç kuşağa ulaşan güvenilir alışveriş deneyimi.", Icon: Sparkles },
   ];
 
@@ -765,7 +766,7 @@ function ProductTile({ product, featured = false }: { product: Product; featured
     event.preventDefault();
     event.stopPropagation();
     if (!product.stock || adding) return;
-    addItem({ id: product.id, slug: product.slug, name: product.name, price: Number(product.price), image: product.images?.[0] ?? "", quantity: 1 });
+    addItem({ id: product.id, productId: product.id, slug: product.slug, name: product.name, price: Number(product.price), image: product.images?.[0] ?? "", quantity: 1 });
     setAdding(true);
     window.setTimeout(() => setAdding(false), 1300);
     toast.success("Sepete eklendi.", { style: { fontSize: "13px" } });
@@ -790,7 +791,7 @@ function ProductTile({ product, featured = false }: { product: Product; featured
         <Link href={`/products/${product.slug}`} prefetch={false} className="book-product-details">
           <div className="book-stars" aria-label={`${rating} yıldız puan`}>{[1, 2, 3, 4, 5].map((star) => <Star key={star} size={12} fill={star <= rating ? "currentColor" : "none"} />)}</div>
           <h3>{product.name}</h3>
-          <p>{product.brand?.name || "Göçmen Kırtasiye"}</p>
+          <p>{product.brand?.name || "Göçmen Perde"}</p>
           <div className="book-price-row">
             <div>
               {product.comparePrice && <del>{money(product.comparePrice)}</del>}

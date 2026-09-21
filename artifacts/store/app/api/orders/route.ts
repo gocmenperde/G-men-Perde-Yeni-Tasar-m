@@ -81,14 +81,42 @@ export async function POST(req: NextRequest) {
     });
 
     let subtotal = 0;
-    const orderItems = items.map((item: { productId: string; quantity: number }) => {
+    const orderItems = items.map((item: {
+      productId: string;
+      quantity: number;
+      dimensions?: { width?: number; height?: number; area?: number; unit?: string } | null;
+    }) => {
       const product = products.find((p) => p.id === item.productId);
       if (!product) throw new Error(`Ürün bulunamadı: ${item.productId}`);
       if (product.stock < item.quantity)
         throw new Error(`"${product.name}" için yeterli stok yok. Mevcut: ${product.stock}`);
-      const price = Number(product.price);
+      const width = Number(item.dimensions?.width);
+      const height = Number(item.dimensions?.height);
+      const hasWidth = Number.isFinite(width) && width > 0;
+      const hasHeight = Number.isFinite(height) && height > 0;
+      if ((product.isMeter || product.requiresWidth) && !hasWidth) {
+        throw new Error(`"${product.name}" için en ölçüsü zorunludur.`);
+      }
+      if ((product.isSquareMeter || product.requiresHeight) && !hasHeight) {
+        throw new Error(`"${product.name}" için boy ölçüsü zorunludur.`);
+      }
+      const measuredArea = hasWidth && hasHeight ? width * height : 0;
+      const price =
+        product.isSquareMeter
+          ? Number(product.price) * measuredArea
+          : product.isMeter
+            ? Number(product.price) * width
+            : Number(product.price);
+      if (!Number.isFinite(price) || price <= 0) {
+        throw new Error(`"${product.name}" için geçerli bir ölçü girin.`);
+      }
       subtotal += price * item.quantity;
-      return { productId: item.productId, quantity: item.quantity, price };
+      return {
+        productId: item.productId,
+        quantity: item.quantity,
+        price: Number(price.toFixed(2)),
+        dimensions: item.dimensions ?? undefined,
+      };
     });
 
     let discount = 0;

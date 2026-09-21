@@ -20,6 +20,7 @@ export function serializeProduct(
     images: imageList,
     price: Number(product.price),
     comparePrice: product.comparePrice ? Number(product.comparePrice) : null,
+    shippingFee: product.shippingFee ? Number(product.shippingFee) : null,
     createdAt: product.createdAt?.toISOString?.() ?? product.createdAt,
     updatedAt: product.updatedAt?.toISOString?.() ?? product.updatedAt,
     reviews: product.reviews?.map((r: any) => ({

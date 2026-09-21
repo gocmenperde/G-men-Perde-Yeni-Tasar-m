@@ -28,11 +28,11 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     metadataBase: new URL(BASE_URL),
     title: {
-      default: `${siteName} | Bursa'nın Kırtasiye Uzmanı`,
+      default: `${siteName} | Bursa'nın Perde Uzmanı`,
       template: `%s | ${siteName}`,
     },
     description:
-      "Göçmen Kırtasiye — Bursa Osmangazi'nde 1993'ten bu yana kırtasiye uzmanı. Kalem, defter, boya, sanat malzemeleri, okul ve ofis gereçleri. Faber-Castell, Staedtler, Pelikan. Ücretsiz kargo, hızlı teslimat.",
+      "Göçmen Perde — Bursa Osmangazi'nde 1993'ten beri tül, fon, zebra, stor ve plise perde modelleri. Ücretsiz ölçü, profesyonel dikim ve montaj hizmeti.",
     keywords: generateKeywords(),
     authors: [{ name: siteName, url: BASE_URL }, { name: "Emin", url: "mailto:nurse.emin016@gmail.com" }],
     creator: siteName,
@@ -58,23 +58,23 @@ export async function generateMetadata(): Promise<Metadata> {
       locale: "tr_TR",
       url: BASE_URL,
       siteName,
-      title: `${siteName} | Bursa'nın Kırtasiye Uzmanı`,
+       title: `${siteName} | Bursa'nın Perde Uzmanı`,
       description:
-        "Bursa'da 1993'ten bu yana kalem, defter, sanat malzemeleri ve okul gereçlerinde güvenilir adresiniz.",
+        "Bursa'da 1993'ten beri tül, fon, zebra, stor ve plise perdelerde güvenilir adresiniz.",
       images: [
         {
           url: `${BASE_URL}/og-image.svg`,
           width: 1200,
           height: 630,
-          alt: `${siteName} — Bursa'nın Kırtasiye Uzmanı`,
+          alt: `${siteName} — Bursa'nın Perde Uzmanı`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${siteName} | Bursa'nın Kırtasiye Uzmanı`,
+       title: `${siteName} | Bursa'nın Perde Uzmanı`,
       description:
-        "Bursa'da 1993'ten bu yana kırtasiye ürünlerinde güvenilir adresiniz.",
+        "Bursa'da 1993'ten beri perde ve ücretsiz ölçü hizmetinde güvenilir adresiniz.",
       images: [`${BASE_URL}/og-image.svg`],
     },
     alternates: { canonical: BASE_URL },

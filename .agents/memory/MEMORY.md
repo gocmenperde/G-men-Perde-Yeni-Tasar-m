@@ -1,0 +1,28 @@
+- [Auth fix — getToken over getServerSession](auth-gettoken.md) — production custom domain breaks getServerSession; use getToken from next-auth/jwt everywhere
+- [Running app location](running-app.md) — artifacts/store is the live app (port 5000); root app/ is boilerplate only
+- [OG image format](og-image-format.md) — og-image.svg (not .jpg) is the canonical OG image; all metadata references use /og-image.svg
+- [GitHub publishing](github-publishing.md) — when HTTPS git push lacks credentials, use the authorized GitHub connector API for repository writes
+- [Product image delivery](product-image-delivery.md) — supplier/CDN imagery stays on its original URL; application image proxying is disabled
+- [Taxonomy image mapping](taxonomy-image-mapping.md) — curated visuals must key off live category and brand slugs, not demo aliases
+- [Publish dependency scope](publish-dependency-scope.md) — root publish installs every workspace package, so blocked unused tooling can fail the app build before it starts
+- [Jina proxy requests](search-proxy-jina.md) — r.jina.ai rejects browser User-Agent headers; use a plain text request and keep proxy secrets in headers
+- [Artifact deployment routing](artifact-deployment-routing.md) — registered API artifacts can own the public route and bypass the root .replit run command
+- [Workflow restart port race](workflow-restart-port-race.md) — a stale Next dev process may retain port 5000 after a restart; verify listeners before retrying
+- [Store navbar rendering](store-navbar-rendering.md) — keep the interactive navbar SSR-rendered; client-only dynamic loading can fail as Lazy/Loadable in proxied previews
+- [Optional media states](optional-media-states.md) — customer-facing media modules need an intentional no-source state; conditional null rendering makes admin features appear broken
+- [Large media uploads](large-media-uploads.md) — do not send large videos through Next/Vercel API routes; sign and upload directly to the media provider
+- [Premium homepage discovery](homepage-premium-discovery.md) — keep editorial discovery modules category-derived and data-light so they remain useful when catalog coverage changes
+- [Storefront carousel interaction](storefront-carousel-interaction.md) — use native horizontal scrolling for product rails so touch movement stays continuous and never reorders cards mid-gesture
+- [Preview hydration checks](preview-hydration-checks.md) — after changing SSR component order, verify with a cache-busting/fresh browser URL before changing markup for stale-client warnings
+- [Preview proxy forwarding](preview-proxy-forwarding.md) — local port 5000 can be healthy while the proxied dev domain returns 502; verify both before changing app code
+- [Homepage configuration](homepage-configuration.md) — ordered, versioned sections live in existing settings JSON with legacy parsing and category-scoped product fallbacks
+- [Banner product selection](banner-product-selection.md) — banner-specific product choices live in existing homepage settings JSON, not a new Banner column
+- [Dependency install firewall](package-install-firewall.md) — the workspace package firewall can block Next tarballs and prevent runtime verification independently of code
+- [Supabase runtime connection](supabase-runtime-connection.md) — MCP access does not configure Prisma; deployed runtime still needs a Supabase PostgreSQL URL
+- [Dev/build cache collision](dev-build-cache-collision.md) — running a production build over the live Next dev server can temporarily break preview chunks; restart the workflow afterward
+- [Sitemap route ownership](sitemap-route-ownership.md) — Next generateSitemaps owns numbered files, so keep the root sitemap index and numbered XML routes explicit and never shadow them with public static files
+- [Fluid CPU and crawler caching](fluid-cpu-crawler-caching.md) — force-dynamic metadata/sitemap routes can turn crawler traffic into repeated CPU work; verify cache headers in production
+- [Auth route CDN caching](auth-route-cdn-caching.md) — Cloudflare must never cache session, login, account, checkout, or order responses
+- [Vercel CDN cache policy](vercel-cdn-cache-policy.md) — Vercel-CDN-Cache-Control must be defined alongside public s-maxage and private no-store rules
+- [External Vercel production](external-vercel-production.md) — Replit deployment status/logs do not represent the separately hosted custom-domain deployment
+- [Vercel origin quota boundaries](vercel-origin-quotas.md) — route-local success/error cache headers and auth-only middleware prevent avoidable origin transfer

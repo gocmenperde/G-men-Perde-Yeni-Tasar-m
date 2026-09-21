@@ -1,0 +1,326 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          String    @default("USER")
+  isBlocked     Boolean   @default(false)
+  accounts      Account[]
+  sessions      Session[]
+  orders        Order[]
+  reviews       Review[]
+  addresses     Address[]
+  wishlists     Wishlist[]
+  cart          Cart?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String
+  slug      String     @unique
+  image     String?
+  parentId  String?
+  parent    Category?  @relation("CategoryChildren", fields: [parentId], references: [id])
+  children  Category[] @relation("CategoryChildren")
+  products  Product[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Brand {
+  id        String    @id @default(cuid())
+  name      String
+  slug      String    @unique
+  logo      String?
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Product {
+  id              String      @id @default(cuid())
+  name            String
+  slug            String      @unique
+  sku             String?     @unique
+  description     String?     @db.Text
+  price           Decimal     @db.Decimal(10, 2)
+  comparePrice    Decimal?    @db.Decimal(10, 2)
+  stock           Int         @default(0)
+  images          String[]
+  isFeatured      Boolean     @default(false)
+  isActive        Boolean     @default(true)
+  barcode         String?
+  weight          Decimal?    @db.Decimal(10, 3)
+  tags            String[]
+  metaTitle       String?
+  metaDescription String?
+  categoryId      String?
+  brandId         String?
+  category        Category?   @relation(fields: [categoryId], references: [id])
+  brand           Brand?      @relation(fields: [brandId], references: [id])
+  reviews         Review[]
+  orderItems      OrderItem[]
+  cartItems       CartItem[]
+  wishlists       Wishlist[]
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([isActive, createdAt])
+  @@index([isActive, isFeatured])
+  @@index([isActive, categoryId])
+  @@index([isActive, brandId])
+  @@index([categoryId])
+  @@index([brandId])
+  @@index([isActive, updatedAt])
+  @@index([isActive, stock])
+  @@index([isActive, comparePrice])
+  @@index([isActive, price])
+  @@index([barcode])
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String
+  status      String      @default("PENDING")
+  subtotal    Decimal     @db.Decimal(10, 2)
+  discount    Decimal     @default(0) @db.Decimal(10, 2)
+  shipping    Decimal     @default(0) @db.Decimal(10, 2)
+  total       Decimal     @db.Decimal(10, 2)
+  couponId    String?
+  coupon      Coupon?     @relation(fields: [couponId], references: [id])
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items       OrderItem[]
+  addressId        String?
+  address          Address?    @relation(fields: [addressId], references: [id])
+  stripeId         String?
+  trackingNumber   String?
+  trackingCompany  String?
+  adminNote        String?
+  createdAt        DateTime    @default(now())
+  updatedAt        DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Coupon {
+  id             String    @id @default(cuid())
+  code           String    @unique
+  type           String
+  value          Decimal   @db.Decimal(10, 2)
+  minOrderAmount Decimal   @default(0) @db.Decimal(10, 2)
+  maxUses        Int?
+  usedCount      Int       @default(0)
+  isActive       Boolean   @default(true)
+  expiresAt      DateTime?
+  orders         Order[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  rating    Int
+  comment   String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Address {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  fullName  String
+  phone     String
+  city      String
+  district  String
+  address   String
+  zipCode   String?
+  isDefault Boolean  @default(false)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orders    Order[]
+  createdAt DateTime @default(now())
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+}
+
+model Cart {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String
+  productId String
+  quantity  Int
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Banner {
+  id        String   @id @default(cuid())
+  title     String
+  subtitle  String?
+  badge     String?
+  ctaText   String?
+  ctaHref   String?
+  cta2Text  String?
+  cta2Href  String?
+  imageUrl  String?
+  gradient  String   @default("amber")
+  darkText  Boolean  @default(false)
+  isActive  Boolean  @default(true)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BarcodeImage {
+  id        String   @id @default(cuid())
+  barcode   String   @unique
+  images    String[]
+  source    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SiteSettings {
+  id                       String   @id @default("global")
+  siteName            String   @default("Göçmen Kırtasiye")
+  indexNowKey              String?
+  logoUrl             String?
+  faviconUrl          String?
+  announcementText    String?
+  announcementActive  Boolean  @default(false)
+  announcementColor   String   @default("amber")
+  heroTitle           String?
+  heroSubtitle        String?
+  heroBadge           String?
+  heroDesc            String?
+  heroCtaPrimaryText  String?
+  heroCtaPrimaryHref  String?
+  heroCtaSecText      String?
+  heroCtaSecHref      String?
+  trustBadge1Text     String?
+  trustBadge1Sub      String?
+  trustBadge2Text     String?
+  trustBadge2Sub      String?
+  trustBadge3Text     String?
+  trustBadge3Sub      String?
+  stat1Value          String?
+  stat1Label          String?
+  stat2Value          String?
+  stat2Label          String?
+  stat3Value          String?
+  stat3Label          String?
+  phone               String?
+  whatsapp            String?
+  email               String?
+  address             String?
+  socialInstagram     String?
+  socialFacebook      String?
+  socialTwitter       String?
+  popularSetsJson          String?
+  homepageVideoUrl         String?
+  homepageVideoSource      String?
+  freeShippingThreshold    Float    @default(1500)
+  shippingFee              Float    @default(79.90)
+  updatedAt                DateTime @updatedAt
+}
+
+model RestockNotification {
+  id         String    @id @default(cuid())
+  productId  String
+  email      String
+  notifiedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([productId])
+  @@index([notifiedAt])
+}
+
+// Silinen ürünlerin slug'larını tutar.
+// Middleware bu tabloyu okuyarak eski ürün URL'lerine 410 Gone döndürür.
+// Google 410 görünce sayfayı otomatik olarak index'ten çıkarır.
+model DeletedProduct {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String?
+  deletedAt DateTime @default(now())
+
+  @@index([slug])
+}

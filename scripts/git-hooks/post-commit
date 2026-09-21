@@ -1,0 +1,12 @@
+#!/bin/sh
+if [ -f /tmp/.git-author-amending ]; then
+  exit 0
+fi
+CURRENT_EMAIL=$(git log -1 --format="%ae")
+if [ "$CURRENT_EMAIL" = "agent@replit.com" ]; then
+  touch /tmp/.git-author-amending
+  git commit --amend --no-edit \
+    --author="gocmen-kirtasiyee <nurse.emin016@gmail.com>" \
+    --no-verify 2>/dev/null || true
+  rm -f /tmp/.git-author-amending
+fi

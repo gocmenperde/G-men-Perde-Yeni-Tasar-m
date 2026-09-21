@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1c1917"/>
+      <stop offset="100%" style="stop-color:#292524"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#D4AF5A"/>
+      <stop offset="100%" style="stop-color:#F59E0B"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle dot pattern -->
+  <pattern id="dots" x="0" y="0" width="30" height="30" patternUnits="userSpaceOnUse">
+    <circle cx="1.5" cy="1.5" r="1.5" fill="#D4AF5A" opacity="0.08"/>
+  </pattern>
+  <rect width="1200" height="630" fill="url(#dots)"/>
+
+  <!-- Gold accent lines -->
+  <rect x="0" y="0" width="6" height="630" fill="url(#gold)" opacity="0.7"/>
+  <rect x="1194" y="0" width="6" height="630" fill="url(#gold)" opacity="0.7"/>
+
+  <!-- Logo area -->
+  <rect x="80" y="80" width="64" height="64" rx="16" fill="#D4AF5A" opacity="0.15"/>
+  <text x="112" y="124" font-family="Georgia, serif" font-size="32" fill="#D4AF5A" text-anchor="middle">✒</text>
+
+  <!-- Brand name -->
+  <text x="80" y="290" font-family="Arial Black, Arial, sans-serif" font-size="76" font-weight="900" fill="white" letter-spacing="-2">GÖÇMEN</text>
+  <text x="80" y="348" font-family="Arial, sans-serif" font-size="28" font-weight="700" fill="#D4AF5A" letter-spacing="8">KIRTASİYE</text>
+
+  <!-- Divider -->
+  <rect x="80" y="375" width="120" height="4" rx="2" fill="url(#gold)"/>
+
+  <!-- Tagline -->
+  <text x="80" y="432" font-family="Arial, sans-serif" font-size="24" fill="#a8a29e">1993'ten bu yana kaliteli kırtasiye ürünleri</text>
+
+  <!-- Features row -->
+  <rect x="80" y="490" width="220" height="48" rx="12" fill="#D4AF5A" opacity="0.1"/>
+  <text x="190" y="521" font-family="Arial, sans-serif" font-size="16" fill="#D4AF5A" text-anchor="middle">🚚 Ücretsiz Kargo</text>
+
+  <rect x="316" y="490" width="220" height="48" rx="12" fill="#D4AF5A" opacity="0.1"/>
+  <text x="426" y="521" font-family="Arial, sans-serif" font-size="16" fill="#D4AF5A" text-anchor="middle">🔒 Güvenli Ödeme</text>
+
+  <rect x="552" y="490" width="220" height="48" rx="12" fill="#D4AF5A" opacity="0.1"/>
+  <text x="662" y="521" font-family="Arial, sans-serif" font-size="16" fill="#D4AF5A" text-anchor="middle">⭐ 4.9 Müşteri Puanı</text>
+
+  <!-- Right side decorative stationery icon -->
+  <rect x="900" y="140" width="220" height="320" rx="20" fill="#D4AF5A" opacity="0.06" transform="rotate(-8 1010 300)"/>
+  <rect x="930" y="160" width="220" height="320" rx="20" fill="#D4AF5A" opacity="0.04" transform="rotate(4 1040 320)"/>
+
+  <!-- Domain -->
+  <text x="1120" y="590" font-family="Arial, sans-serif" font-size="16" fill="#57534e" text-anchor="end">gocmenkirtasiye.com.tr</text>
+
+  <!-- Bursa tag -->
+  <text x="1120" y="78" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#78716c" text-anchor="end" letter-spacing="3">BURSA · EST. 1993</text>
+</svg>

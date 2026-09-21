@@ -1,0 +1,183 @@
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { getUserFromToken } from "@/lib/get-user-token";
+import { sanitizeImageList } from "@/lib/image-url";
+
+export const dynamic = "force-dynamic";
+
+export async function GET(req: NextRequest) {
+  try {
+    const user = await getUserFromToken(req);
+    if (!user)
+      return NextResponse.json({ error: "Giriş yapınız." }, { status: 401 });
+
+    const { searchParams } = new URL(req.url);
+    const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
+    const take = 20;
+    const where: { userId?: string; status?: string } =
+      user.role === "ADMIN" ? {} : { userId: user.id };
+    const status = searchParams.get("status");
+    if (status) where.status = status;
+
+    const [orders, total] = await Promise.all([
+      db.order.findMany({
+        where,
+        include: {
+          user: { select: { name: true, email: true } },
+          items: {
+            include: { product: { select: { name: true, images: true } } },
+          },
+        },
+        orderBy: { createdAt: "desc" },
+        take,
+        skip: (page - 1) * take,
+      }),
+      db.order.count({ where }),
+    ]);
+
+    const safeOrders = orders.map((order) => ({
+      ...order,
+      items: order.items.map((item) => ({
+        ...item,
+        product: item.product
+          ? { ...item.product, images: sanitizeImageList(item.product.images) }
+          : item.product,
+      })),
+    }));
+
+    return NextResponse.json({
+      data: safeOrders,
+      total,
+      page,
+      pages: Math.ceil(total / take),
+    });
+  } catch (error) {
+    console.error("[ORDERS_GET]", error);
+    return NextResponse.json({ error: "Siparişler alınamadı." }, { status: 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const user = await getUserFromToken(req);
+    if (!user)
+      return NextResponse.json({ error: "Giriş yapınız." }, { status: 401 });
+
+    const body = await req.json();
+    const { items, couponCode, shipping: shippingFee = 0, address, addressId } = body;
+
+    if (!items || items.length === 0)
+      return NextResponse.json({ error: "Sepet boş." }, { status: 400 });
+
+    // Adres zorunlu — ya kayıtlı addressId ya da tam dolu address nesnesi gelmeli
+    const hasNewAddress = address?.fullName && address?.phone && address?.city && address?.district && address?.address;
+    if (!addressId && !hasNewAddress) {
+      return NextResponse.json({ error: "Teslimat adresi ve iletişim bilgileri zorunludur." }, { status: 400 });
+    }
+
+    const productIds = items.map((i: { productId: string }) => i.productId);
+    const products = await db.product.findMany({
+      where: { id: { in: productIds }, isActive: true },
+    });
+
+    let subtotal = 0;
+    const orderItems = items.map((item: { productId: string; quantity: number }) => {
+      const product = products.find((p) => p.id === item.productId);
+      if (!product) throw new Error(`Ürün bulunamadı: ${item.productId}`);
+      if (product.stock < item.quantity)
+        throw new Error(`"${product.name}" için yeterli stok yok. Mevcut: ${product.stock}`);
+      const price = Number(product.price);
+      subtotal += price * item.quantity;
+      return { productId: item.productId, quantity: item.quantity, price };
+    });
+
+    let discount = 0;
+    let couponId: string | undefined;
+    if (couponCode) {
+      const coupon = await db.coupon.findFirst({
+        where: {
+          code: String(couponCode).toUpperCase(),
+          isActive: true,
+          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+        },
+      });
+      if (coupon && (!coupon.maxUses || coupon.usedCount < coupon.maxUses)) {
+        discount =
+          coupon.type === "PERCENTAGE"
+            ? (subtotal * Number(coupon.value)) / 100
+            : Number(coupon.value);
+        discount = Math.min(discount, subtotal);
+        couponId = coupon.id;
+      }
+    }
+
+    const shipping = Number(shippingFee);
+    const total = Math.max(0, subtotal - discount) + shipping;
+
+    const order = await db.$transaction(async (tx) => {
+      // Adres kaydı oluştur veya mevcut adresi kullan
+      let resolvedAddressId: string | undefined;
+      if (addressId) {
+        // Kayıtlı adres — kullanıcıya ait mi doğrula
+        const existing = await tx.address.findFirst({ where: { id: addressId, userId: user.id } });
+        if (existing) {
+          resolvedAddressId = existing.id;
+        } else if (!hasNewAddress) {
+          // addressId geçersiz ve yedek address nesnesi de yok → sert hata
+          throw new Error("Seçilen teslimat adresi bulunamadı. Lütfen tekrar adres seçin.");
+        }
+        // addressId geçersiz ama hasNewAddress varsa aşağıda yeni adres oluşturulur
+      }
+      if (!resolvedAddressId && address) {
+        const newAddr = await tx.address.create({
+          data: {
+            userId: user.id,
+            title: "Sipariş Adresi",
+            fullName: address.fullName,
+            phone: address.phone,
+            city: address.city,
+            district: address.district,
+            address: address.address,
+            zipCode: address.zipCode ?? null,
+          },
+        });
+        resolvedAddressId = newAddr.id;
+      }
+
+      // Son güvence: adres çözümlenemedi
+      if (!resolvedAddressId) {
+        throw new Error("Teslimat adresi zorunludur. Lütfen geçerli bir adres girin.");
+      }
+
+      const created = await tx.order.create({
+        data: {
+          userId: user.id,
+          status: "AWAITING_PAYMENT",
+          subtotal,
+          discount,
+          shipping,
+          total,
+          couponId,
+          addressId: resolvedAddressId ?? null,
+          items: { create: orderItems },
+        },
+        include: { items: true },
+      });
+      if (couponId) {
+        await tx.coupon.update({
+          where: { id: couponId },
+          data: { usedCount: { increment: 1 } },
+        });
+      }
+      return created;
+    });
+
+    return NextResponse.json({ data: order }, { status: 201 });
+  } catch (err: any) {
+    console.error("[ORDERS_POST]", err);
+    return NextResponse.json(
+      { error: err.message ?? "Sipariş oluşturulamadı." },
+      { status: 500 },
+    );
+  }
+}

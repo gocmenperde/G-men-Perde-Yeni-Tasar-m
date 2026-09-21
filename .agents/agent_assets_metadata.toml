@@ -1,0 +1,30 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "mWKdJN7qcL2Gwu3MSAnQq"
+uri = "file://bkm_seed.txt"
+type = "text"
+title = "BKM Kitap Kırtasiye Ürünleri - SQL Seed (26 ürün, 12 marka, 28 kategori)"
+logical_id = "bae85c1d-21fa-4b7d-8e99-168262ce3225"
+
+[[outputs]]
+id = "Rh4sbPP_0nQGoEU0m7lH3"
+uri = "file://attached_assets/Hepsiburada_TumUrunler_v7_FIXED.xlsx"
+type = "table"
+title = "Hepsiburada_TumUrunler_v7_FIXED.xlsx"
+logical_id = "3634859a-1a86-4e0c-a936-66878c823e9d"
+
+[[outputs]]
+id = "aXMTW1AsN7nODdNQZ3sME"
+uri = "file://neon_export.sql"
+type = "unspecified"
+title = "Neon Veritabanı SQL Export"
+logical_id = "e5233384-75e1-4d78-a9d6-ab67f2902e3c"
+
+[[outputs]]
+id = "4AJ9V8XHSwrj5OQcfD98r"
+uri = "file://supabase_schema.sql"
+type = "unspecified"
+title = "Supabase Schema SQL - Son Hali"
+logical_id = "8ce3e4c0-d0c3-42ab-b8fb-d6511108db53"

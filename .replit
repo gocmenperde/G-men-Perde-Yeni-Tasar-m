@@ -1,0 +1,54 @@
+modules = ["nodejs-20", "web", "python-3.12"]
+
+[deployment]
+router = "application"
+deploymentTarget = "autoscale"
+run = ["node", "scripts/start-production.mjs"]
+build = ["bash", "-c", "pnpm install --no-frozen-lockfile --filter @workspace/store... --reporter=append-only && pnpm --filter @workspace/store run build"]
+
+[deployment.postBuild]
+args = ["pnpm", "store", "prune"]
+env = { "CI" = "true" }
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pnpm install --no-frozen-lockfile --filter @workspace/store... --reporter=append-only && PORT=5000 pnpm --filter @workspace/store run dev"
+waitForPort = 5000
+
+[agent]
+stack = "BEST_EFFORT_FALLBACK"
+expertMode = true
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 20000
+
+[nix]
+channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+NEXT_PUBLIC_SITE_URL = "https://31e6bd26-6b0b-467e-ac7c-d9cf108b0130-00-3w474q76l9n52.sisko.replit.dev"
+NEXTAUTH_URL = "https://31e6bd26-6b0b-467e-ac7c-d9cf108b0130-00-3w474q76l9n52.sisko.replit.dev"
+PORT = "3000"
+CONTACT_EMAIL = "muhammedemint76@gmail.com"

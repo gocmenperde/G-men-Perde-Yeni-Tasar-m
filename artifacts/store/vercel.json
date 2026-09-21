@@ -1,0 +1,9 @@
+{
+  "buildCommand": "cd ../.. && pnpm --filter @workspace/store build",
+  "installCommand": "cd ../.. && pnpm install --no-frozen-lockfile --filter @workspace/store... --reporter=append-only",
+  "framework": "nextjs",
+  "env": {
+    "NEXTAUTH_URL": "https://www.gocmenkirtasiye.com.tr",
+    "NEXT_PUBLIC_SITE_URL": "https://www.gocmenkirtasiye.com.tr"
+  }
+}

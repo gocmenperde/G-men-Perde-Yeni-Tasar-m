@@ -1,0 +1,14 @@
+schema_version = 1
+id = "store-premium"
+kind = "web"
+title = "Premium Store"
+preview_path = "/store"
+
+[[services]]
+name = "web"
+command = "pnpm --filter @workspace/store run dev"
+port = 5173
+wait_for_port = true
+
+[services.env]
+PORT = "5173"

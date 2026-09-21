@@ -1,0 +1,12 @@
+kind = "web"
+previewPath = "/"
+title = "Premium Store"
+version = "1.0.0"
+
+[[services]]
+localPort = 3000
+name = "Premium Store"
+paths = ["/"]
+
+[services.development]
+run = "PORT=3000 pnpm --filter @workspace/store run dev"

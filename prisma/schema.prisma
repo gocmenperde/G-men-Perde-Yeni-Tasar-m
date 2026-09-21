@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  name           String?
+  passwordHash   String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  orders         Order[]
+  orderHistories OrderHistory[]
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  emoji       String?   @default("📌")
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id             String      @id @default(cuid())
+  name           String
+  slug           String      @unique
+  description    String
+  price          Decimal     @db.Decimal(10, 2)
+  comparePrice   Decimal?    @db.Decimal(10, 2)
+  stock          Int         @default(0)
+  imageUrl       String?
+  shippingCost   Decimal     @default(0) @db.Decimal(10, 2)
+  freeShipping   Boolean     @default(false)
+  isActive       Boolean     @default(true)
+  categoryId     String
+  category       Category    @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  orderItems     OrderItem[]
+  reviews        ProductReview[]
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status        OrderStatus @default(PENDING)
+  subtotal      Decimal     @db.Decimal(10, 2)
+  vatAmount     Decimal     @db.Decimal(10, 2)
+  shippingCost  Decimal     @db.Decimal(10, 2)
+  totalAmount   Decimal     @db.Decimal(10, 2)
+  currency      String      @default("TRY")
+  paymentMethod String      @default("PAYTR")
+  paymentRef    String?
+  couponCode    String?
+  couponDiscount Decimal     @default(0) @db.Decimal(10, 2)
+  items         OrderItem[]
+  history       OrderHistory[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model OrderItem {
+  id         String   @id @default(cuid())
+  orderId    String
+  productId  String
+  quantity   Int      @default(1)
+  unitPrice  Decimal  @db.Decimal(10, 2)
+  lineTotal  Decimal  @db.Decimal(10, 2)
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+  createdAt  DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model OrderHistory {
+  id          String      @id @default(cuid())
+  orderId      String
+  userId       String
+  order        Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fromStatus   OrderStatus?
+  toStatus     OrderStatus
+  note         String?
+  createdAt    DateTime    @default(now())
+
+  @@index([orderId])
+  @@index([userId])
+}
+
+model ProductReview {
+  id        String   @id @default(cuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  fullName  String
+  rating    Int      @default(5)
+  comment   String
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+}
+
+model Coupon {
+  id            String       @id @default(cuid())
+  code          String       @unique
+  discountType  DiscountType @default(PERCENT)
+  discountValue Decimal      @db.Decimal(10, 2)
+  minOrder      Decimal?     @db.Decimal(10, 2)
+  imageUrl      String?
+  active        Boolean      @default(true)
+  expiresAt     DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}

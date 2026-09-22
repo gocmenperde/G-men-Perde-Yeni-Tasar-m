@@ -7,7 +7,7 @@ import {
   InspirationSection,
 } from "@/components/store/curtain-story-sections";
 import { parseHomepageConfig, type HomepageSection } from "@/lib/homepage-config";
-import { getCachedSettings } from "@/lib/settings";
+import { getLiveSettings } from "@/lib/settings";
 
 type EditorialPageKind = "inspiration" | "projects" | "story";
 
@@ -106,7 +106,7 @@ function PageHero({ kind }: { kind: EditorialPageKind }) {
 }
 
 export default async function EditorialPage({ kind }: { kind: EditorialPageKind }) {
-  const settings = await getCachedSettings().catch(() => null);
+  const settings = await getLiveSettings();
   const config = parseHomepageConfig(settings?.popularSetsJson);
   const section = config.sections.find((item) => item.id === kind) ?? sections[kind];
   const projectsSection = config.sections.find((item) => item.id === "projects") ?? sections.projects;

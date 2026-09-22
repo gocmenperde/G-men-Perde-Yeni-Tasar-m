@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import EditorialPage from "@/components/store/editorial-page";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Sizden Gelenler | Göçmen Perde",
   description: "Göçmen Perde müşterilerinin evlerinden gerçek perde uygulamaları.",

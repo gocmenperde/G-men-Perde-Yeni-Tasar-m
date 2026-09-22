@@ -74,6 +74,23 @@ async function fetchSettingsFromDb(): Promise<SiteSettings> {
   return data;
 }
 
+/**
+ * Use this for customer-facing content that must reflect an admin save
+ * immediately. The cached settings helper is intentionally kept for the
+ * shared shell, but a gallery update should never wait for another cache
+ * instance or an ISR invalidation to expire.
+ */
+export async function getLiveSettings(): Promise<SiteSettings> {
+  try {
+    const rows = await db.$queryRaw<SiteSettings[]>`
+      SELECT * FROM "SiteSettings" WHERE "id" = 'global' LIMIT 1
+    `;
+    return rows[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export function bustSettingsCache() {
   _cache = null;
 }

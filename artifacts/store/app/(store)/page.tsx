@@ -1,7 +1,7 @@
-// Ana sayfa, admin mutation'larının on-demand invalidation'ı ile yenilenir.
-export const revalidate = false;
+// Editorial settings must reflect an admin save immediately.
+export const dynamic = "force-dynamic";
 
-import { getCachedSettings } from "@/lib/settings";
+import { getLiveSettings } from "@/lib/settings";
 import { parseHomepageConfig } from "@/lib/homepage-config";
 import { getCachedHomepageBanners, getHomepageCatalog } from "@/lib/homepage-data";
 import BookstoreHome from "@/components/store/bookstore-home";
@@ -112,7 +112,7 @@ export default async function HomePage() {
   let brandCatalog: any[] = [];
   let curatedProducts: any[] = [];
   let categoryProducts: Record<string, any[]> = {};
-  const settings = await getCachedSettings().catch(() => null);
+  const settings = await getLiveSettings();
   const homepageConfig = parseHomepageConfig(settings?.popularSetsJson);
   const selectedProductIds = Array.from(
     new Set([

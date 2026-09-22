@@ -7,9 +7,7 @@ GitHub'da geliştirme yapılır, Vercel üzerinden deploy edilir — Replit sade
 
 - **GitHub → Vercel** otomatik deploy (main branch)
 - Vercel env değişkenleri Vercel dashboard'da yönetilir
-- Üretimde kullanıcılar, oturumlar ve siparişler için `DATABASE_URL` yeni Supabase PostgreSQL bağlantısını göstermelidir
-- Replit önizlemesinde `SUPABASE_DATABASE_URL` tanımlıysa runtime-managed `DATABASE_URL` yerine bu bağlantı önceliklidir
-- Eski Supabase'teki ürün/kategori/marka kataloğunu korumak için Vercel ortamında `TARGET_SUPABASE_URL` kullanılabilir; bu bağlantı yalnızca katalog okumalarında kullanılır
+- Üretimde uygulama sorguları için `DATABASE_URL`, Prisma doğrudan şema/migration işlemleri için `DIRECT_URL` tanımlı olmalıdır
 - `vercel.json` build komutunu ve output dizinini tanımlar
 
 ## Replit'te Çalıştırma (geliştirme)

@@ -52,8 +52,9 @@ export async function POST(req: NextRequest) {
     const max_installment = "0";
     const currency = "TL";
 
+    const configuredTestMode = process.env.PAYTR_TEST_MODE?.trim().toLowerCase();
     const test_mode =
-      process.env.PAYTR_TEST_MODE === "1"
+      configuredTestMode === "1" || configuredTestMode === "true"
         ? "1"
         : process.env.NODE_ENV === "production"
         ? "0"

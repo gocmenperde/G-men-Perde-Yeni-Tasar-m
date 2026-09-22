@@ -39,11 +39,14 @@ pnpm dev
 
 ## 2) Vercel / Production
 
-`DATABASE_URL` değişkenini deployment platformunda da tanımlayın:
+`DATABASE_URL` ve `DIRECT_URL` değişkenlerini deployment platformunda tanımlayın:
 
 - Vercel Dashboard → Project → **Settings** → **Environment Variables**
 - Key: `DATABASE_URL`
 - Value: production Postgres connection string
+- Environment: Production (gerekirse Preview/Development da ekleyin)
+- Key: `DIRECT_URL`
+- Value: direct/session Postgres connection string
 - Environment: Production (gerekirse Preview/Development da ekleyin)
 
 > Önemli: Vercel'e değişken eklendikten sonra deployment'ı yeniden alın.

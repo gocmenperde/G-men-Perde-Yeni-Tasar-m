@@ -7,20 +7,9 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 // The primary database owns the full application: catalog, accounts, sessions,
-// addresses, carts, orders, settings, and admin data. Replit's runtime-managed
-// DATABASE_URL is not necessarily the application's Supabase database, so an
-// explicit SUPABASE_DATABASE_URL takes priority in both Replit and Vercel.
-const explicitSupabaseDatabaseUrl = process.env.SUPABASE_DATABASE_URL?.trim();
+// addresses, carts, orders, settings, and admin data. Runtime queries use only
+// DATABASE_URL; DIRECT_URL is reserved for Prisma direct schema operations.
 const primaryDatabaseUrl = getRuntimeDatabaseUrl();
-
-// Keep the legacy catalog connection as a compatibility fallback only. Once
-// SUPABASE_DATABASE_URL is set, the connected new Supabase is the single source
-// of truth and TARGET_SUPABASE_URL cannot silently override it.
-const catalogDatabaseUrl =
-  explicitSupabaseDatabaseUrl
-    ? getRuntimeDatabaseUrl()
-    : process.env.TARGET_SUPABASE_URL?.trim() ||
-      primaryDatabaseUrl;
 
 const clientOptions = (url?: string): Prisma.PrismaClientOptions => ({
   ...(url ? { datasources: { db: { url } } } : {}),
@@ -33,9 +22,7 @@ export const db =
 
 export const catalogDb =
   globalForPrisma.catalogPrisma ??
-  (catalogDatabaseUrl === primaryDatabaseUrl
-    ? db
-    : new PrismaClient(clientOptions(catalogDatabaseUrl)));
+  db;
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = db;

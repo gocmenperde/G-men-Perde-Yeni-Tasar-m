@@ -236,6 +236,7 @@ function BookBanner({
   const [index, setIndex] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [failedProductIds, setFailedProductIds] = useState<Set<string>>(() => new Set());
   const touchStart = useRef<{ x: number; y: number } | null>(null);
   const swipeTimer = useRef<number | null>(null);
   const featuredCovers = fallbackProducts.slice(0, 4);
@@ -334,13 +335,18 @@ function BookBanner({
   }, []);
 
   const getSlideProducts = (slide: BannerSlide) => {
-    if (slide.categorySlug) return (slide.categoryProducts ?? []).slice(0, 4);
-    return slide.productIds?.length
-      ? slide.productIds
-          .map((productId) => productById.get(productId))
-          .filter((product): product is Product => Boolean(product))
-          .slice(0, 4)
-      : featuredCovers;
+    const source = slide.categorySlug
+      ? slide.categoryProducts ?? []
+      : slide.productIds?.length
+        ? slide.productIds
+            .map((productId) => productById.get(productId))
+            .filter((product): product is Product => Boolean(product))
+        : featuredCovers;
+
+    return source
+      .filter((product) => Boolean(getFirstProductImage(product)))
+      .filter((product) => !failedProductIds.has(product.id))
+      .slice(0, 4);
   };
 
   const handleTouchStart = (event: TouchEvent<HTMLElement>) => {
@@ -388,6 +394,8 @@ function BookBanner({
   };
 
   const activeSlide = slides[index] ?? slides[0];
+  const activeProducts = activeSlide ? getSlideProducts(activeSlide) : [];
+  const materialCardCount = Math.max(1, 4 - activeProducts.length);
 
   return (
     <>
@@ -424,8 +432,8 @@ function BookBanner({
               </div>
               <div className="book-banner__premium-stage">
                 <div className="book-banner__premium-halo" aria-hidden="true" />
-                <div className="book-banner__premium-products">
-                   {getSlideProducts(slide).length ? getSlideProducts(slide).map((product, coverIndex) => (
+                  <div className="book-banner__premium-products">
+                    {slide === activeSlide && activeProducts.map((product, coverIndex) => (
                      <Link
                        href={`/products/${product.slug}`}
                        prefetch={false}
@@ -434,13 +442,35 @@ function BookBanner({
                        aria-label={`${product.name} ürününü incele`}
                        style={{ "--rotation": `${(coverIndex - 1.5) * 5}deg`, "--lift": `${Math.abs(coverIndex - 1.5) * 8}px` } as CSSProperties}
                      >
-                       <ProductImage src={product.images} alt={product.name} fill sizes="(max-width: 767px) 76px, 122px" className="book-banner__premium-product-image object-contain p-2" priority={slideIndex === index && coverIndex === 0} fallbackLabel="" />
+                        <ProductImage
+                          src={product.images}
+                          alt={product.name}
+                          fill
+                          sizes="(max-width: 767px) 76px, 122px"
+                          className="book-banner__premium-product-image object-contain p-2"
+                          priority={slideIndex === index && coverIndex === 0}
+                          fallbackLabel=""
+                          hideOnError
+                          onImageError={() => {
+                            setFailedProductIds((current) => {
+                              if (current.has(product.id)) return current;
+                              const next = new Set(current);
+                              next.add(product.id);
+                              return next;
+                            });
+                          }}
+                        />
                        <span className="book-banner__premium-product-number">0{coverIndex + 1}</span>
                        <span className="book-banner__premium-product-label">{product.brand?.name || product.category?.name || "Seçki"}</span>
                      </Link>
-                   )) : (
-                    <div className="book-banner__premium-empty"><span className="book-placeholder-glyph" aria-hidden="true" /></div>
-                  )}
+                    ))}
+                    {slide === activeSlide && Array.from({ length: materialCardCount }).map((_, materialIndex) => (
+                      <CategoryMaterialCard
+                        key={`${slide.id}-material-${materialIndex}`}
+                        slide={slide}
+                        index={activeProducts.length + materialIndex}
+                      />
+                    ))}
                 </div>
                 <div className="book-banner__premium-meta">
                   <span>{slide.categoryName || slide.eyebrow}</span>
@@ -465,6 +495,28 @@ function BookBanner({
         <CategoryBannerProducts slide={activeSlide} />
       ) : null}
     </>
+  );
+}
+
+function CategoryMaterialCard({ slide, index }: { slide: BannerSlide; index: number }) {
+  const isSheer = slide.categorySlug === "ormetulperde";
+  const label = isSheer ? "ÖRME DOKU" : slide.categorySlug === "fonperdeler" ? "FON DOKUSU" : "PERDE DOKUSU";
+  const detail = isSheer ? "Işığı yumuşatan" : "Dekoratif katman";
+
+  return (
+    <div
+      className={`book-banner__premium-material book-banner__premium-material--${slide.categorySlug || "default"}`}
+      style={{ "--rotation": `${(index - 1.5) * 5}deg`, "--lift": `${Math.abs(index - 1.5) * 8}px` } as CSSProperties}
+      role="img"
+      aria-label={`${slide.categoryName || "Perde"} ${label.toLocaleLowerCase("tr-TR")} detayı`}
+    >
+      <span className="book-banner__premium-material-mark" aria-hidden="true" />
+      <span className="book-banner__premium-material-number">0{index + 1}</span>
+      <span className="book-banner__premium-material-copy">
+        <strong>{label}</strong>
+        <small>{detail}</small>
+      </span>
+    </div>
   );
 }
 

@@ -1,8 +1,25 @@
 import { sanitizeImageList } from "@/lib/image-url";
+import slugify from "slugify";
+import { GOCMEN_PRODUCTS } from "@/data/gocmen-catalog";
 
 type CatalogSerializationOptions = {
   imageLimit?: number;
 };
+
+const sourceProductImages = new Map(
+  GOCMEN_PRODUCTS.map((source) => {
+    const key = slugify(String(source.id || source.name || ""), {
+      lower: true,
+      strict: true,
+      locale: "tr",
+    });
+    const images = sanitizeImageList([
+      ...(Array.isArray(source.images) ? source.images : []),
+      source.image,
+    ], 4);
+    return [key, images] as const;
+  }),
+);
 
 export function serializeProduct(
   product: any,
@@ -13,7 +30,14 @@ export function serializeProduct(
   // Image values are part of the server-to-client payload. Strip embedded
   // data/blob URLs here, before React Flight can place their bytes in HTML or
   // an RSC response. The browser-side image component is too late for this.
-  const imageList = sanitizeImageList(product.images, options.imageLimit);
+  const sourceImages = sourceProductImages.get(String(product.slug || ""));
+  const imageList = sanitizeImageList(
+    [
+      ...(Array.isArray(product.images) ? product.images : []),
+      ...(sourceImages ?? []),
+    ],
+    options.imageLimit,
+  );
 
   return {
     ...product,

@@ -46,6 +46,13 @@ function productSlug(product: (typeof GOCMEN_PRODUCTS)[number]) {
   return slugify(product.id || product.name, { lower: true, strict: true, locale: "tr" });
 }
 
+function productCategoryKey(source: (typeof GOCMEN_PRODUCTS)[number]) {
+  if (source.cat === "tul-perde" && /örme|orme/i.test(source.name)) {
+    return "ormetulperde";
+  }
+  return source.cat;
+}
+
 const CURTAIN_BANNERS = [
   {
     title: "Yaşam alanınıza doğru perdeyi seçin",
@@ -151,6 +158,7 @@ export async function POST(req: NextRequest) {
 
     for (const source of GOCMEN_PRODUCTS) {
       const slug = productSlug(source);
+      const categoryKey = productCategoryKey(source);
       const data = {
         name: source.name,
         slug,
@@ -164,7 +172,7 @@ export async function POST(req: NextRequest) {
         isActive: source.active !== false,
         barcode: source.barcode || null,
         tags: [...new Set([source.cat, ...(source.seoKeywords ?? [])])],
-        categoryId: categoryIds.get(source.cat) ?? null,
+        categoryId: categoryIds.get(categoryKey) ?? null,
         unit: source.unit || "adet",
         isMeter: Boolean(source.isMeter),
         isSquareMeter: Boolean(source.isSquareMeter),

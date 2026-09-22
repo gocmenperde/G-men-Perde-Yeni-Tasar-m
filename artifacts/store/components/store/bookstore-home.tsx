@@ -6,13 +6,10 @@ import {
   ArrowLeft,
   ArrowRight,
   BookOpen,
-  BriefcaseBusiness,
   Check,
   GraduationCap,
   Gift,
   Heart,
-  Palette,
-  PenLine,
   ShoppingCart,
   ShieldCheck,
   Sparkles,
@@ -939,58 +936,6 @@ function BookShelfShowcase({ products, section }: { products: Product[]; section
               </span>
             </Link>
           ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function StationeryEdit({ categories, products, section }: { categories: any[]; products: Product[]; section: HomepageSection }) {
-  const stationeryCategories = categories
-    .filter((category) => /tül|tul|fon|stor|zebra|plise|güneşlik|guneslik|koltuk|örme|orme/i.test(`${category.name} ${category.slug}`))
-    .slice(0, 4);
-  const categoryCards = (stationeryCategories.length ? stationeryCategories : categories).slice(0, 4);
-  if (!categoryCards.length) return null;
-
-  const icons = [PenLine, Palette, BriefcaseBusiness, Gift];
-
-  return (
-    <section className="book-stationery-edit" aria-label="Perde seçkileri">
-      <div className="book-section-width">
-        <div className="book-stationery-edit__top">
-          <div>
-            <span className="book-kicker">Perde seçkileri</span>
-            <h2>{section.title}</h2>
-            <p>{section.subtitle}</p>
-          </div>
-          <span className="book-stationery-edit__seal">GÖÇMEN<br />SEÇKİSİ</span>
-        </div>
-        <div className="book-stationery-edit__grid">
-          {categoryCards.map((category, index) => {
-            const Icon = icons[index % icons.length];
-            const product = products.find((item) => (
-              item.category &&
-              (item.category.slug === category.slug || item.category.name === category.name)
-            ));
-            return (
-               <Link href={categoryHref(category)} className="book-stationery-card" key={category.id || category.slug}>
-                <span className="book-stationery-card__wash" />
-                {product && (
-                  <span className="book-stationery-card__product">
-                    <ProductImage src={product.images} alt="" fill sizes="100px" className="object-contain" fallbackLabel="" />
-                  </span>
-                )}
-                <span className="book-stationery-card__icon">
-                  <Icon size={19} strokeWidth={1.6} aria-hidden="true" />
-                </span>
-                <span className="book-stationery-card__copy">
-                  <strong>{category.name}</strong>
-                  <small>{category._count?.products ? `${category._count.products} ürün` : "Rafı keşfet"}</small>
-                </span>
-                <ArrowRight className="book-stationery-card__arrow" size={15} aria-hidden="true" />
-              </Link>
-            );
-          })}
         </div>
       </div>
     </section>

@@ -8,6 +8,7 @@ import { generateKeywords } from "@/lib/seo-keywords";
 import ProductImage from "@/components/store/product-image";
 import { listingProductSelect, productMetadataSelect } from "@/lib/product-selects";
 import { getPublicImageUrl } from "@/lib/image-url";
+import { getCurtainCategoryProductWhere } from "@/lib/catalog-taxonomy";
 
 // Kategori HTML'i 24 saat ISR ile paylaşılır ve arka planda yenilenir.
 export const revalidate = 86400;
@@ -33,7 +34,7 @@ export async function generateMetadata({
         select: { name: true, slug: true },
       }),
       catalogDb.product.findFirst({
-        where: { category: { slug: params.slug }, isActive: true },
+        where: getCurtainCategoryProductWhere(params.slug),
         select: { ...productMetadataSelect, images: true, name: true },
         orderBy: { createdAt: "desc" },
       }),
@@ -104,16 +105,17 @@ export default async function CategoryPage({
   if (Number.isFinite(requestedPage) && requestedPage > MAX_PAGE) notFound();
   const page = Math.max(1, Number.isFinite(requestedPage) ? requestedPage : 1);
   const skip = (page - 1) * TAKE;
+  const productWhere = getCurtainCategoryProductWhere(params.slug);
 
   const [rawProducts, total] = await Promise.all([
     catalogDb.product.findMany({
-      where: { categoryId: category.id, isActive: true },
+      where: productWhere,
       select: listingProductSelect,
       orderBy: { createdAt: "desc" },
       skip,
       take: TAKE,
     }),
-    catalogDb.product.count({ where: { categoryId: category.id, isActive: true } }),
+    catalogDb.product.count({ where: productWhere }),
   ]);
 
   const products = serializeProducts(rawProducts, { imageLimit: 2 });

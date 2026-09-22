@@ -1,11 +1,12 @@
 import { unstable_cache } from "next/cache";
-import slugify from "slugify";
 import { db, catalogDb } from "@/lib/db";
 import { serializeProducts } from "@/lib/serialize";
 import { homepageProductSelect } from "@/lib/product-selects";
 import { getPublicImageUrl, sanitizeImageList } from "@/lib/image-url";
-import { CURTAIN_CATALOG_CATEGORY_SLUGS } from "@/lib/catalog-taxonomy";
-import { GOCMEN_PRODUCTS } from "@/data/gocmen-catalog";
+import {
+  CURTAIN_CATALOG_CATEGORY_SLUGS,
+  getCurtainCategoryProductWhere,
+} from "@/lib/catalog-taxonomy";
 
 type HomepageCatalogResult = {
   featured: any[];
@@ -31,32 +32,8 @@ const homepageBannerSelect = {
   order: true,
 } as const;
 
-const sourceProductImages = new Map(
-  GOCMEN_PRODUCTS.map((source) => {
-    const rawSource = source as { id?: unknown; name?: unknown; image?: unknown; images?: unknown };
-    const key = slugify(String(rawSource.id || rawSource.name || ""), {
-      lower: true,
-      strict: true,
-      locale: "tr",
-    });
-    const images = sanitizeImageList([
-      ...(Array.isArray(rawSource.images) ? rawSource.images : []),
-      rawSource.image,
-    ], 4);
-    return [key, images] as const;
-  }),
-);
-
 function serializeHomepageProducts(products: any[]) {
-  return serializeProducts(products, { imageLimit: 4 }).map((product) => {
-    const fallbackImages = sourceProductImages.get(String(product.slug || ""));
-    if (!fallbackImages?.length) return product;
-
-    return {
-      ...product,
-      images: sanitizeImageList([...(product.images ?? []), ...fallbackImages], 4),
-    };
-  });
+  return serializeProducts(products, { imageLimit: 4 });
 }
 
 function categoryProductWhere(slug: string) {
@@ -65,20 +42,8 @@ function categoryProductWhere(slug: string) {
     stock: { gt: 0 },
   };
 
-  if (slug === "ormetulperde") {
-    return {
-      ...base,
-      OR: [
-        { category: { slug } },
-        {
-          category: { slug: "tul-perde" },
-          name: { contains: "Örme" },
-        },
-      ],
-    };
-  }
-
-  return { ...base, category: { slug } };
+  const categoryWhere = getCurtainCategoryProductWhere(slug);
+  return { ...categoryWhere, ...base };
 }
 
 const getCachedMenuCategories = unstable_cache(

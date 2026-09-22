@@ -27,6 +27,12 @@ import ProductImage from "@/components/store/product-image";
 import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import BrandCatalog from "@/components/store/brand-catalog";
+import {
+  CurtainStorySection,
+  CustomerProjectsSection,
+  CustomerReviewsSection,
+  InspirationSection,
+} from "@/components/store/curtain-story-sections";
 import { parseHomepageConfig, type HomepageSection } from "@/lib/homepage-config";
 
 type Product = any;
@@ -977,7 +983,6 @@ function BrandDetailBand({ section }: { section: HomepageSection }) {
 export default function BookstoreHome({
   products,
   newProducts,
-  bookProducts = [],
   curatedProducts = [],
   categories,
   brands,
@@ -986,7 +991,6 @@ export default function BookstoreHome({
 }: {
   products: Product[];
   newProducts: Product[];
-  bookProducts?: Product[];
   curatedProducts?: Product[];
   categories: any[];
   brands: any[];
@@ -1013,20 +1017,24 @@ export default function BookstoreHome({
             );
           case "brandSignature":
             return <BrandDetailBand key={section.id} section={section} />;
-          case "bestsellerBooks":
-            return <BestsellerBookShowcase key={section.id} products={bookProducts} section={section} />;
           case "editorShelf":
             return <BookShelfShowcase key={section.id} products={getSectionProducts(section, products.length ? products : newProducts, curatedProducts)} section={section} />;
           case "categories":
             return <CategoryRail key={section.id} categories={categories} section={section} />;
           case "brands":
             return <BrandCatalog key={section.id} brands={brands} title={section.title} subtitle={section.subtitle} />;
+          case "story":
+            return <CurtainStorySection key={section.id} section={section} />;
+          case "projects":
+            return <CustomerProjectsSection key={section.id} section={section} />;
+          case "reviews":
+            return <CustomerReviewsSection key={section.id} section={section} />;
+          case "inspiration":
+            return <InspirationSection key={section.id} section={section} />;
           case "featured":
              return <ProductShowcase key={section.id} products={getSectionProducts(section, products, curatedProducts)} title={section.title} subtitle={section.subtitle} limit={section.limit} variant="favorites" href={section.categorySlug ? `/kategori/${section.categorySlug}` : "/products"} />;
           case "dailyDeal":
             return <DailyDeal key={section.id} products={getSectionProducts(section, allProducts, curatedProducts)} newProducts={newProducts} section={section} />;
-          case "stationery":
-            return <StationeryEdit key={section.id} categories={categories} products={newProducts.length ? newProducts : products} section={section} />;
           case "discovery":
             return <PremiumDiscovery key={section.id} categories={categories} section={section} />;
           case "perks":

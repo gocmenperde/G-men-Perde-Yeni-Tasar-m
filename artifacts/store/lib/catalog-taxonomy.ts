@@ -1,7 +1,7 @@
 /**
  * Katalog importunun desteklediği kategori slugg'ları.
  *
- * Bu liste, eski kırtasiye/boya verilerinin admin ekranında perde kataloğuyla
+ * Bu liste, perde ürünlerinin admin ekranında katalogla
  * karışmasını tespit etmek için kullanılır. Ürün bağlı kategoriler otomatik
  * silinmez; önce ürünlerin doğru kategoriye taşınması gerekir.
  */

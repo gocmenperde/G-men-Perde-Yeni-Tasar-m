@@ -42,10 +42,11 @@ export default function NotFound() {
           <p className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Hızlı Linkler</p>
           <div className="grid grid-cols-2 gap-2">
             {[
-              ["Kalemler", "/kategori/kalemler-yazi-gerecleri"],
-              ["Defterler", "/kategori/defterler-ajandalar"],
+              ["Tül Perdeler", "/kategori/tul-perde"],
+              ["Fon Perdeler", "/kategori/fonperdeler"],
+              ["Stor Perdeler", "/kategori/stor-perde"],
+              ["Zebra Perdeler", "/kategori/zebra-perde"],
               ["İletişim", "/contact"],
-              ["Hakkımızda", "/about"],
             ].map(([label, href]) => (
               <Link
                 key={href}

@@ -7,7 +7,7 @@ import { getCachedHomepageBanners, getHomepageCatalog } from "@/lib/homepage-dat
 import BookstoreHome from "@/components/store/bookstore-home";
 
 const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenkirtasiye.com.tr"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"
 ).replace(/\/$/, "");
 
 const WEBSITE_JSONLD = {
@@ -79,7 +79,6 @@ const LOCAL_BUSINESS_JSONLD = {
   ],
   sameAs: [
     BASE_URL,
-    "https://www.trendyol.com/magaza/gocmen-perde-kirtasiye-m-1249327",
   ],
   priceRange: "₺–₺₺",
   currenciesAccepted: "TRY",
@@ -111,7 +110,6 @@ export default async function HomePage() {
   let newProducts: any[] = [];
   let banners: any[] = [];
   let brandCatalog: any[] = [];
-  let bookProducts: any[] = [];
   let curatedProducts: any[] = [];
   const settings = await getCachedSettings().catch(() => null);
   const homepageConfig = parseHomepageConfig(settings?.popularSetsJson);
@@ -131,7 +129,6 @@ export default async function HomePage() {
     newProducts = catalog.newest;
     categories = catalog.categories;
     brandCatalog = catalog.brands;
-    bookProducts = catalog.books;
     curatedProducts = catalog.curated;
     banners = activeBanners;
   } catch {}
@@ -154,7 +151,6 @@ export default async function HomePage() {
           <BookstoreHome
             products={featuredProducts}
             newProducts={newProducts}
-            bookProducts={bookProducts}
             curatedProducts={curatedProducts}
             categories={categories}
             brands={brandCatalog}

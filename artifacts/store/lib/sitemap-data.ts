@@ -1,11 +1,10 @@
 import type { MetadataRoute } from "next";
 import { unstable_cache } from "next/cache";
 import { catalogDb } from "@/lib/db";
-import { BURSA_ILCELER, TURKIYE_SEHIRLER } from "@/lib/seo-keywords";
 import { getPublicImageUrl } from "@/lib/image-url";
 
 const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenkirtasiye.com.tr"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"
 ).replace(/\/$/, "");
 
 const PRODUCTS_PER_SITEMAP = 500;
@@ -91,21 +90,7 @@ export async function getSitemapEntries(sitemapId: number): Promise<MetadataRout
       priority: 0.75,
     }));
 
-    const cities = [
-      "bursa",
-      ...BURSA_ILCELER,
-      ...TURKIYE_SEHIRLER.filter((city) => city !== "bursa"),
-    ];
-    const cityPages: MetadataRoute.Sitemap = [
-      { url: `${BASE_URL}/kirtasiye`, changeFrequency: "monthly", priority: 0.8 },
-      ...cities.map((city) => ({
-        url: `${BASE_URL}/kirtasiye/${city}`,
-        changeFrequency: "monthly" as const,
-        priority: 0.75,
-      })),
-    ];
-
-    return [...staticPages, ...categoryPages, ...brandPages, ...cityPages];
+    return [...staticPages, ...categoryPages, ...brandPages];
   }
 
   try {

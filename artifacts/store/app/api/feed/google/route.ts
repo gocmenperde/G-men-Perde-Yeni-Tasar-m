@@ -7,7 +7,7 @@ import { sanitizeImageList } from "@/lib/image-url";
 export const dynamic = "force-dynamic";
 
 const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenkirtasiye.com.tr"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"
 ).replace(/\/$/, "");
 
 // Google Merchant Center RSS 2.0 feed.

@@ -1,25 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { PenLine } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import ProductImage from "@/components/store/product-image";
 import { BRAND_IMAGES } from "@/lib/taxonomy-images";
 
 const BRAND_YEAR: Record<string, string> = {
-  "faber-castell": "1761",
-  "pelikan":       "1832",
-  "staedtler":     "1835",
-  "pentel":        "1946",
-  "koh-i-noor":    "1790",
-  "moleskine":     "1997",
-  "stabilo":       "1855",
-  "sudor":         "1972",
-  "mikro":         "1985",
-  "pensan":        "1968",
-  "fatih":         "1978",
-  "masis":         "1990",
-  "delta":         "2001",
-  "keskin-color":  "1970",
+  "gocmen-perde": "1993",
 };
 
 interface Brand {
@@ -49,7 +36,7 @@ function BrandCard({ brand }: { brand: Brand }) {
             fallbackLabel=""
           />
         ) : (
-           <PenLine className="w-5 h-5 text-[var(--gold)]" aria-hidden="true" />
+           <Sparkles className="w-5 h-5 text-[var(--gold)]" aria-hidden="true" />
         )}
       </div>
       <div>
@@ -65,14 +52,8 @@ function BrandCard({ brand }: { brand: Brand }) {
 }
 
 export default function BrandSlider({ brands }: { brands: Brand[] }) {
-  const displayBrands = brands.length > 0 ? brands : [
-    { id: "1", name: "Faber-Castell", slug: "faber-castell", logo: null },
-    { id: "2", name: "Pelikan",       slug: "pelikan",       logo: null },
-    { id: "3", name: "Staedtler",     slug: "staedtler",     logo: null },
-    { id: "4", name: "Südor",         slug: "sudor",         logo: null },
-    { id: "5", name: "Pensan",        slug: "pensan",        logo: null },
-    { id: "6", name: "Stabilo",       slug: "stabilo",       logo: null },
-  ];
+  const displayBrands = brands;
+  if (!displayBrands.length) return null;
 
   const doubled = [...displayBrands, ...displayBrands];
 

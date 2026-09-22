@@ -7,18 +7,18 @@ import { useTheme } from "next-themes";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import {
-  BookOpen,
   ChevronDown,
   FileText,
-  GraduationCap,
+  House,
   Heart,
   Home,
   Info,
   Menu,
   Moon,
   Package,
-  Paintbrush,
-  PenLine,
+  Layers3,
+  PanelTop,
+  Sun,
   Percent,
   PhoneCall,
   ScanLine,
@@ -62,19 +62,19 @@ function NavIcon({
 }
 
 const MENU_GROUPS = [
-  { label: "Kalemler", icon: PenLine, href: "/kategori/kirtasiye", items: ["Kurşun kalemler", "Tükenmez kalemler", "Dolma kalemler"] },
-  { label: "Defterler", icon: BookOpen, href: "/kategori/kareli-defter", items: ["Spiralli defterler", "Ajandalar", "Kareli defterler"] },
-  { label: "Sanat", icon: Paintbrush, href: "/kategori/sulu-boyalar", items: ["Suluboya", "Pastel boya", "Kuru boya"] },
-  { label: "Okul", icon: GraduationCap, href: "/kategori/okul-gerecleri", items: ["Çizim setleri", "Silgi ve kalemtıraş", "Cetvel ve pergel"] },
-  { label: "Ofis", icon: FileText, href: "/kategori/tahta-kalemleri-ve-gerecleri", items: ["Kağıt", "Dosyalama", "Zımba ve ataş"] },
+  { label: "Tül Perdeler", icon: PanelTop, href: "/kategori/tul-perde", items: ["Tül perde modelleri", "Özel ölçü tül", "Pileli tül perdeler"] },
+  { label: "Fon Perdeler", icon: Layers3, href: "/kategori/fonperdeler", items: ["Salon fon perdeleri", "Yatak odası fonları", "Fon perde kumaşları"] },
+  { label: "Stor & Zebra", icon: Sun, href: "/kategori/stor-perde", items: ["Stor perde", "Zebra perde", "Blackout perde"] },
+  { label: "Plise Perdeler", icon: House, href: "/kategori/plise-perde", items: ["Plise perde modelleri", "Güneşlik plise", "Özel ölçü plise"] },
+  { label: "Koltuk Örtüleri", icon: FileText, href: "/kategori/koltuk", items: ["Koltuk örtüsü", "Özel ölçü", "Dekorasyon"] },
 ];
 
 const MOBILE_CATEGORY_GROUPS = [
-  { label: "Kalemler", icon: PenLine, keywords: ["kalem"], fallbackHref: "/kategori/kirtasiye", item: "Kurşun · tükenmez · dolma" },
-  { label: "Defterler", icon: BookOpen, keywords: ["defter", "ajanda"], fallbackHref: "/kategori/kareli-defter", item: "Defter · ajanda · planlayıcı" },
-  { label: "Sanat", icon: Paintbrush, keywords: ["sanat", "boya", "resim"], fallbackHref: "/kategori/sulu-boyalar", item: "Boya · çizim · hobi" },
-  { label: "Okul", icon: GraduationCap, keywords: ["okul", "çocuk"], fallbackHref: "/kategori/okul-gerecleri", item: "Gereç · çanta · set" },
-  { label: "Ofis", icon: FileText, keywords: ["ofis", "dosya"], fallbackHref: "/kategori/ofis-malzemeleri", item: "Kağıt · dosya · düzen" },
+  { label: "Tül Perdeler", icon: PanelTop, keywords: ["tül", "tul"], fallbackHref: "/kategori/tul-perde", item: "Zarif · aydınlık · özel ölçü" },
+  { label: "Fon Perdeler", icon: Layers3, keywords: ["fon"], fallbackHref: "/kategori/fonperdeler", item: "Salon · yatak odası · dekorasyon" },
+  { label: "Stor & Zebra", icon: Sun, keywords: ["stor", "zebra"], fallbackHref: "/kategori/stor-perde", item: "Güneş kontrolü · modern çözüm" },
+  { label: "Plise Perdeler", icon: House, keywords: ["plise"], fallbackHref: "/kategori/plise-perde", item: "Pratik · şık · özel ölçü" },
+  { label: "Koltuk Örtüleri", icon: FileText, keywords: ["koltuk"], fallbackHref: "/kategori/koltuk", item: "Koruma · yenileme · uyum" },
 ];
 
 interface NavbarProps {
@@ -159,7 +159,7 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Perde", ca
               {logoUrl ? (
                 <Image src={logoUrl} alt={`${siteName} logo`} width={68} height={34} unoptimized priority />
               ) : (
-                <span className="book-mobile-logo__fallback-mark" aria-hidden="true"><NavIcon icon={PenLine} hydrated={hydrated} size={18} /></span>
+                <span className="book-mobile-logo__fallback-mark" aria-hidden="true"><NavIcon icon={PanelTop} hydrated={hydrated} size={18} /></span>
               )}
                <span className="book-mobile-logo__copy"><b>Göçmen</b><small>{brandDescriptor}</small></span>
             </Link>

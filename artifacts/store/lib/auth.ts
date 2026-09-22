@@ -14,7 +14,7 @@ if (process.env.NODE_ENV === "production" && !authSecret) {
   throw new Error("Missing authentication secret environment variable.");
 }
 
-// NEXTAUTH_URL .env.local veya ortam değişkeninden gelir (gocmenkirtasiye.com.tr)
+// NEXTAUTH_URL .env.local veya ortam değişkeninden gelir (gocmenperde.com.tr)
 // Replit domain'i sadece NEXTAUTH_URL hiç ayarlanmamışsa yedek olarak kullan
 if (process.env.NODE_ENV === "production" && !process.env.NEXTAUTH_URL && process.env.REPLIT_DOMAINS) {
   const domains = process.env.REPLIT_DOMAINS.split(",").map((d: string) => d.trim());

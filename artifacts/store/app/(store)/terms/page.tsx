@@ -5,7 +5,7 @@ import { FileText, ChevronRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "Kullanım Koşulları | Göçmen Perde",
   description: "Göçmen Perde kullanım koşulları ve satış sözleşmesi.",
-  alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/terms" },
+  alternates: { canonical: "https://www.gocmenperde.com.tr/terms" },
 };
 
 const sections = [

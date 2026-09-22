@@ -5,7 +5,7 @@ import { ChevronRight, FileText, CreditCard, Receipt } from "lucide-react";
 export const metadata: Metadata = {
   title: "Satış Politikası | Göçmen Perde",
   description: "Göçmen Perde satış politikası, sipariş onayı, fiyatlandırma ve ödeme kuralları.",
-  alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/sales-policy" },
+  alternates: { canonical: "https://www.gocmenperde.com.tr/sales-policy" },
 };
 
 export default function SalesPolicyPage() {

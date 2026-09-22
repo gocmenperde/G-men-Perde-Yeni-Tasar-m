@@ -12,7 +12,7 @@ export const revalidate = false;
 export const dynamicParams = true;
 
 const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenkirtasiye.com.tr"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"
 ).replace(/\/$/, "");
 
 export async function generateMetadata({
@@ -54,7 +54,7 @@ export async function generateMetadata({
     return {
       title,
       description,
-      keywords: [`${brand.name}`, `${brand.name} ürünleri`, `${brand.name} kırtasiye`, `${brand.name} fiyatları`, `${brand.name} satın al`, `${brand.name} bursa`, `orijinal ${brand.name}`, `${brand.name} göçmen kırtasiye`],
+      keywords: [`${brand.name}`, `${brand.name} ürünleri`, `${brand.name} perde`, `${brand.name} fiyatları`, `${brand.name} satın al`, `${brand.name} bursa`, `orijinal ${brand.name}`, `${brand.name} göçmen perde`],
       robots: isPaged
         ? { index: false, follow: true }
         : { index: true, follow: true },

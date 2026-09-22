@@ -5,7 +5,7 @@ import { ChevronRight, Truck, Clock3, ShieldCheck } from "lucide-react";
 export const metadata: Metadata = {
   title: "Teslimat Koşulları | Göçmen Perde",
   description: "Göçmen Perde kargo, teslimat süreleri ve teslimat koşulları.",
-  alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/delivery" },
+  alternates: { canonical: "https://www.gocmenperde.com.tr/delivery" },
 };
 
 export default function DeliveryPage() {

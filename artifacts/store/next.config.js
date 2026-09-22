@@ -277,21 +277,21 @@ const nextConfig = {
       // /api/products cache başlıkları başarılı GET yanıtında route'un içinde
       // set edilir. Burada genel bir kural kullanmamak önemlidir: aksi halde
       // route'un no-store hata ve mutation yanıtları public cache'e taşınabilir.
-      // Kategori ve marka API'leri — 5 dakika CDN cache
+      // Kategori ve marka API'leri admin değişikliklerini anında yansıtır.
       {
         source: "/api/categories",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=300, s-maxage=900, stale-while-revalidate=3600" },
-          { key: "CDN-Cache-Control", value: "public, s-maxage=900, stale-while-revalidate=3600" },
-          { key: "Vercel-CDN-Cache-Control", value: "public, s-maxage=900, stale-while-revalidate=3600" },
+          { key: "Cache-Control", value: "private, no-store, no-cache, max-age=0, must-revalidate" },
+          { key: "CDN-Cache-Control", value: "no-store" },
+          { key: "Vercel-CDN-Cache-Control", value: "no-store" },
         ],
       },
       {
         source: "/api/brands",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=300, s-maxage=900, stale-while-revalidate=3600" },
-          { key: "CDN-Cache-Control", value: "public, s-maxage=900, stale-while-revalidate=3600" },
-          { key: "Vercel-CDN-Cache-Control", value: "public, s-maxage=900, stale-while-revalidate=3600" },
+          { key: "Cache-Control", value: "private, no-store, no-cache, max-age=0, must-revalidate" },
+          { key: "CDN-Cache-Control", value: "no-store" },
+          { key: "Vercel-CDN-Cache-Control", value: "no-store" },
         ],
       },
       {

@@ -12,7 +12,7 @@ const DEFAULT_MESSAGES = [
   { icon: "ShieldCheck",  text: "Güvenli Ödeme · 256-bit SSL Koruması" },
   { icon: "Star",         text: "1.000+ Mutlu Müşteri · 4.9 Ortalama Puan" },
   { icon: "Tag",          text: "İlk Siparişe %10 İndirim · Kod: GOCMEN10" },
-  { icon: "BookOpen",     text: "Okul Sezonu Başladı · En İyi Fiyatlar!" },
+  { icon: "Sparkles",     text: "Yeni perde koleksiyonu · Özel ölçü seçenekleri" },
 ];
 
 interface BarProps {

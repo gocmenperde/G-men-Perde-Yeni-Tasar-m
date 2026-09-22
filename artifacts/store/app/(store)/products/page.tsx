@@ -12,7 +12,7 @@ import { productCardSelect } from "@/lib/product-selects";
 import ProductFiltersClient from "@/components/store/product-filters-client";
 
 const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenkirtasiye.com.tr"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"
 ).replace(/\/$/, "");
 
 export async function generateMetadata({ searchParams: searchParamsPromise }: Props): Promise<Metadata> {

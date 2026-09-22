@@ -58,7 +58,7 @@ const EMPTY_FORM = {
 
 const STARTER_BANNERS = [
   {
-    title: "Okula dönüş hazırlıkları başladı",
+    title: "Yeni perde koleksiyonu geldi",
     subtitle: "Çanta, defter ve okul ihtiyaçlarında seçili fırsatlar.",
     badge: "OKULA DÖNÜŞ",
     ctaText: "Ürünleri keşfet",
@@ -66,8 +66,8 @@ const STARTER_BANNERS = [
     gradient: "blue",
   },
   {
-    title: "Üretenlere ilham veren kırtasiye",
-    subtitle: "Sanat ve hobi malzemeleriyle yeni projene başla.",
+    title: "Pencerenize özel çözümler",
+    subtitle: "Tül, fon, stor, zebra ve plise perde modellerini keşfedin.",
     badge: "SANAT & HOBİ",
     ctaText: "Koleksiyonu gör",
     ctaHref: "/products",
@@ -93,7 +93,7 @@ const STARTER_BANNERS = [
     title: "Her fikir için doğru malzeme",
     subtitle: "Çizim, boya ve hobi ürünleriyle üretmeye başla.",
     badge: "SANAT",
-    ctaText: "Sanat ürünlerini keşfet",
+    ctaText: "Perdeleri keşfet",
     ctaHref: "/products",
     gradient: "amber",
   },

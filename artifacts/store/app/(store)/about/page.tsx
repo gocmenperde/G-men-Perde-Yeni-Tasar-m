@@ -14,7 +14,7 @@ const reveal = (delay = 0) => ({
 const pillars = [
   { icon: Shield, title: "Seçerek sunarız", text: "Her ürünü kalite, kullanım alanı ve güvenilir marka ölçüsüyle değerlendiririz." },
   { icon: HeadphonesIcon, title: "İnsanla destekleriz", text: "Kararsız kaldığınızda doğru malzemeyi bulmanız için gerçek bir ekip yanınızdadır." },
-  { icon: Award, title: "İyi fikirlere eşlik ederiz", text: "Okuldan ofise, ilk çizgiden profesyonel projeye kadar her başlangıcı önemseriz." },
+  { icon: Award, title: "İyi yaşam alanlarına eşlik ederiz", text: "Doğru ölçüden özenli dikime ve temiz montaja kadar her adımı önemseriz." },
 ];
 
 const contactLinks = [

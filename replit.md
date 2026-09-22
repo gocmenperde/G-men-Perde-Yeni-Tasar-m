@@ -1,6 +1,6 @@
-# Göçmen Kırtasiye — Online Mağaza
+# Göçmen Perde — Online Mağaza
 
-Bursa Osmangazi'de 1993'ten bu yana faaliyet gösteren Göçmen Kırtasiye'nin e-ticaret sitesi.  
+Bursa Osmangazi'de 1993'ten bu yana faaliyet gösteren Göçmen Perde'nin e-ticaret sitesi.  
 GitHub'da geliştirme yapılır, Vercel üzerinden deploy edilir — Replit sadece geliştirme ortamı olarak kullanılır.
 
 ## Deployment
@@ -60,7 +60,7 @@ GitHub'da geliştirme yapılır, Vercel üzerinden deploy edilir — Replit sade
 
 ## SEO Yapılandırması
 
-- Sitemap: `/sitemap/[id].xml` — dinamik, ürün + kategori + şehir sayfaları
+- Sitemap: `/sitemap/[id].xml` — dinamik, ürün + kategori + marka sayfaları
 - robots.txt: otomatik oluşturulan, admin/cart/api yollarını bloklar
 - JSON-LD: WebSite, Organization, LocalBusiness, Product, BreadcrumbList
 - Google Search Console doğrulaması: `google5a5b2a90acddec72` (metadata verification)

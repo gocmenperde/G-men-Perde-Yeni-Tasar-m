@@ -24,7 +24,7 @@ export default function CategoryBar() {
   const activeSlug = searchParams.get("category") ?? "";
 
   useEffect(() => {
-    fetch("/api/categories", { cache: "force-cache" })
+    fetch("/api/categories", { cache: "no-store" })
       .then((r) => r.json())
       .then((j) => setCategories(j.data ?? []))
       .catch(() => {});

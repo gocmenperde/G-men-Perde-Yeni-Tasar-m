@@ -9,7 +9,6 @@ type HomepageCatalogResult = {
   newest: any[];
   categories: any[];
   brands: any[];
-  books: any[];
   curated: any[];
 };
 
@@ -78,7 +77,7 @@ const getCachedHomepageCatalog = unstable_cache(
   async (selectedProductIdsJson: string): Promise<HomepageCatalogResult> => {
     const selectedProductIds: string[] = JSON.parse(selectedProductIdsJson);
 
-    const [featuredRaw, newestRaw, categories, brandCatalogRaw, booksRaw, curatedRaw] =
+    const [featuredRaw, newestRaw, categories, brandCatalogRaw, curatedRaw] =
       await Promise.all([
         catalogDb.product.findMany({
           where: { isFeatured: true, isActive: true, stock: { gt: 0 } },
@@ -122,16 +121,6 @@ const getCachedHomepageCatalog = unstable_cache(
           orderBy: { name: "asc" },
           take: 10,
         }),
-        catalogDb.product.findMany({
-          where: {
-            isActive: true,
-            stock: { gt: 0 },
-            category: { slug: "kitap" },
-          },
-          select: homepageProductSelect,
-          take: 10,
-          orderBy: { createdAt: "desc" },
-        }),
         selectedProductIds.length
           ? catalogDb.product.findMany({
               where: {
@@ -159,7 +148,6 @@ const getCachedHomepageCatalog = unstable_cache(
         productCount: brand._count.products,
         products: serializeProducts(brand.products, { imageLimit: 1 }),
       })),
-      books: serializeProducts(booksRaw, { imageLimit: 1 }).filter((product: any) => Boolean(product.images?.[0])),
       curated: serializeProducts(curatedRaw, { imageLimit: 1 }),
     };
   },

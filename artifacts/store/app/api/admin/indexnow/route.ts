@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
     if (!authorized) return unauthorizedResponse();
 
     const BASE_URL = (
-      process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenkirtasiye.com.tr"
+      process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"
     ).replace(/\/$/, "");
 
     const body = await req.json().catch(() => ({}));

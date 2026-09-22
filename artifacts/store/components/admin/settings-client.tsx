@@ -858,7 +858,7 @@ export default function SettingsClient({
               <input
                 value={form.announcementText ?? ""}
                 onChange={(e) => set("announcementText", e.target.value)}
-                placeholder="🎉 Okula Dönüş İndirimleri Başladı! Tüm sipariş..."
+                placeholder="🎉 Yeni perde koleksiyonu geldi! Özel ölçü seçeneklerini keşfedin..."
                 className={inputCls}
               />
             </Field>
@@ -1199,7 +1199,7 @@ export default function SettingsClient({
                 <input
                   value={form.email ?? ""}
                   onChange={(e) => set("email", e.target.value)}
-                  placeholder="info@gocmenkirtasiye.com.tr"
+                  placeholder="info@gocmenperde.com.tr"
                   className={inputCls}
                 />
               </Field>

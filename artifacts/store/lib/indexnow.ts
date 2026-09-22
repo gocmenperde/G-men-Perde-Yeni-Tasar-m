@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 
 export const DEFAULT_INDEXNOW_KEY = "4bd276aa29c77b7e414dc08ad2376ec4";
 const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenkirtasiye.com.tr"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"
 ).replace(/\/$/, "");
 
 const INDEXNOW_ENDPOINT = "https://api.indexnow.org/indexnow";

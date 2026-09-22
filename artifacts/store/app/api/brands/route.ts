@@ -6,7 +6,11 @@ import slugify from "slugify";
 import { getPublicImageUrl } from "@/lib/image-url";
 
 export const dynamic = "force-dynamic";
-const PUBLIC_CACHE = "public, max-age=300, s-maxage=900, stale-while-revalidate=3600";
+const LIVE_CATALOG_HEADERS = {
+  "Cache-Control": "private, no-store, no-cache, max-age=0, must-revalidate",
+  "CDN-Cache-Control": "no-store",
+  "Vercel-CDN-Cache-Control": "no-store",
+};
 
 export async function GET() {
   try {
@@ -24,11 +28,7 @@ export async function GET() {
       ...brand,
       logo: getPublicImageUrl(brand.logo),
     })) }, {
-      headers: {
-        "Cache-Control": PUBLIC_CACHE,
-        "CDN-Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
-        "Vercel-CDN-Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
-      },
+      headers: LIVE_CATALOG_HEADERS,
     });
   } catch {
     return NextResponse.json({ error: "Markalar alınamadı." }, { status: 500 });

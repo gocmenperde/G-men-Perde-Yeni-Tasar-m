@@ -6,7 +6,7 @@ import { getSitemapChunkCount } from "@/lib/sitemap-data";
 export const dynamic = "force-dynamic";
 
 const BASE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenkirtasiye.com.tr"
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"
 ).replace(/\/$/, "");
 
 export async function GET() {

@@ -120,7 +120,7 @@ export async function sendOrderStatusEmail(order: {
   const transporter = getTransporter();
   if (!transporter) return;
 
-  const from = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? "noreply@gocmenkirtasiye.com";
+  const from = process.env.SMTP_FROM ?? process.env.SMTP_USER ?? "noreply@gocmenperde.com";
   const firstName = order.user.name?.split(" ")[0] ?? "Sayın Müşterimiz";
   const trackUrl =
     order.trackingCompany && order.trackingNumber && CARGO_TRACKING_URL[order.trackingCompany]

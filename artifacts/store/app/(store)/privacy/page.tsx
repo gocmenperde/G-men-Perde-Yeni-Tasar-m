@@ -5,7 +5,7 @@ import { Shield, ChevronRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "Gizlilik Politikası | Göçmen Perde",
   description: "Göçmen Perde gizlilik politikası — kişisel verilerinizin nasıl toplandığı, kullanıldığı ve korunduğu hakkında bilgi.",
-  alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/privacy" },
+  alternates: { canonical: "https://www.gocmenperde.com.tr/privacy" },
 };
 
 const sections = [

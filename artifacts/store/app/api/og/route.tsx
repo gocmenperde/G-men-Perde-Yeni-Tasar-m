@@ -148,7 +148,7 @@ export async function GET(req: NextRequest) {
                   letterSpacing: "0.5px",
                 }}
               >
-                gocmenkirtasiye.com.tr
+                gocmenperde.com.tr
               </span>
             </div>
           </div>

@@ -62,7 +62,7 @@ const defaultCopy = [
   {
     match: /kategori|category/i,
     title: "İhtiyacınıza göre keşfedin",
-    subtitle: "Kırtasiye dünyasını kategorilere göre inceleyin.",
+    subtitle: "Perde koleksiyonunu kategorilere göre inceleyin.",
   },
 ];
 

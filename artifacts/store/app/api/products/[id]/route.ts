@@ -111,7 +111,7 @@ export async function PUT(
     // IndexNow: güncellenen ürün URL'sini ve ürün listesi görünümünü bildir.
     notifyProductUpdated(product.slug).catch(() => {});
     if (before?.slug && before.slug !== product.slug) {
-      notifyIndexNow(`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenkirtasiye.com.tr"}/products/${before.slug}`).catch(() => {});
+      notifyIndexNow(`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"}/products/${before.slug}`).catch(() => {});
     }
     revalidateProductCatalog(product.slug);
 
@@ -145,7 +145,7 @@ export async function DELETE(
         update: { deletedAt: new Date() },
         create: { slug: existing.slug, name: existing.name ?? null },
       }).catch(() => {});
-      notifyIndexNow(`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenkirtasiye.com.tr"}/products/${existing.slug}`).catch(() => {});
+      notifyIndexNow(`${process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"}/products/${existing.slug}`).catch(() => {});
       revalidateProductCatalog(existing.slug);
     }
 

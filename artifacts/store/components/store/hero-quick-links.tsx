@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Zap, Star, TrendingUp, Tag, Sparkles, PenLine, BookOpen, Paintbrush, Backpack } from "lucide-react";
+import { Zap, Star, TrendingUp, Tag, Sparkles, PanelTop, Sun, Layers3, House } from "lucide-react";
 
 const QUICK_LINKS = [
   {
@@ -49,40 +49,40 @@ const QUICK_LINKS = [
     iconColor: "text-amber-500",
   },
   {
-    href: "/kategori/kirtasiye",
-     icon: PenLine,
-    label: "Kalemler",
-    sub: "Tükenmez, Dolma, Jel",
+    href: "/kategori/tul-perde",
+     icon: PanelTop,
+    label: "Tül Perdeler",
+    sub: "Zarif ve aydınlık",
     bg: "bg-white",
     text: "text-zinc-900",
     border: "border-zinc-100",
     iconBg: "bg-blue-50",
   },
   {
-    href: "/kategori/not-defterleri-ve-bloknotlar",
-     icon: BookOpen,
-    label: "Defterler",
-    sub: "Spiralli, Kareli, Çizgili",
+    href: "/kategori/fonperdeler",
+     icon: Layers3,
+    label: "Fon Perdeler",
+    sub: "Salon ve yatak odası",
     bg: "bg-white",
     text: "text-zinc-900",
     border: "border-zinc-100",
     iconBg: "bg-purple-50",
   },
   {
-    href: "/kategori/kuru-boyalar",
-     icon: Paintbrush,
-    label: "Sanat",
-    sub: "Boya, Fırça, Tuval",
+    href: "/kategori/stor-perde",
+     icon: Sun,
+    label: "Stor Perdeler",
+    sub: "Güneş kontrolü",
     bg: "bg-white",
     text: "text-zinc-900",
     border: "border-zinc-100",
     iconBg: "bg-pink-50",
   },
   {
-    href: "/kategori/beslenme-cantasi",
-     icon: Backpack,
-    label: "Okul Seti",
-    sub: "Çanta, Kalemlik, Set",
+    href: "/kategori/zebra-perde",
+     icon: House,
+    label: "Zebra Perdeler",
+    sub: "Modern ve kullanışlı",
     bg: "bg-white",
     text: "text-zinc-900",
     border: "border-zinc-100",

@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
               <hr style="border:none;border-top:1px solid #f0ebe3;margin:16px 0;">
               <p style="color:#333;font-size:14px;line-height:1.7;white-space:pre-line;margin:0;">${message}</p>
             </div>
-            <p style="color:#aaa;font-size:11px;text-align:center;margin-top:12px;">Bu mesaj gocmenkirtasiye.com.tr iletişim formundan gönderildi.</p>
+            <p style="color:#aaa;font-size:11px;text-align:center;margin-top:12px;">Bu mesaj gocmenperde.com.tr iletişim formundan gönderildi.</p>
           </div>
         `,
       });

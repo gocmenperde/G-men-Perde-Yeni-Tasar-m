@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         ? null
         : (process.env.NEXT_PUBLIC_SITE_URL ??
            process.env.NEXTAUTH_URL ??
-           "https://www.gocmenkirtasiye.com.tr");
+           "https://www.gocmenperde.com.tr");
 
     const ok_url =
       process.env.PAYTR_OK_URL ??

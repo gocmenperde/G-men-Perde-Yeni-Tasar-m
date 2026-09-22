@@ -1,13 +1,13 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  BookOpen,
   Check,
   Headphones,
-  Palette,
-  PenLine,
+  Layers3,
+  PanelTop,
   ShieldCheck,
   ShoppingBag,
+  Sun,
   Truck,
 } from "lucide-react";
 
@@ -55,9 +55,9 @@ function premiumLabel(value: string | null | undefined, fallback: string) {
 }
 
 const quickCategories = [
-  { name: "Kalemler", href: "/kategori/kirtasiye", icon: PenLine, tone: "bg-[#F8E5C6] text-[#8A541F]" },
-  { name: "Defterler", href: "/kategori/kareli-defter", icon: BookOpen, tone: "bg-[#DCE9E5] text-[#2D625C]" },
-  { name: "Sanat", href: "/kategori/sulu-boyalar", icon: Palette, tone: "bg-[#F2DCDD] text-[#8E4D52]" },
+  { name: "Tül Perdeler", href: "/kategori/tul-perde", icon: PanelTop, tone: "bg-[#F8E5C6] text-[#8A541F]" },
+  { name: "Fon Perdeler", href: "/kategori/fonperdeler", icon: Layers3, tone: "bg-[#DCE9E5] text-[#2D625C]" },
+  { name: "Stor & Zebra", href: "/kategori/stor-perde", icon: Sun, tone: "bg-[#F2DCDD] text-[#8E4D52]" },
 ];
 
 export default function Hero({ settings }: { settings?: HeroSettings }) {
@@ -145,7 +145,7 @@ export default function Hero({ settings }: { settings?: HeroSettings }) {
         <div className="relative mx-auto w-full max-w-[460px]">
           <div className="relative rounded-[2rem] border border-[#E7D9BF]/45 bg-[#F5EBDD] p-5 text-[#243B43] shadow-[0_28px_70px_rgba(7,20,23,.3)] sm:p-7">
             <div className="absolute right-5 top-5 grid h-12 w-12 place-items-center rounded-2xl bg-[#D96C54] text-[#FFF3E6]">
-              <PenLine className="h-6 w-6" aria-hidden="true" />
+              <PanelTop className="h-6 w-6" aria-hidden="true" />
             </div>
             <div className="max-w-[220px]">
               <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#8A6D4A]">Bugünün seçimi</p>

@@ -1,27 +1,26 @@
 import Link from "next/link";
 import {
   ArrowUpRight,
-  BookOpen,
-  BriefcaseBusiness,
-  Brush,
-  FolderKanban,
-  GraduationCap,
-  PenLine,
-  Shapes,
+  House,
+  Layers3,
+  PanelTop,
+  Ruler,
+  Sparkles,
+  Sun,
 } from "lucide-react";
 import ProductImage from "@/components/store/product-image";
 import { getCategoryImage, getCuratedCategoryImage } from "@/lib/taxonomy-images";
 
 const categoryStyles = [
-  { icon: PenLine, tone: "bg-[#D96C54]" },
-  { icon: BookOpen, tone: "bg-[#3E7773]" },
-  { icon: Brush, tone: "bg-[#B77A9A]" },
-  { icon: GraduationCap, tone: "bg-[#D39A4C]" },
-  { icon: BriefcaseBusiness, tone: "bg-[#496A72]" },
-  { icon: Shapes, tone: "bg-[#8A6C55]" },
+  { icon: PanelTop, tone: "bg-[#B8973E]" },
+  { icon: Sun, tone: "bg-[#C69C42]" },
+  { icon: Layers3, tone: "bg-[#6F7C70]" },
+  { icon: House, tone: "bg-[#8A6C55]" },
+  { icon: Sparkles, tone: "bg-[#A67C52]" },
+  { icon: Ruler, tone: "bg-[#496A72]" },
 ];
 
-const hiddenSlugs = new Set(["belirtilmedi", "deneme", "ihtiyac", "mesh", "min"]);
+const hiddenSlugs = new Set(["belirtilmedi", "deneme", "ihtiyac", "mesh", "min", "kitap"]);
 
 export default function CategoryGrid({ categories }: { categories: any[] }) {
   const visible = categories.filter((category) => !category.parentId && !hiddenSlugs.has(category.slug)).slice(0, 6);
@@ -32,9 +31,9 @@ export default function CategoryGrid({ categories }: { categories: any[] }) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <span className="section-label">Masana göre seç</span>
-            <h2 className="mt-3 max-w-xl font-display text-4xl font-bold leading-none tracking-tight text-[var(--navy)] sm:text-5xl">Bugün ne üretiyorsun?</h2>
-            <p className="mt-3 max-w-md text-sm leading-6 text-[var(--ink-muted)]">Kalem, kağıt, okul ve sanat malzemelerini kullanım alanına göre hızlıca bul.</p>
+              <span className="section-label">Yaşam alanınıza göre seçin</span>
+              <h2 className="mt-3 max-w-xl font-display text-4xl font-bold leading-none tracking-tight text-[var(--navy)] sm:text-5xl">Perdede aradığınız her şey.</h2>
+              <p className="mt-3 max-w-md text-sm leading-6 text-[var(--ink-muted)]">Tül, fon, stor, zebra ve plise perde seçeneklerini kullanım alanınıza göre keşfedin.</p>
           </div>
           <Link href="/products" className="group inline-flex items-center gap-2 text-sm font-extrabold text-[var(--navy)] underline decoration-[var(--gold-light)] decoration-2 underline-offset-4">
             Tüm kategoriler <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />

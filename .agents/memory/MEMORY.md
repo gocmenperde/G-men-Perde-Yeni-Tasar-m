@@ -28,3 +28,4 @@
 - [Vercel origin quota boundaries](vercel-origin-quotas.md) — route-local success/error cache headers and auth-only middleware prevent avoidable origin transfer
 - [Curtain catalog seeding](curtain-catalog-seeding.md) — the new Vercel catalog is seeded once from the in-repo curtain JSON, then deployments use the normal build
 - [Mobile form focus](mobile-form-focus.md) — never declare interactive field components inside a parent render; React remounts them on each keystroke and iOS can lose focus
+- [Curtain catalog boundary](curtain-catalog-boundary.md) — storefront and admin must share live curtain data; empty-state fallbacks must never recreate stationery content

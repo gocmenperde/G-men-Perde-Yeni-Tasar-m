@@ -7,6 +7,15 @@
  * available, so the brand name is still represented instead of a random icon.
  */
 export const CATEGORY_IMAGES: Record<string, string> = {
+  "carsaf": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472086/gocmenperde/gocmenperde/1774941769022-cat-0c205a66-96b0-47ce-845c-527320655af1-IMG_1826.webp",
+  "tul-perde": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472088/gocmenperde/gocmenperde/1774942003017-cat-bf27470e-c08d-4bb4-9e30-e566c5011aaa-IMG_1833.jpg",
+  "plise-perde": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472085/gocmenperde/gocmenperde/1774941735219-cat-42dc129d-b47f-4bf3-862d-50f2f82d837a-IMG_1828.png",
+  "stor-perde": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472086/gocmenperde/gocmenperde/1774941831646-cat-8b5824d5-1427-46c1-9119-4e4758e1028f-IMG_1829.webp",
+  "zebra-perde": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472087/gocmenperde/gocmenperde/1774941844858-cat-74509096-ac8b-4511-9738-07ec5c3e8c6b-IMG_1830.png",
+  "koltuk": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472084/gocmenperde/gocmenperde/1774901271412-cat-3ea20fbc-d043-4ace-9a44-c85479f2d08f-IMG_1819.jpg",
+  "ormetulperde": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472081/gocmenperde/gocmenperde/1774898972205-cat-ea138205-6daa-4042-80a4-db011294d13e-IMG_1648.png",
+  "guneslik": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472083/gocmenperde/gocmenperde/1774900623824-cat-16eb03c8-c4b4-4b95-b95d-b9a05051e2dc-IMG_1818.webp",
+  "fonperdeler": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472087/gocmenperde/gocmenperde/1774941944610-cat-f82778b4-32fe-4088-ab22-32a39d2bb273-IMG_1832.webp",
   "kalemler-yazi-gerecleri": "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=900&h=720&fit=crop&auto=format&q=88",
   "defterler-ajandalar": "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=900&h=720&fit=crop&auto=format&q=88",
   "sanat-malzemeleri": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=900&h=720&fit=crop&auto=format&q=88",
@@ -90,7 +99,7 @@ export function getCategoryImage(category: { slug?: string | null; image?: strin
     ?? CATEGORY_IMAGES[slug]
     ?? (alias ? CATEGORY_IMAGES[alias] : null)
     ?? (keywordAlias ? CATEGORY_IMAGES[keywordAlias] : null)
-    ?? CATEGORY_IMAGES["ofis-malzemeleri"];
+    ?? CATEGORY_IMAGES["tul-perde"];
 }
 
 export function getCuratedCategoryImage(slug?: string | null) {
@@ -101,6 +110,7 @@ const initialsImage = (name: string, background: string) =>
   `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${background}&color=fff&size=128&bold=true&format=png`;
 
 export const BRAND_IMAGES: Record<string, string> = {
+  "gocmen-perde": "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472205/gocmenperde/gocmenperde/logo.jpg",
   "sudor": "https://sudor.com.tr/wp-content/uploads/2021/08/sudorlogo-130x100-1.png",
   "mikro": "https://commons.wikimedia.org/wiki/Special:FilePath/Mikro%20Logo.png?width=320",
   "pensan": initialsImage("Pensan", "1d4ed8"),

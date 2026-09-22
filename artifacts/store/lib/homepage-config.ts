@@ -1,13 +1,15 @@
 export type HomepageSectionId =
   | "banner"
   | "brandSignature"
-  | "bestsellerBooks"
   | "editorShelf"
   | "categories"
   | "brands"
+  | "story"
+  | "projects"
+  | "reviews"
+  | "inspiration"
   | "featured"
   | "dailyDeal"
-  | "stationery"
   | "discovery"
   | "perks"
   | "new";
@@ -43,17 +45,6 @@ const SECTION_DEFAULTS: HomepageSection[] = [
     categorySlug: "",
   },
   {
-    id: "bestsellerBooks",
-    label: "Haftanın en çok satan kitapları",
-    description: "Kitap kataloğu için ayrılmış eski bölüm",
-    visible: false,
-    title: "Haftanın En Çok Satan Kitapları",
-    subtitle: "Bu haftanın okur favorileri.",
-    limit: 8,
-    productIds: [],
-    categorySlug: "kitap",
-  },
-  {
     id: "brandSignature",
     label: "Marka imza şeridi",
     description: "Mağazanın köklü marka hikâyesini ve güven mesajını taşıyan ince alan",
@@ -66,7 +57,7 @@ const SECTION_DEFAULTS: HomepageSection[] = [
   },
   {
     id: "editorShelf",
-    label: "Haftanın seçtikleri",
+    label: "Öne çıkan perde modelleri",
     description: "Editörün öne çıkan ürün rafı",
     visible: true,
     title: "Öne çıkan perde modelleri",
@@ -90,10 +81,54 @@ const SECTION_DEFAULTS: HomepageSection[] = [
     id: "brands",
     label: "Marka kataloğu",
     description: "Marka seçimi ve markaya ait ürün kaydırıcısı",
-    visible: false,
+    visible: true,
     title: "Perde markaları",
     subtitle: "Seçili perde markalarını keşfet.",
     limit: 14,
+    productIds: [],
+    categorySlug: "",
+  },
+  {
+    id: "story",
+    label: "Hikâyemiz",
+    description: "Göçmen Perde'nin Bursa'dan başlayan hikâyesi",
+    visible: true,
+    title: "Göçmen Perde: 30 yıllık bir hikâye",
+    subtitle: "Bursa Osmangazi'nde başlayan perde deneyimimizi doğru ölçü, özenli dikim ve profesyonel montajla sürdürüyoruz.",
+    limit: 1,
+    productIds: [],
+    categorySlug: "",
+  },
+  {
+    id: "projects",
+    label: "Sizden Gelenler",
+    description: "Gerçek müşteri evlerinden uygulama fotoğrafları",
+    visible: true,
+    title: "Sizden Gelenler",
+    subtitle: "Göçmen Perde uygulamaları sonrası paylaşılan gerçek müşteri fotoğrafları.",
+    limit: 6,
+    productIds: [],
+    categorySlug: "",
+  },
+  {
+    id: "reviews",
+    label: "Müşterilerimiz Anlatıyor",
+    description: "Müşteri deneyimleri ve Google yorumları",
+    visible: true,
+    title: "Müşterilerimiz Anlatıyor",
+    subtitle: "Ölçüden montaja kadar yaşanan gerçek deneyimler.",
+    limit: 3,
+    productIds: [],
+    categorySlug: "",
+  },
+  {
+    id: "inspiration",
+    label: "Uygulama & İlham Alanı",
+    description: "Perde uygulamalarından ilham veren seçki",
+    visible: true,
+    title: "Uygulama & İlham Alanı",
+    subtitle: "Farklı odalar ve pencere tipleri için tamamlanan perde uygulamalarına göz atın.",
+    limit: 6,
     productIds: [],
     categorySlug: "",
   },
@@ -120,23 +155,12 @@ const SECTION_DEFAULTS: HomepageSection[] = [
     categorySlug: "",
   },
   {
-    id: "stationery",
-    label: "Perde seçkileri",
-    description: "Tül, fon, stor ve dekorasyon kategorileri",
-    visible: false,
-    title: "Perde seçkileri",
-    subtitle: "Bu bölüm perde mağazasında kullanılmaz.",
-    limit: 4,
-    productIds: [],
-    categorySlug: "",
-  },
-  {
     id: "discovery",
-    label: "Moduna göre seçkiler",
-    description: "Ders, çizim, masa başı ve hediye kısayolları",
+    label: "Odaya göre perde seçkileri",
+    description: "Salon, yatak odası ve gün ışığı için perde kısayolları",
     visible: true,
-    title: "İhtiyacına göre perdeyi seç",
-    subtitle: "Salon, yatak odası ve gün ışığı için doğru kategoriyi keşfet.",
+    title: "Odanıza uygun perdeyi seçin",
+    subtitle: "Salon, yatak odası ve gün ışığı için doğru perde kategorisini keşfedin.",
     limit: 4,
     productIds: [],
     categorySlug: "",

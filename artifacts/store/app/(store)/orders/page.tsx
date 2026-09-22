@@ -59,7 +59,7 @@ export default async function OrdersPage() {
               <ShoppingBag className="w-9 h-9 text-[#D4AF5A]" />
             </div>
             <h2 className="text-xl font-black text-zinc-900 mb-2">Henüz Siparişiniz Yok</h2>
-            <p className="text-zinc-400 mb-8 max-w-sm mx-auto">İlk siparişinizi verin ve kırtasiye dünyasını keşfedin!</p>
+            <p className="text-zinc-400 mb-8 max-w-sm mx-auto">İlk siparişinizi verin ve perde koleksiyonumuzu keşfedin!</p>
             <Link href="/products" className="inline-flex items-center gap-2 bg-zinc-900 text-white font-bold px-8 py-3.5 rounded-2xl hover:bg-[#B8973E] transition-colors shadow-lg">
               Alışverişe Başla <ChevronRight className="w-4 h-4" />
             </Link>

@@ -2,7 +2,7 @@ import { catalogDb } from "@/lib/db";
 import SearchClient from "./search-client";
 import type { Metadata } from "next";
 
-const BASE_URL = "https://www.gocmenkirtasiye.com.tr";
+const BASE_URL = "https://www.gocmenperde.com.tr";
 
 export const metadata: Metadata = {
   title: "Ürün Ara — Göçmen Perde",

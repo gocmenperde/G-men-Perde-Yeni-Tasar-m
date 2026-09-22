@@ -9,7 +9,7 @@ export default function ShareButtons({ name, slug }: { name: string; slug: strin
   const getUrl = () =>
     typeof window !== "undefined"
       ? `${window.location.origin}/products/${slug}`
-      : `https://www.gocmenkirtasiye.com.tr/products/${slug}`;
+      : `https://www.gocmenperde.com.tr/products/${slug}`;
 
   const handleCopy = async () => {
     try {

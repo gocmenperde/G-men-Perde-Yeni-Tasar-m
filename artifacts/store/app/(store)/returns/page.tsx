@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "İade, Değişim & Cayma Hakkı Politikası | Göçmen Perde",
   description:
     "Göçmen Perde iade, değişim ve cayma hakkı politikası — Mesafeli Sözleşmeler Yönetmeliği kapsamındaki başvuru ve süreç bilgileri.",
-  alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/returns" },
+  alternates: { canonical: "https://www.gocmenperde.com.tr/returns" },
 };
 
 const steps = [
@@ -184,7 +184,7 @@ export default function ReturnsPage() {
                   href="/contact"
                   className="text-blue-600 underline hover:text-blue-800"
                 >
-                  gocmenkirtasiye.com.tr/contact
+                  gocmenperde.com.tr/contact
                 </Link>
               </li>
             </ul>

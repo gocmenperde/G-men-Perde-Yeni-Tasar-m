@@ -26,3 +26,4 @@
 - [Vercel CDN cache policy](vercel-cdn-cache-policy.md) — Vercel-CDN-Cache-Control must be defined alongside public s-maxage and private no-store rules
 - [External Vercel production](external-vercel-production.md) — Replit deployment status/logs do not represent the separately hosted custom-domain deployment
 - [Vercel origin quota boundaries](vercel-origin-quotas.md) — route-local success/error cache headers and auth-only middleware prevent avoidable origin transfer
+- [Curtain catalog seeding](curtain-catalog-seeding.md) — the new Vercel catalog is seeded once from the in-repo curtain JSON, then deployments use the normal build

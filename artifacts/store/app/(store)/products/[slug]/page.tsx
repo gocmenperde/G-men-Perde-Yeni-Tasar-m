@@ -199,6 +199,18 @@ export default async function ProductDetailPage({
     url: `${BASE_URL}/products/${product.slug}`,
     sku: skuValue,
     ...(isGtin ? { [gtinKey]: barcodeField } : {}),
+    ...(barcodeField
+      ? {
+          identifier: [
+            {
+              "@type": "PropertyValue",
+              propertyID: isGtin ? "GTIN" : "Product barcode",
+              value: barcodeField,
+            },
+          ],
+        }
+      : {}),
+    ...(product.sku ? { mpn: product.sku } : {}),
     ...(product.brand ? { brand: { "@type": "Brand", name: product.brand.name } } : {}),
     ...(product.category ? { category: product.category.name } : {}),
     offers: {

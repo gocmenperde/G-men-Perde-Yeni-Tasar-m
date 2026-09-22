@@ -20,6 +20,29 @@ export const URUN_KATEGORILERI = [
 
 export const MARKALAR = ["göçmen perde", "göçmen perde bursa", "bursa perdeci"];
 
+const CATEGORY_SEARCH_TERMS: Record<string, string[]> = {
+  "tül perde": ["tül perde modelleri", "tül perde fiyatları", "özel ölçü tül perde", "salon tül perde"],
+  "fon perde": ["fon perde modelleri", "fon perde fiyatları", "salon fon perde", "yatak odası fon perde"],
+  "stor perde": ["stor perde modelleri", "stor perde fiyatları", "ışık geçirmeyen stor perde", "özel ölçü stor perde"],
+  "zebra perde": ["zebra perde modelleri", "zebra perde fiyatları", "zebra perde ölçü", "bursa zebra perde"],
+  "plise perde": ["plise perde modelleri", "plise perde fiyatları", "plise perde ölçü", "modern pencere perdesi"],
+  "özel ölçü perde": ["perde ölçü alma", "perde dikimi", "perde montajı", "bursa özel ölçü perde"],
+};
+
+function getCategorySearchTerms(categoryName?: string) {
+  if (!categoryName) return [];
+  const normalized = categoryName.toLocaleLowerCase("tr-TR").trim();
+  const direct = Object.entries(CATEGORY_SEARCH_TERMS).find(([term]) =>
+    normalized === term || normalized.includes(term),
+  )?.[1];
+  if (direct) return direct;
+  return [
+    `${categoryName} modelleri`,
+    `${categoryName} fiyatları`,
+    `özel ölçü ${categoryName}`,
+  ];
+}
+
 export function generateKeywords(options?: {
   productName?: string;
   categoryName?: string;
@@ -36,10 +59,13 @@ export function generateKeywords(options?: {
     "bursa perde fiyatları",
     "perde modelleri",
     "perde fiyatları",
+    "perde satın al",
+    "online perde",
+    "perde ölçü rehberi",
     "özel ölçü perde",
     "perde dikimi",
     "perde montajı",
-    ...URUN_KATEGORILERI,
+    ...(options?.categoryName ? getCategorySearchTerms(options.categoryName) : URUN_KATEGORILERI),
     ...(options?.productName ? [options.productName, `${options.productName} fiyatı`] : []),
     ...(options?.categoryName ? [options.categoryName, `${options.categoryName} modelleri`] : []),
     ...(options?.brandName ? [options.brandName, `${options.brandName} perde`] : []),

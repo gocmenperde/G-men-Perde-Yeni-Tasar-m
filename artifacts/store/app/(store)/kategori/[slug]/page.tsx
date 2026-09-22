@@ -18,6 +18,46 @@ const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"
 ).replace(/\/$/, "");
 
+const CATEGORY_EDITORIAL: Record<string, {
+  intro: string;
+  details: string[];
+  related: { href: string; label: string }[];
+}> = {
+  "tul-perde": {
+    intro: "Tül perde modelleri, gün ışığını yumuşatırken yaşam alanına ferah ve zarif bir görünüm kazandırır. Göçmen Perde koleksiyonunda salon ve yatak odası için farklı dokularda, pile seçenekleriyle özel ölçü tül perde çözümleri bulunur.",
+    details: ["Doğru pile seçimi kumaşın duruşunu ve ışık geçirgenliğini etkiler.", "En ve boy ölçünüzü ürün sayfasındaki hesaplama alanına girerek yaklaşık tutarı görebilirsiniz.", "Özel ölçü, dikim ve Bursa içi uygulama desteği için ekibimizle görüşebilirsiniz."],
+    related: [{ href: "/measure-guide", label: "Tül perde ölçü rehberi" }, { href: "/kategori/fonperdeler", label: "Fon perde modelleri" }],
+  },
+  fonperdeler: {
+    intro: "Fon perde modelleri, tül perdeyle birlikte kullanıldığında odaya derinlik, renk ve ışık kontrolü kazandırır. Salon ve yatak odası için farklı renk ve dokulardaki fon perdeleri ölçünüze göre değerlendirebilirsiniz.",
+    details: ["Fon perde boyu, korniş veya ray yüksekliğine göre belirlenir.", "Kanat genişliği ve pile tercihi görünümü doğrudan etkiler.", "Kumaş, dikim ve montaj seçeneğini netleştirmek için ölçünüzü paylaşabilirsiniz."],
+    related: [{ href: "/kategori/tul-perde", label: "Tül perde modelleri" }, { href: "/measure-guide", label: "Fon perde ölçü rehberi" }],
+  },
+  "stor-perde": {
+    intro: "Stor perde modelleri, pencere ölçüsüne uyumlu yapısı ve pratik kullanımıyla gün ışığını kontrol etmek isteyenler için işlevsel bir seçenektir. Mutfak, ofis ve yaşam alanları için farklı kumaş ve opaklık seçeneklerini inceleyin.",
+    details: ["Stor perde fiyatı en ve boy ölçüsüyle birlikte değerlendirilir.", "Kasa ve montaj alanını ölçmeden önce pencere kolu ve engelleri kontrol edin.", "Doğru ölçü için rehberimizi takip edin veya ekibimizden destek alın."],
+    related: [{ href: "/kategori/zebra-perde", label: "Zebra perde modelleri" }, { href: "/measure-guide", label: "Stor perde ölçü rehberi" }],
+  },
+  "zebra-perde": {
+    intro: "Zebra perde modelleri, tül ve güneşlik etkisini tek üründe birleştirerek ışık kontrolünü kolaylaştırır. Modern pencereler ve günlük kullanım için farklı renk ve dokularda zebra perde seçeneklerini keşfedin.",
+    details: ["Zebra perde ölçüsü, montaj tipine göre cam veya duvar ölçüsü alınarak belirlenir.", "Şeritlerin doğru hizalanması için en ölçüsünü birden fazla noktadan kontrol edin.", "Özel ölçü ve montaj desteği için yaklaşık ölçünüzü gönderin."],
+    related: [{ href: "/kategori/stor-perde", label: "Stor perde modelleri" }, { href: "/measure-guide", label: "Zebra perde ölçü rehberi" }],
+  },
+  "plise-perde": {
+    intro: "Plise perde modelleri, dar alanlar ve farklı pencere geometrileri için modern ve kompakt bir çözüm sunar. Pencerenin kullanımına göre ışık kontrolü ve mahremiyet seçeneklerini karşılaştırabilirsiniz.",
+    details: ["Plise perde seçiminde pencere açılımı ve montaj yüzeyi önemlidir.", "En ve boy ölçüsünü iki farklı noktadan alarak not edin.", "Uygun model ve montaj seçeneğini birlikte netleştirmek için bize ulaşın."],
+    related: [{ href: "/measure-guide", label: "Plise perde ölçü rehberi" }, { href: "/kategori/zebra-perde", label: "Zebra perde modelleri" }],
+  },
+};
+
+function getCategoryEditorial(slug: string, name: string) {
+  return CATEGORY_EDITORIAL[slug] ?? {
+    intro: `${name} seçeneklerini Göçmen Perde'nin perde koleksiyonunda inceleyin. Ürün, ölçü ve teslimat bilgilerini karşılaştırarak pencereniz için uygun çözümü seçin.`,
+    details: ["Ürün sayfalarında stok, fiyat ve ölçü bilgileri yer alır.", "Ölçünüzden emin değilseniz ücretsiz ölçü rehberini kullanabilirsiniz.", "Bursa içi ölçü, dikim ve montaj seçenekleri için ekibimizle görüşebilirsiniz."],
+    related: [{ href: "/measure-guide", label: "Ölçü rehberi" }, { href: "/faq", label: "Sık sorulan sorular" }],
+  };
+}
+
 export async function generateMetadata({
   params: paramsPromise,
   searchParams: searchParamsPromise,
@@ -41,13 +81,14 @@ export async function generateMetadata({
     ]);
     if (!category) return { title: "Kategori Bulunamadı" };
 
+    const editorial = getCategoryEditorial(category.slug, category.name);
     const page = parseInt(searchParams.page ?? "1");
     const isPaged = page > 1;
     const url = `${BASE_URL}/kategori/${params.slug}`;
     const title = isPaged
       ? `${category.name} Çeşitleri — Sayfa ${page} | Göçmen Perde`
       : `${category.name} Çeşitleri ve Fiyatları | Göçmen Perde`;
-    const description = `${category.name} — Göçmen Perde'de uygun fiyat, güvenilir kalite ve hızlı teslimat. Bursa'nın perde uzmanı.`;
+    const description = `${editorial.intro} Göçmen Perde'de uygun fiyat, hızlı teslimat ve ölçü desteği.`;
 
     const firstImage = getPublicImageUrl(firstProduct?.images?.[0]);
     const ogImage = firstImage
@@ -121,6 +162,7 @@ export default async function CategoryPage({
   const products = serializeProducts(rawProducts, { imageLimit: 2 });
   const totalPages = Math.ceil(total / TAKE);
   const canonicalUrl = `${BASE_URL}/kategori/${params.slug}`;
+  const editorial = getCategoryEditorial(category.slug, category.name);
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -168,10 +210,24 @@ export default async function CategoryPage({
           <p className="text-zinc-500 mt-1 text-sm">
             <span className="font-semibold text-zinc-800">{total}</span> ürün
           </p>
+          <p className="mt-4 max-w-3xl text-sm leading-7 text-zinc-600">{editorial.intro}</p>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
+        <section className="mb-8 grid gap-4 rounded-2xl border border-[#E8E0D5] bg-[#FFFDF9] p-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
+          <div>
+            <h2 className="text-sm font-black text-zinc-900">Perde seçerken nelere dikkat etmeli?</h2>
+            <ul className="mt-2 grid gap-1.5 text-xs leading-5 text-zinc-600 md:grid-cols-3">
+              {editorial.details.map((detail) => <li key={detail} className="flex gap-2"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#B8973E]" />{detail}</li>)}
+            </ul>
+          </div>
+          <div className="flex flex-wrap gap-2 md:justify-end">
+            {editorial.related.map((link) => (
+              <Link key={link.href} href={link.href} className="inline-flex min-h-10 items-center rounded-xl border border-[#E8E0D5] bg-white px-3 text-xs font-bold text-zinc-700 transition-colors hover:border-[#D4AF5A] hover:text-[#B8973E]">{link.label}</Link>
+            ))}
+          </div>
+        </section>
         {products.length === 0 ? (
           <div className="bg-white border border-zinc-100 rounded-2xl text-center py-24 px-8">
             <Package className="w-12 h-12 text-zinc-300 mx-auto mb-4" />

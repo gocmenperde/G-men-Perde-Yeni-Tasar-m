@@ -131,9 +131,24 @@ function FAQItem({ q, a }: { q: string; a: string }) {
 
 export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState(FAQS[0].category);
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQS.flatMap(({ items }) =>
+      items.map(({ q, a }) => ({
+        "@type": "Question",
+        name: q,
+        acceptedAnswer: { "@type": "Answer", text: a },
+      })),
+    ),
+  };
 
   return (
     <div className="bg-[#FAF7F2] min-h-screen py-12">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <div className="max-w-4xl mx-auto px-4">
         {/* Breadcrumb */}
         <nav className="flex items-center gap-1.5 text-sm text-zinc-400 mb-8">

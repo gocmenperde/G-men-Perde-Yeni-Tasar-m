@@ -14,7 +14,9 @@ const BASE_URL = (
 // Merchant Center'ın tanıdığı GTIN alanı g:gtin (tek alan, uzunluktan bağımsız).
 // gtin8/gtin12/gtin13/gtin14 sadece Content API'de kullanılır — XML feed'de geçersiz.
 // original_price alanı da tanınmıyor; indirim için g:price (orijinal) + g:sale_price kullanılmalı.
-const GOOGLE_CATEGORY = "Arts & Entertainment > Hobbies & Creative Arts > Stationery";
+// Katalog perde ürünlerinden oluşur. Yanlış kategori, Merchant Center'da
+// ürünlerin yanlış aramalarda görünmesine ve ürün uygunluğu sorunlarına yol açar.
+const GOOGLE_CATEGORY = "Home & Garden > Decor > Window Treatments";
 
 function escapeXml(str: string): string {
   return str

@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, type Dispatch, type SetStateAction } from "react";
+import {
+  useRef,
+  useState,
+  type ChangeEvent,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 import {
   Check,
   Eye,
@@ -53,6 +59,7 @@ export default function EditorialMediaEditor({
   const [uploadingBatch, setUploadingBatch] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [messageTone, setMessageTone] = useState<"success" | "error">("success");
+  const multipleInputRef = useRef<HTMLInputElement>(null);
 
   const items = media[activeKind];
 
@@ -115,12 +122,13 @@ export default function EditorialMediaEditor({
     }
   }
 
-  async function uploadMultiple(files: FileList | null) {
-    const selectedFiles = Array.from(files ?? []);
+  async function uploadMultiple(selectedFiles: File[]) {
     if (selectedFiles.length === 0) return;
 
     setUploadingBatch(true);
     setMessage(null);
+    setMessageTone("success");
+    setMessage(`${selectedFiles.length} görsel yükleniyor...`);
     const failedFiles: string[] = [];
     let uploadedCount = 0;
 
@@ -146,8 +154,12 @@ export default function EditorialMediaEditor({
         uploadedCount += 1;
         setMessageTone("success");
         setMessage(`${uploadedCount}/${selectedFiles.length} görsel yüklendi...`);
-      } catch {
-        failedFiles.push(file.name);
+      } catch (error) {
+        const reason =
+          error instanceof Error && error.message
+            ? `: ${error.message}`
+            : "";
+        failedFiles.push(`${file.name}${reason}`);
       }
     }
 
@@ -163,6 +175,19 @@ export default function EditorialMediaEditor({
       );
     }
     setUploadingBatch(false);
+  }
+
+  function handleMultipleSelection(event: ChangeEvent<HTMLInputElement>) {
+    // Copy the File objects before clearing the input. iOS Safari can clear
+    // the live FileList as soon as the picker closes.
+    const selectedFiles = Array.from(event.currentTarget.files ?? []);
+    event.currentTarget.value = "";
+    if (selectedFiles.length === 0) {
+      setMessageTone("error");
+      setMessage("Telefondan görsel seçilemedi. Lütfen tekrar deneyin.");
+      return;
+    }
+    void uploadMultiple(selectedFiles);
   }
 
   return (
@@ -182,8 +207,11 @@ export default function EditorialMediaEditor({
           </p>
         </div>
         <div className="flex shrink-0 flex-wrap justify-end gap-2">
-          <label
-            className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-amber-500 px-3.5 py-2.5 text-xs font-black text-zinc-950 transition-colors hover:bg-amber-400 ${
+          <button
+            type="button"
+            onClick={() => multipleInputRef.current?.click()}
+            disabled={uploadingBatch}
+            className={`inline-flex items-center justify-center gap-2 rounded-xl bg-amber-500 px-3.5 py-2.5 text-xs font-black text-zinc-950 transition-colors hover:bg-amber-400 disabled:pointer-events-none disabled:opacity-60 ${
               uploadingBatch ? "pointer-events-none opacity-60" : ""
             }`}
           >
@@ -193,19 +221,16 @@ export default function EditorialMediaEditor({
               <ImagePlus className="h-4 w-4" />
             )}
             {uploadingBatch ? "Görseller yükleniyor..." : "Birden fazla görsel seç"}
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              disabled={uploadingBatch}
-              onChange={(event) => {
-                const files = event.target.files;
-                event.target.value = "";
-                void uploadMultiple(files);
-              }}
-            />
-          </label>
+          </button>
+          <input
+            ref={multipleInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            className="sr-only"
+            disabled={uploadingBatch}
+            onChange={handleMultipleSelection}
+          />
           <button
             type="button"
             onClick={addItem}

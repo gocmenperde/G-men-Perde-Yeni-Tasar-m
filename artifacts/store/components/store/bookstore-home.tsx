@@ -1335,11 +1335,23 @@ export default function BookstoreHome({
           case "story":
             return <CurtainStorySection key={section.id} section={section} />;
           case "projects":
-            return <CustomerProjectsSection key={section.id} section={section} />;
+            return (
+              <CustomerProjectsSection
+                key={section.id}
+                section={section}
+                media={config.editorialMedia.projects}
+              />
+            );
           case "reviews":
             return <CustomerReviewsSection key={section.id} section={section} />;
           case "inspiration":
-            return <InspirationSection key={section.id} section={section} />;
+            return (
+              <InspirationSection
+                key={section.id}
+                section={section}
+                media={config.editorialMedia.inspiration}
+              />
+            );
           case "featured":
              return <ProductShowcase key={section.id} products={getSectionProducts(section, products, curatedProducts)} title={section.title} subtitle={section.subtitle} limit={section.limit} variant="favorites" href={section.categorySlug ? `/kategori/${section.categorySlug}` : "/products"} />;
           case "dailyDeal":

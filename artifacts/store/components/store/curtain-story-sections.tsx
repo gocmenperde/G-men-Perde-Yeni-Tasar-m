@@ -3,25 +3,14 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, House, Quote, Ruler, Scissors, Sparkles, Star } from "lucide-react";
-import type { HomepageSection } from "@/lib/homepage-config";
+import {
+  DEFAULT_EDITORIAL_MEDIA,
+  type EditorialMediaItem,
+  type HomepageSection,
+} from "@/lib/homepage-config";
 
-const PROJECT_IMAGES = [
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto6.jpg", alt: "Bursa salon perde uygulaması", label: "Salon uygulaması" },
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto8.jpg", alt: "Nilüfer zebra ve fon perde uygulaması", label: "Zebra & fon" },
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto11.jpg", alt: "Yatak odası perde dönüşümü", label: "Yatak odası" },
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto1.jpg", alt: "Çekirge fon perde uygulaması", label: "Fon perde" },
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto3.jpg", alt: "Görükle oturma odası uygulaması", label: "Oturma odası" },
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto5.jpg", alt: "Mudanya tül perde uygulaması", label: "Tül perde" },
-];
-
-const INSPIRATION_IMAGES = [
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto1.jpg", alt: "Salon tül perde uygulaması", label: "Salon tül" },
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto2.jpg", alt: "Zebra perde montajı", label: "Zebra sistem" },
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto9.jpg", alt: "Yatak odası fon perde uygulaması", label: "Fon kombin" },
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto10.jpg", alt: "Balkon plise perde uygulaması", label: "Plise alan" },
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto11.jpg", alt: "Ofis stor perde uygulaması", label: "Ofis stor" },
-  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto3.jpg", alt: "Çocuk odası perde uygulaması", label: "Çocuk odası" },
-];
+const PROJECT_IMAGES = DEFAULT_EDITORIAL_MEDIA.projects;
+const INSPIRATION_IMAGES = DEFAULT_EDITORIAL_MEDIA.inspiration;
 
 const REVIEWS = [
   {
@@ -144,16 +133,25 @@ export function CurtainStorySection({ section }: { section: HomepageSection }) {
   );
 }
 
-export function CustomerProjectsSection({ section }: { section: HomepageSection }) {
+export function CustomerProjectsSection({
+  section,
+  media = PROJECT_IMAGES,
+}: {
+  section: HomepageSection;
+  media?: EditorialMediaItem[];
+}) {
+  const images = media.filter((image) => image.visible).slice(0, section.limit);
+
   return (
     <section className="bg-[var(--cream)] py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <SectionHeading section={section} kicker="Gerçek müşteri evleri" />
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-          {PROJECT_IMAGES.slice(0, section.limit).map((image, index) => (
-            <figure key={image.src} className={`group relative overflow-hidden rounded-[1.35rem] bg-[var(--surface)] ${index === 0 ? "col-span-2 row-span-2 min-h-[340px] sm:min-h-[480px]" : "min-h-[170px] sm:min-h-[230px]"}`}>
+        {images.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+          {images.map((image, index) => (
+            <figure key={image.id} className={`group relative overflow-hidden rounded-[1.35rem] bg-[var(--surface)] ${index === 0 ? "col-span-2 row-span-2 min-h-[340px] sm:min-h-[480px]" : "min-h-[170px] sm:min-h-[230px]"}`}>
               <ShowcaseImage
-                src={image.src}
+                src={image.imageUrl}
                 alt={image.alt}
                 className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
               />
@@ -161,7 +159,10 @@ export function CustomerProjectsSection({ section }: { section: HomepageSection 
               <figcaption className="absolute inset-x-0 bottom-0 p-4 text-sm font-bold text-white">{image.label}</figcaption>
             </figure>
           ))}
-        </div>
+          </div>
+        ) : (
+          <EmptyEditorialMedia />
+        )}
       </div>
     </section>
   );
@@ -193,17 +194,26 @@ export function CustomerReviewsSection({ section }: { section: HomepageSection }
   );
 }
 
-export function InspirationSection({ section }: { section: HomepageSection }) {
+export function InspirationSection({
+  section,
+  media = INSPIRATION_IMAGES,
+}: {
+  section: HomepageSection;
+  media?: EditorialMediaItem[];
+}) {
+  const images = media.filter((image) => image.visible).slice(0, section.limit);
+
   return (
     <section className="bg-[var(--surface)] py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <SectionHeading section={section} kicker="Montaj projelerimiz" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {INSPIRATION_IMAGES.slice(0, section.limit).map((image) => (
-            <Link href="/products" key={image.src} className="group relative overflow-hidden rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface-muted)]">
+        {images.length > 0 ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {images.map((image) => (
+            <Link href="/products" key={image.id} className="group relative overflow-hidden rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface-muted)]">
               <div className="aspect-[1.3/1] overflow-hidden">
                 <ShowcaseImage
-                  src={image.src}
+                  src={image.imageUrl}
                   alt={image.alt}
                   className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
                 />
@@ -214,8 +224,22 @@ export function InspirationSection({ section }: { section: HomepageSection }) {
               </div>
             </Link>
           ))}
-        </div>
+          </div>
+        ) : (
+          <EmptyEditorialMedia />
+        )}
       </div>
     </section>
+  );
+}
+
+function EmptyEditorialMedia() {
+  return (
+    <div className="rounded-[1.5rem] border border-dashed border-[var(--line)] bg-[var(--surface-muted)] px-6 py-14 text-center">
+      <Sparkles className="mx-auto h-7 w-7 text-[var(--gold)]" aria-hidden="true" />
+      <p className="mt-3 text-sm font-semibold text-[var(--ink-muted)]">
+        Bu alanda henüz paylaşılacak görsel bulunmuyor.
+      </p>
+    </div>
   );
 }

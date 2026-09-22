@@ -13,10 +13,13 @@ import HomepageEditor, {
 } from "@/components/admin/homepage-editor";
 import type { Banner } from "@/components/admin/banners-client";
 import {
+  DEFAULT_EDITORIAL_MEDIA,
   parseHomepageConfig,
   serializeHomepageConfig,
+  type EditorialMedia,
   type HomepageSection,
 } from "@/lib/homepage-config";
+import EditorialMediaEditor from "@/components/admin/editorial-media-editor";
 
 interface SiteSettings {
   id: string;
@@ -98,6 +101,9 @@ export default function SettingsClient({
   const [form, setForm] = useState<SiteSettings>(initialSettings ?? { id: "global" });
   const [homepageSections, setHomepageSections] = useState<HomepageSection[]>(
     () => parseHomepageConfig(initialSettings?.popularSetsJson).sections,
+  );
+  const [editorialMedia, setEditorialMedia] = useState<EditorialMedia>(
+    () => parseHomepageConfig(initialSettings?.popularSetsJson).editorialMedia ?? DEFAULT_EDITORIAL_MEDIA,
   );
   const [homepageProducts, setHomepageProducts] = useState<ProductOption[]>([]);
   const [homepageCategories, setHomepageCategories] = useState<CategoryOption[]>([]);
@@ -414,7 +420,11 @@ export default function SettingsClient({
       }
       payload = {
         ...form,
-        popularSetsJson: serializeHomepageConfig(homepageSections, bannerProductIds),
+        popularSetsJson: serializeHomepageConfig(
+          homepageSections,
+          bannerProductIds,
+          editorialMedia,
+        ),
         freeShippingThreshold: parseShippingValue(
           shippingInputs.freeShippingThreshold,
           "Ücretsiz kargo sınırı",
@@ -544,6 +554,10 @@ export default function SettingsClient({
               bannersLoading={homepageBannersLoading}
               onBannersChange={handleBannersChange}
               onChange={setHomepageSections}
+            />
+            <EditorialMediaEditor
+              media={editorialMedia}
+              onChange={setEditorialMedia}
             />
           </div>
         )}

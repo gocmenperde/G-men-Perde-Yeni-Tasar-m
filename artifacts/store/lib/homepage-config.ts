@@ -26,11 +26,62 @@ export type HomepageSection = {
   categorySlug: string;
 };
 
+export type EditorialMediaKind = "projects" | "inspiration";
+
+export type EditorialMediaItem = {
+  id: string;
+  imageUrl: string;
+  alt: string;
+  label: string;
+  visible: boolean;
+};
+
+export type EditorialMedia = Record<EditorialMediaKind, EditorialMediaItem[]>;
+
 export type HomepageConfig = {
   version: 2;
   sections: HomepageSection[];
   bannerProductIds: Record<string, string[]>;
+  editorialMedia: EditorialMedia;
 };
+
+export const DEFAULT_EDITORIAL_MEDIA: EditorialMedia = {
+  projects: [
+    { id: "project-foto6", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto6.jpg", alt: "Bursa salon perde uygulaması", label: "Salon uygulaması", visible: true },
+    { id: "project-foto8", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto8.jpg", alt: "Nilüfer zebra ve fon perde uygulaması", label: "Zebra & fon", visible: true },
+    { id: "project-foto11", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto11.jpg", alt: "Yatak odası perde dönüşümü", label: "Yatak odası", visible: true },
+    { id: "project-foto1", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto1.jpg", alt: "Çekirge fon perde uygulaması", label: "Fon perde", visible: true },
+    { id: "project-foto3", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto3.jpg", alt: "Görükle oturma odası uygulaması", label: "Oturma odası", visible: true },
+    { id: "project-foto5", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto5.jpg", alt: "Mudanya tül perde uygulaması", label: "Tül perde", visible: true },
+  ],
+  inspiration: [
+    { id: "inspiration-foto1", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto1.jpg", alt: "Salon tül perde uygulaması", label: "Salon tül", visible: true },
+    { id: "inspiration-foto2", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto2.jpg", alt: "Zebra perde montajı", label: "Zebra sistem", visible: true },
+    { id: "inspiration-foto9", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto9.jpg", alt: "Yatak odası fon perde uygulaması", label: "Fon kombin", visible: true },
+    { id: "inspiration-foto10", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto10.jpg", alt: "Balkon plise perde uygulaması", label: "Plise alan", visible: true },
+    { id: "inspiration-foto11", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto11.jpg", alt: "Ofis stor perde uygulaması", label: "Ofis stor", visible: true },
+    { id: "inspiration-foto3", imageUrl: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto3.jpg", alt: "Çocuk odası perde uygulaması", label: "Çocuk odası", visible: true },
+  ],
+};
+
+function parseEditorialMedia(raw: any): EditorialMedia {
+  const result = {} as EditorialMedia;
+  for (const kind of ["projects", "inspiration"] as EditorialMediaKind[]) {
+    const source = raw?.[kind];
+    result[kind] = Array.isArray(source)
+      ? source
+          .map((item: any, index: number) => ({
+            id: typeof item?.id === "string" && item.id.trim() ? item.id : `${kind}-${index + 1}`,
+            imageUrl: typeof item?.imageUrl === "string" ? item.imageUrl.trim() : "",
+            alt: typeof item?.alt === "string" ? item.alt.trim() : "",
+            label: typeof item?.label === "string" ? item.label.trim() : "",
+            visible: item?.visible !== false,
+          }))
+          .filter((item: EditorialMediaItem) => Boolean(item.imageUrl))
+      : DEFAULT_EDITORIAL_MEDIA[kind].map((item) => ({ ...item }));
+  }
+  return result;
+}
 
 const SECTION_DEFAULTS: HomepageSection[] = [
   {
@@ -235,6 +286,7 @@ export function parseHomepageConfig(raw?: string | null): HomepageConfig {
           section.visible,
       })),
       bannerProductIds,
+      editorialMedia: parseEditorialMedia(undefined),
     };
   }
 
@@ -271,14 +323,16 @@ export function parseHomepageConfig(raw?: string | null): HomepageConfig {
     version: 2,
     sections: merged,
     bannerProductIds,
+    editorialMedia: parseEditorialMedia(parsed.editorialMedia),
   };
 }
 
 export function serializeHomepageConfig(
   sections: HomepageSection[],
   bannerProductIds: Record<string, string[]> = {},
+  editorialMedia: EditorialMedia = DEFAULT_EDITORIAL_MEDIA,
 ): string {
-  return JSON.stringify({ version: 2, sections, bannerProductIds });
+  return JSON.stringify({ version: 2, sections, bannerProductIds, editorialMedia });
 }
 
 export function updateBannerProductIds(

@@ -173,6 +173,10 @@ export async function PUT(req: NextRequest) {
     revalidatePath("/products", "layout");
     revalidatePath("/about");
     revalidatePath("/about", "layout");
+    revalidatePath("/sizden-gelenler");
+    revalidatePath("/sizden-gelenler", "layout");
+    revalidatePath("/uygulama-ilham");
+    revalidatePath("/uygulama-ilham", "layout");
     revalidatePath("/contact");
     revalidatePath("/contact", "layout");
     revalidatePath("/cart");

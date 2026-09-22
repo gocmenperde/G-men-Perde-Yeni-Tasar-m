@@ -6,7 +6,8 @@ import {
   CustomerReviewsSection,
   InspirationSection,
 } from "@/components/store/curtain-story-sections";
-import type { HomepageSection } from "@/lib/homepage-config";
+import { parseHomepageConfig, type HomepageSection } from "@/lib/homepage-config";
+import { getCachedSettings } from "@/lib/settings";
 
 type EditorialPageKind = "inspiration" | "projects" | "story";
 
@@ -104,22 +105,27 @@ function PageHero({ kind }: { kind: EditorialPageKind }) {
   );
 }
 
-export default function EditorialPage({ kind }: { kind: EditorialPageKind }) {
-  const section = sections[kind];
+export default async function EditorialPage({ kind }: { kind: EditorialPageKind }) {
+  const settings = await getCachedSettings().catch(() => null);
+  const config = parseHomepageConfig(settings?.popularSetsJson);
+  const section = config.sections.find((item) => item.id === kind) ?? sections[kind];
+  const projectsSection = config.sections.find((item) => item.id === "projects") ?? sections.projects;
+  const inspirationMedia = config.editorialMedia.inspiration;
+  const projectsMedia = config.editorialMedia.projects;
 
   return (
     <div className="bg-[var(--cream)]">
       <PageHero kind={kind} />
       {kind === "inspiration" && (
         <>
-          <InspirationSection section={section} />
-          <CustomerProjectsSection section={sections.projects} />
+          <InspirationSection section={section} media={inspirationMedia} />
+          <CustomerProjectsSection section={projectsSection} media={projectsMedia} />
         </>
       )}
       {kind === "projects" && (
         <>
-          <CustomerProjectsSection section={section} />
-          <CustomerReviewsSection section={{ ...sections.projects, title: "Müşterilerimiz Anlatıyor", subtitle: "Ölçüden montaja kadar yaşanan gerçek deneyimler.", limit: 3 }} />
+          <CustomerProjectsSection section={section} media={projectsMedia} />
+          <CustomerReviewsSection section={{ ...projectsSection, title: "Müşterilerimiz Anlatıyor", subtitle: "Ölçüden montaja kadar yaşanan gerçek deneyimler.", limit: 3 }} />
         </>
       )}
       {kind === "story" && (

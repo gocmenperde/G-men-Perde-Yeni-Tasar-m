@@ -398,7 +398,6 @@ function BookBanner({
 
   const activeSlide = slides[index] ?? slides[0];
   const activeProducts = activeSlide ? getSlideProducts(activeSlide) : [];
-  const materialCardCount = Math.max(1, 4 - activeProducts.length);
 
   return (
     <>
@@ -467,13 +466,6 @@ function BookBanner({
                        <span className="book-banner__premium-product-label">{product.brand?.name || product.category?.name || "Seçki"}</span>
                      </Link>
                     ))}
-                    {slide === activeSlide && Array.from({ length: materialCardCount }).map((_, materialIndex) => (
-                      <CategoryMaterialCard
-                        key={`${slide.id}-material-${materialIndex}`}
-                        slide={slide}
-                        index={activeProducts.length + materialIndex}
-                      />
-                    ))}
                 </div>
                 <div className="book-banner__premium-meta">
                   <span>{slide.categoryName || slide.eyebrow}</span>
@@ -498,28 +490,6 @@ function BookBanner({
         <CategoryBannerProducts slide={activeSlide} />
       ) : null}
     </>
-  );
-}
-
-function CategoryMaterialCard({ slide, index }: { slide: BannerSlide; index: number }) {
-  const isSheer = slide.categorySlug === "ormetulperde";
-  const label = isSheer ? "ÖRME DOKU" : slide.categorySlug === "fonperdeler" ? "FON DOKUSU" : "PERDE DOKUSU";
-  const detail = isSheer ? "Işığı yumuşatan" : "Dekoratif katman";
-
-  return (
-    <div
-      className={`book-banner__premium-material book-banner__premium-material--${slide.categorySlug || "default"}`}
-      style={{ "--rotation": `${(index - 1.5) * 5}deg`, "--lift": `${Math.abs(index - 1.5) * 8}px` } as CSSProperties}
-      role="img"
-      aria-label={`${slide.categoryName || "Perde"} ${label.toLocaleLowerCase("tr-TR")} detayı`}
-    >
-      <span className="book-banner__premium-material-mark" aria-hidden="true" />
-      <span className="book-banner__premium-material-number">0{index + 1}</span>
-      <span className="book-banner__premium-material-copy">
-        <strong>{label}</strong>
-        <small>{detail}</small>
-      </span>
-    </div>
   );
 }
 

@@ -1,9 +1,11 @@
 import { unstable_cache } from "next/cache";
+import slugify from "slugify";
 import { db, catalogDb } from "@/lib/db";
 import { serializeProducts } from "@/lib/serialize";
 import { homepageProductSelect } from "@/lib/product-selects";
-import { getPublicImageUrl } from "@/lib/image-url";
+import { getPublicImageUrl, sanitizeImageList } from "@/lib/image-url";
 import { CURTAIN_CATALOG_CATEGORY_SLUGS } from "@/lib/catalog-taxonomy";
+import { GOCMEN_PRODUCTS } from "@/data/gocmen-catalog";
 
 type HomepageCatalogResult = {
   featured: any[];
@@ -28,6 +30,56 @@ const homepageBannerSelect = {
   darkText: true,
   order: true,
 } as const;
+
+const sourceProductImages = new Map(
+  GOCMEN_PRODUCTS.map((source) => {
+    const rawSource = source as { id?: unknown; name?: unknown; image?: unknown; images?: unknown };
+    const key = slugify(String(rawSource.id || rawSource.name || ""), {
+      lower: true,
+      strict: true,
+      locale: "tr",
+    });
+    const images = sanitizeImageList([
+      ...(Array.isArray(rawSource.images) ? rawSource.images : []),
+      rawSource.image,
+    ], 4);
+    return [key, images] as const;
+  }),
+);
+
+function serializeHomepageProducts(products: any[]) {
+  return serializeProducts(products, { imageLimit: 4 }).map((product) => {
+    const fallbackImages = sourceProductImages.get(String(product.slug || ""));
+    if (!fallbackImages?.length) return product;
+
+    return {
+      ...product,
+      images: sanitizeImageList([...(product.images ?? []), ...fallbackImages], 4),
+    };
+  });
+}
+
+function categoryProductWhere(slug: string) {
+  const base = {
+    isActive: true,
+    stock: { gt: 0 },
+  };
+
+  if (slug === "ormetulperde") {
+    return {
+      ...base,
+      OR: [
+        { category: { slug } },
+        {
+          category: { slug: "tul-perde" },
+          name: { contains: "Örme" },
+        },
+      ],
+    };
+  }
+
+  return { ...base, category: { slug } };
+}
 
 const getCachedMenuCategories = unstable_cache(
   async () => {
@@ -136,11 +188,7 @@ const getCachedHomepageCatalog = unstable_cache(
         Promise.all(
           CURTAIN_CATALOG_CATEGORY_SLUGS.map((slug) =>
             catalogDb.product.findMany({
-              where: {
-                isActive: true,
-                stock: { gt: 0 },
-                category: { slug },
-              },
+              where: categoryProductWhere(slug),
               select: homepageProductSelect,
               orderBy: { createdAt: "desc" },
               take: 4,
@@ -150,8 +198,8 @@ const getCachedHomepageCatalog = unstable_cache(
       ]);
 
     return {
-      featured: serializeProducts(featuredRaw, { imageLimit: 1 }),
-      newest: serializeProducts(newestRaw, { imageLimit: 1 }),
+      featured: serializeHomepageProducts(featuredRaw),
+      newest: serializeHomepageProducts(newestRaw),
       categories: categories.map((category) => ({
         ...category,
         image: getPublicImageUrl(category.image),
@@ -162,13 +210,13 @@ const getCachedHomepageCatalog = unstable_cache(
         slug: brand.slug,
         logo: getPublicImageUrl(brand.logo),
         productCount: brand._count.products,
-        products: serializeProducts(brand.products, { imageLimit: 1 }),
+        products: serializeHomepageProducts(brand.products),
       })),
-      curated: serializeProducts(curatedRaw, { imageLimit: 1 }),
+      curated: serializeHomepageProducts(curatedRaw),
       categoryProducts: Object.fromEntries(
         CURTAIN_CATALOG_CATEGORY_SLUGS.map((slug, index) => [
           slug,
-          serializeProducts(categoryProductsRaw[index] ?? [], { imageLimit: 1 }),
+          serializeHomepageProducts(categoryProductsRaw[index] ?? []),
         ]),
       ),
     };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import {
   Check,
   Eye,
@@ -46,12 +46,13 @@ export default function EditorialMediaEditor({
   onChange,
 }: {
   media: EditorialMedia;
-  onChange: (media: EditorialMedia) => void;
+  onChange: Dispatch<SetStateAction<EditorialMedia>>;
 }) {
   const [activeKind, setActiveKind] = useState<EditorialMediaKind>("projects");
   const [uploadingId, setUploadingId] = useState<string | null>(null);
   const [uploadingBatch, setUploadingBatch] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [messageTone, setMessageTone] = useState<"success" | "error">("success");
 
   const items = media[activeKind];
 
@@ -104,8 +105,10 @@ export default function EditorialMediaEditor({
     try {
       const imageUrl = await uploadAdminImage(file);
       updateItem(id, { imageUrl });
+      setMessageTone("success");
       setMessage("Görsel yüklendi. Değişiklikleri kaydetmeyi unutmayın.");
     } catch (error) {
+      setMessageTone("error");
       setMessage(error instanceof Error ? error.message : "Görsel yüklenemedi.");
     } finally {
       setUploadingId(null);
@@ -118,8 +121,8 @@ export default function EditorialMediaEditor({
 
     setUploadingBatch(true);
     setMessage(null);
-    const uploadedItems: EditorialMediaItem[] = [];
     const failedFiles: string[] = [];
+    let uploadedCount = 0;
 
     for (const file of selectedFiles) {
       try {
@@ -129,32 +132,34 @@ export default function EditorialMediaEditor({
             .replace(/\.[^/.]+$/, "")
             .replace(/[-_]+/g, " ")
             .trim() || "Yeni görsel";
-        uploadedItems.push({
+        const uploadedItem: EditorialMediaItem = {
           id: createId(activeKind),
           imageUrl,
           label,
           alt: `${label} perde uygulaması`,
           visible: true,
-        });
+        };
+        onChange((current) => ({
+          ...current,
+          [activeKind]: [...current[activeKind], uploadedItem],
+        }));
+        uploadedCount += 1;
+        setMessageTone("success");
+        setMessage(`${uploadedCount}/${selectedFiles.length} görsel yüklendi...`);
       } catch {
         failedFiles.push(file.name);
       }
     }
 
-    if (uploadedItems.length > 0) {
-      onChange({
-        ...media,
-        [activeKind]: [...items, ...uploadedItems],
-      });
-    }
-
     if (failedFiles.length > 0) {
+      setMessageTone("error");
       setMessage(
-        `${uploadedItems.length} görsel yüklendi. ${failedFiles.length} görsel yüklenemedi: ${failedFiles.join(", ")}`,
+        `${uploadedCount} görsel yüklendi. ${failedFiles.length} görsel yüklenemedi: ${failedFiles.join(", ")}`,
       );
     } else {
+      setMessageTone("success");
       setMessage(
-        `${uploadedItems.length} görsel yüklendi. Değişiklikleri kaydetmeyi unutmayın.`,
+        `${uploadedCount} görsel yüklendi. Değişiklikleri kaydetmeyi unutmayın.`,
       );
     }
     setUploadingBatch(false);
@@ -221,6 +226,7 @@ export default function EditorialMediaEditor({
             onClick={() => {
               setActiveKind(kind);
               setMessage(null);
+              setMessageTone("success");
             }}
             className={`rounded-lg px-3 py-2.5 text-left text-xs font-bold transition-colors ${
               activeKind === kind
@@ -237,8 +243,18 @@ export default function EditorialMediaEditor({
       </div>
 
       {message && (
-        <div className="flex items-start gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.06] px-3 py-2.5 text-xs leading-5 text-emerald-200">
-          <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+        <div
+          className={`flex items-start gap-2 rounded-xl border px-3 py-2.5 text-xs leading-5 ${
+            messageTone === "error"
+              ? "border-red-500/20 bg-red-500/[0.06] text-red-200"
+              : "border-emerald-500/20 bg-emerald-500/[0.06] text-emerald-200"
+          }`}
+        >
+          {messageTone === "error" ? (
+            <X className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          ) : (
+            <Check className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          )}
           <span>{message}</span>
         </div>
       )}

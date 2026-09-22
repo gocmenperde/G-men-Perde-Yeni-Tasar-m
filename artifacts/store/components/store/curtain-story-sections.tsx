@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { ArrowRight, House, Quote, Ruler, Scissors, Sparkles, Star } from "lucide-react";
 import type { HomepageSection } from "@/lib/homepage-config";
 
@@ -41,6 +44,49 @@ const REVIEWS = [
   },
 ];
 
+function ShowcaseImage({
+  src,
+  alt,
+  className,
+  loading = "lazy",
+}: {
+  src: string;
+  alt: string;
+  className?: string;
+  loading?: "lazy" | "eager";
+}) {
+  const [failed, setFailed] = useState(false);
+
+  if (failed) {
+    return (
+      <div
+        className={`flex items-center justify-center bg-gradient-to-br from-[#f7f2e8] via-[#efe5d5] to-[#e4d7c1] ${className ?? ""}`}
+        role="img"
+        aria-label={`${alt} — görsel şu anda kullanılamıyor`}
+      >
+        <div className="px-5 text-center">
+          <span className="mx-auto grid h-12 w-12 place-items-center rounded-full border border-[#c9ad72]/50 bg-white/60 text-[#b8973e]">
+            <Sparkles className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <span className="mt-3 block text-[10px] font-extrabold uppercase tracking-[.18em] text-[#8e7b5c]">
+            Göçmen Perde
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      loading={loading}
+      onError={() => setFailed(true)}
+    />
+  );
+}
+
 function SectionHeading({ section, kicker }: { section: HomepageSection; kicker: string }) {
   return (
     <div className="mb-8 flex flex-col gap-4 sm:mb-10 sm:flex-row sm:items-end sm:justify-between">
@@ -78,12 +124,16 @@ export function CurtainStorySection({ section }: { section: HomepageSection }) {
               </div>
             ))}
           </div>
-          <Link href="/about" className="mt-8 inline-flex items-center gap-2 text-sm font-extrabold text-[#E5B96F]">
+          <Link href="/hikayemiz" className="mt-8 inline-flex items-center gap-2 text-sm font-extrabold text-[#E5B96F]">
             Hikâyemizi keşfedin <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
         <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#16252A] shadow-[0_24px_70px_rgba(0,0,0,.22)]">
-          <img src="/showcase/story.jpg" alt="Göçmen Perde'nin perde uygulamalarından bir görünüm" className="h-full min-h-[330px] w-full object-cover" loading="lazy" />
+          <ShowcaseImage
+            src="/showcase/story.jpg"
+            alt="Göçmen Perde'nin perde uygulamalarından bir görünüm"
+            className="h-full min-h-[330px] w-full object-cover"
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-[#152429]/80 via-transparent to-transparent" />
           <span className="absolute bottom-5 left-5 rounded-full border border-[#E5B96F]/40 bg-[#152429]/70 px-4 py-2 text-[10px] font-extrabold uppercase tracking-[.2em] text-[#E5B96F]">
             GÖÇMEN PERDE
@@ -102,7 +152,11 @@ export function CustomerProjectsSection({ section }: { section: HomepageSection 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
           {PROJECT_IMAGES.slice(0, section.limit).map((image, index) => (
             <figure key={image.src} className={`group relative overflow-hidden rounded-[1.35rem] bg-[var(--surface)] ${index === 0 ? "col-span-2 row-span-2 min-h-[340px] sm:min-h-[480px]" : "min-h-[170px] sm:min-h-[230px]"}`}>
-              <img src={image.src} alt={image.alt} className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" />
+              <ShowcaseImage
+                src={image.src}
+                alt={image.alt}
+                className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-[#17282C]/75 via-transparent to-transparent" />
               <figcaption className="absolute inset-x-0 bottom-0 p-4 text-sm font-bold text-white">{image.label}</figcaption>
             </figure>
@@ -148,7 +202,11 @@ export function InspirationSection({ section }: { section: HomepageSection }) {
           {INSPIRATION_IMAGES.slice(0, section.limit).map((image) => (
             <Link href="/products" key={image.src} className="group relative overflow-hidden rounded-[1.5rem] border border-[var(--line)] bg-[var(--surface-muted)]">
               <div className="aspect-[1.3/1] overflow-hidden">
-                <img src={image.src} alt={image.alt} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" loading="lazy" />
+                <ShowcaseImage
+                  src={image.src}
+                  alt={image.alt}
+                  className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                />
               </div>
               <div className="flex items-center justify-between gap-3 p-4">
                 <span className="flex items-center gap-2 text-sm font-extrabold text-[var(--navy)]"><Sparkles className="h-4 w-4 text-[var(--gold)]" aria-hidden="true" />{image.label}</span>

@@ -8,6 +8,8 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import {
   ChevronDown,
+  BookOpen,
+  Camera,
   FileText,
   House,
   Heart,
@@ -22,6 +24,7 @@ import {
   Percent,
   PhoneCall,
   ScanLine,
+  Sparkles,
   Settings,
   ShoppingCart,
   type LucideIcon,
@@ -229,6 +232,7 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Perde", ca
                   <div className="mt-5 flex gap-4 border-t border-[var(--line)] pt-4 text-xs font-bold">
                     <Link href="/products" className="text-[var(--navy)] hover:text-[var(--gold)]">Tüm ürünler</Link>
                     <Link href="/products?sale=true" className="inline-flex items-center gap-1 text-[var(--gold)]"><Percent className="h-3 w-3" /> İndirimliler</Link>
+                    <Link href="/uygulama-ilham" className="text-[var(--ink-muted)] hover:text-[var(--gold)]">İlham alanı</Link>
                   </div>
                 </div>
               )}
@@ -324,6 +328,9 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Perde", ca
 
             <div className="book-mobile-menu__footer">
               <Link href="/about" onClick={() => setMenuOpen(false)}><NavIcon icon={Info} hydrated={hydrated} size={14} /> Hakkımızda</Link>
+              <Link href="/uygulama-ilham" onClick={() => setMenuOpen(false)}><NavIcon icon={Sparkles} hydrated={hydrated} size={14} /> Uygulama &amp; İlham</Link>
+              <Link href="/hikayemiz" onClick={() => setMenuOpen(false)}><NavIcon icon={BookOpen} hydrated={hydrated} size={14} /> Hikâyemiz</Link>
+              <Link href="/sizden-gelenler" onClick={() => setMenuOpen(false)}><NavIcon icon={Camera} hydrated={hydrated} size={14} /> Sizden Gelenler</Link>
               <Link href="/contact" onClick={() => setMenuOpen(false)}><NavIcon icon={PhoneCall} hydrated={hydrated} size={14} /> İletişim</Link>
               {session && <Link href="/orders" onClick={() => setMenuOpen(false)}><NavIcon icon={FileText} hydrated={hydrated} size={14} /> Siparişlerim</Link>}
             </div>

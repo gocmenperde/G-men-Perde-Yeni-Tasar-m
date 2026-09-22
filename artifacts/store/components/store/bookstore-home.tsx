@@ -253,7 +253,7 @@ function BookBanner({
       ctaHref: "/products",
       imageUrl: null,
       cta2Text: "Ücretsiz ölçü",
-      cta2Href: "/contact",
+      cta2Href: "/measure-guide",
       darkText: false,
     },
     {
@@ -727,7 +727,7 @@ function CurtainFinder({ categories }: { categories: any[] }) {
               <Link href={recommendationHref} className="book-curtain-finder__result-link">
                 Seçkiyi keşfet <ArrowUpRight size={15} aria-hidden="true" />
               </Link>
-              <Link href="/contact" className="book-curtain-finder__measure-link">Ölçü desteği al</Link>
+              <Link href="/measure-guide" className="book-curtain-finder__measure-link">Ölçü desteği al</Link>
               <button type="button" onClick={reset} aria-label="Perde seçim rehberini baştan başlat">
                 <RotateCcw size={14} aria-hidden="true" /> Baştan başla
               </button>

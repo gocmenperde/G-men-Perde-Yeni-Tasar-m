@@ -86,16 +86,16 @@ const FAQS = [
     category: "Ürünler",
     items: [
       {
-        q: "Ürünler orijinal mi?",
-        a: "Evet, tüm ürünler yetkili distribütörlerden temin edilmekte olup yüzde yüz orijinaldir. Faber-Castell, Pelikan, Staedtler gibi dünya markalarının Türkiye distribütörleriyle çalışıyoruz.",
+        q: "Perdeler hazır ölçü mü, özel ölçü mü hazırlanıyor?",
+        a: "Koleksiyondaki ürün türüne göre hazır ölçü veya özel ölçü seçenekleri bulunur. Tül, fon, stor, zebra ve plise ürünlerinde ölçü bilgilerinizi ürün sayfasından girebilir ya da ekibimizden destek alabilirsiniz.",
       },
       {
-        q: "Stokta olmayan ürünü nasıl takip ederim?",
-        a: "Ürün sayfasındaki 'Stok Bildirimi Al' butonuna tıklayarak e-posta adresinizi kaydettirin. Ürün tekrar stoğa girdiğinde sizi bilgilendiririz.",
+        q: "Perde ölçüsünü nasıl almalıyım?",
+        a: "Kornişin sağ ve sol bitiş noktaları arasını en, korniş altından zemine kadar olan mesafeyi boy olarak ölçün. Ölçüleri en az iki noktadan kontrol edip metre cinsinden yazın. Ayrıntılı adımlar için Ölçü Rehberi sayfamıza bakabilirsiniz.",
       },
       {
-        q: "Toplu sipariş verebilir miyim?",
-        a: "Evet, okul, kurum veya toplu alımlar için özel fiyatlandırma yapıyoruz. Lütfen WhatsApp veya e-posta ile iletişime geçin.",
+        q: "Bursa'da ölçü ve montaj desteği var mı?",
+        a: "Bursa içindeki projeler için ölçü, dikim ve montaj seçeneklerini ekibimizle planlayabilirsiniz. Yaklaşık ölçünüzü WhatsApp üzerinden gönderin; uygun hizmet kapsamını ve teklifi birlikte netleştirelim.",
       },
     ],
   },

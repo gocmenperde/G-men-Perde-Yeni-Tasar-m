@@ -955,6 +955,19 @@ h1, h2, h3, h4, h5, h6 {
   color: #fffaf0;
 }
 
+.book-banner__premium-slide.book-banner--dark-text h1 {
+  color: #302b23;
+}
+
+.book-banner__premium-slide.book-banner--dark-text h1 strong {
+  color: #8b671e;
+}
+
+.book-banner__premium-slide.book-banner--dark-text .book-banner__premium-secondary,
+.book-banner__premium-slide.book-banner--dark-text .book-banner__premium-meta {
+  color: rgba(48, 43, 35, .72);
+}
+
 .book-category-banner-products {
   overflow: hidden;
   padding: 30px 0 42px;

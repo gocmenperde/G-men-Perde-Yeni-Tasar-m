@@ -133,12 +133,20 @@ const getCachedHomepageCatalog = unstable_cache(
               select: homepageProductSelect,
             })
           : Promise.resolve([]),
-        catalogDb.product.findMany({
-          where: { isActive: true, stock: { gt: 0 } },
-          select: homepageProductSelect,
-          orderBy: { createdAt: "desc" },
-          take: CURTAIN_CATALOG_CATEGORY_SLUGS.length * 4,
-        }),
+        Promise.all(
+          CURTAIN_CATALOG_CATEGORY_SLUGS.map((slug) =>
+            catalogDb.product.findMany({
+              where: {
+                isActive: true,
+                stock: { gt: 0 },
+                category: { slug },
+              },
+              select: homepageProductSelect,
+              orderBy: { createdAt: "desc" },
+              take: 4,
+            }),
+          ),
+        ),
       ]);
 
     return {
@@ -158,14 +166,9 @@ const getCachedHomepageCatalog = unstable_cache(
       })),
       curated: serializeProducts(curatedRaw, { imageLimit: 1 }),
       categoryProducts: Object.fromEntries(
-        CURTAIN_CATALOG_CATEGORY_SLUGS.map((slug) => [
+        CURTAIN_CATALOG_CATEGORY_SLUGS.map((slug, index) => [
           slug,
-          serializeProducts(
-            categoryProductsRaw
-              .filter((product) => product.category?.slug === slug)
-              .slice(0, 4),
-            { imageLimit: 1 },
-          ),
+          serializeProducts(categoryProductsRaw[index] ?? [], { imageLimit: 1 }),
         ]),
       ),
     };

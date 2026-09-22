@@ -12,6 +12,7 @@ type ProductImageProps = Omit<ImageProps, "src" | "onError" | "onLoad"> & {
   onImageError?: () => void;
   onImageLoad?: () => void;
   hideOnError?: boolean;
+  cdnWidth?: number;
 };
 
 export default function ProductImage({
@@ -23,6 +24,7 @@ export default function ProductImage({
   onImageError,
   onImageLoad,
   hideOnError = false,
+  cdnWidth,
   ...props
 }: ProductImageProps) {
   const sourceCandidates = [
@@ -30,7 +32,7 @@ export default function ProductImage({
     ...getProductImageCandidates(fallbackSrc),
   ].filter((value, index, values) => values.indexOf(value) === index);
   const candidates = sourceCandidates.flatMap((value) => {
-    const optimized = getCdnOptimizedImageUrl(value);
+    const optimized = getCdnOptimizedImageUrl(value, cdnWidth);
     return optimized === value ? [value] : [optimized, value];
   });
   const candidateKey = candidates.join("\u0000");

@@ -3530,13 +3530,15 @@ body:has(.book-announcement-bar) .book-mobile-menu {
 }
 
 .book-mobile-menu {
-  max-height: calc(100dvh - 112px - env(safe-area-inset-top, 0px));
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  max-height: none;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
 
 body:has(.book-announcement-bar) .book-mobile-menu {
-  max-height: calc(100dvh - 148px - env(safe-area-inset-top, 0px));
+  bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  max-height: none;
 }
 
 .book-mobile-menu__inner {

@@ -54,14 +54,14 @@ export function getProductImageCandidates(value: unknown): string[] {
  * The original URL is kept as a fallback so an existing asset never becomes
  * unavailable just because a transformation is not accepted by the provider.
  */
-export function getCdnOptimizedImageUrl(value: string): string {
+export function getCdnOptimizedImageUrl(value: string, width?: number): string {
   try {
     const url = new URL(value);
     if (!url.hostname.endsWith("res.cloudinary.com")) return value;
 
     const imageMarker = /\/image\/(fetch|upload)\//;
     const match = url.pathname.match(imageMarker);
-    if (!match || /(?:^|[/,])(?:f_auto|q_auto)(?:$|[/,])/.test(url.pathname)) {
+    if (!match) {
       return value;
     }
 
@@ -69,8 +69,21 @@ export function getCdnOptimizedImageUrl(value: string): string {
     const markerIndex = url.pathname.indexOf(marker);
     if (markerIndex < 0) return value;
 
+    const existingTransformations = url.pathname.slice(markerIndex + marker.length).split("/")[0];
+    if (/(?:^|,)(?:f_auto|q_auto|c_limit|w_\d+)(?:,|$)/.test(existingTransformations)) {
+      return value;
+    }
+
+    const boundedWidth = Number.isFinite(width) && width && width > 0
+      ? Math.min(Math.max(Math.round(width), 240), 1200)
+      : undefined;
+    const transformations = [
+      boundedWidth ? `c_limit,w_${boundedWidth}` : null,
+      "f_auto",
+      "q_auto",
+    ].filter(Boolean).join(",");
     const insertionPoint = markerIndex + marker.length;
-    url.pathname = `${url.pathname.slice(0, insertionPoint)}f_auto,q_auto/${url.pathname.slice(insertionPoint)}`;
+    url.pathname = `${url.pathname.slice(0, insertionPoint)}${transformations}/${url.pathname.slice(insertionPoint)}`;
     return url.toString();
   } catch {
     return value;

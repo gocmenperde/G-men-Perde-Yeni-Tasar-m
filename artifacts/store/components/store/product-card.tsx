@@ -118,7 +118,7 @@ export default function ProductCard({
     return (
       <div {...productEvents} role="link" tabIndex={0} className="group flex gap-3 rounded-2xl border border-[var(--line)] bg-[var(--surface)] p-3 transition-colors hover:border-[var(--gold-light)]">
         <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-[var(--surface-muted)]">
-          <ProductImage src={product.images} alt={product.name} fill sizes="96px" className="object-cover" priority={priority} fallbackLabel="Görsel yok" />
+          <ProductImage src={product.images} alt={product.name} fill sizes="96px" cdnWidth={320} className="object-cover" priority={priority} fallbackLabel="Görsel yok" />
           {discount > 0 && <span className="absolute left-1.5 top-1.5 rounded-md bg-[#D96C54] px-1.5 py-1 text-[9px] font-extrabold text-white">-{discount}%</span>}
         </div>
         <div className="min-w-0 flex-1 py-1">
@@ -144,8 +144,8 @@ export default function ProductCard({
   return (
     <article {...productEvents} onMouseEnter={() => setShowHoverImage(true)} onFocus={() => setShowHoverImage(true)} role="link" tabIndex={0} className="group flex min-w-0 cursor-pointer flex-col overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--surface)] transition-transform duration-300 hover:-translate-y-1 hover:border-[var(--gold-light)] hover:shadow-[0_16px_35px_rgba(45,55,52,.12)] sm:rounded-[1.35rem]">
       <div className="relative aspect-[.88/1] overflow-hidden bg-[var(--surface-muted)]">
-        <ProductImage src={product.images} alt={product.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={priority} fallbackLabel="Görsel hazırlanıyor" />
-        {showHoverImage && product.images?.[1] && <ProductImage src={product.images[1]} alt="" fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden="true" />}
+        <ProductImage src={product.images} alt={product.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" cdnWidth={640} className="object-cover transition-transform duration-500 group-hover:scale-[1.04]" priority={priority} fallbackLabel="Görsel hazırlanıyor" />
+        {showHoverImage && product.images?.[1] && <ProductImage src={product.images[1]} alt="" fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" cdnWidth={640} className="object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden="true" />}
         <div className="absolute left-2.5 top-2.5 flex flex-col gap-1.5">
           {discount > 0 && <span className="rounded-md bg-[#D96C54] px-2 py-1 text-[10px] font-extrabold text-white">-{discount}%</span>}
           {discount === 0 && isNew && <span className="rounded-md bg-[var(--navy)] px-2 py-1 text-[10px] font-extrabold text-white">Yeni</span>}

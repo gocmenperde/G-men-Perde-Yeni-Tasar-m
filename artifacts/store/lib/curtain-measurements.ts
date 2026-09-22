@@ -75,10 +75,13 @@ export function getCurtainMeasurementRequirements(product: {
     return {
       kind,
       requiresWidth: Boolean(product.requiresWidth || product.isMeter),
-      requiresHeight: Boolean(product.requiresHeight),
+      // Perde ürünlerinde metre fiyatlı ürünler de müşteriden pencere enini
+      // ve ürün boyunu alır. Eski kayıtlarda requiresHeight false olsa bile
+      // ölçü akışı artık iki boyutlu olmalıdır.
+      requiresHeight: true,
       requiresPile: false,
-      title: "Özel ölçü",
-      description: "Metre fiyatı üzerinden hesaplanır.",
+      title: "En ve boy ölçüsü",
+      description: "En × boy (m²) üzerinden hesaplanır.",
     };
   }
   return {
@@ -114,7 +117,9 @@ export function calculateCurtainPrice(
   if (kind === "area" && width > 0 && height > 0) {
     return basePrice * getBillableWidth(product, width) * height;
   }
-  if (kind === "meter" && width > 0) return basePrice * width;
+  if (kind === "meter" && width > 0 && height > 0) {
+    return basePrice * width * height;
+  }
   return basePrice;
 }
 

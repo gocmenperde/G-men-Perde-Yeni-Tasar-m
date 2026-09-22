@@ -31,6 +31,9 @@ export default function AdminCategoriesClient({ categories: initial }: { categor
   const [emptyPreview, setEmptyPreview] = useState<any[] | null>(null);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [outsideCatalogPreview, setOutsideCatalogPreview] = useState<any[] | null>(null);
+  const [isOutsidePreviewing, setIsOutsidePreviewing] = useState(false);
+  const [isOutsideDeleting, setIsOutsideDeleting] = useState(false);
 
   const previewEmpty = async () => {
     setIsPreviewing(true);
@@ -61,6 +64,52 @@ export default function AdminCategoriesClient({ categories: initial }: { categor
       toast.error(e.message ?? "Silme başarısız.");
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const previewOutsideCatalog = async () => {
+    setIsOutsidePreviewing(true);
+    try {
+      const res = await fetch("/api/admin/fix-categories");
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setOutsideCatalogPreview(data.outsideCatalog ?? []);
+      if ((data.outsideCatalog ?? []).length === 0) {
+        toast.success("Katalog dışı kategori yok.");
+      }
+    } catch (e: any) {
+      toast.error(e.message ?? "Tarama başarısız.");
+    } finally {
+      setIsOutsidePreviewing(false);
+    }
+  };
+
+  const deleteOutsideCatalog = async () => {
+    const deletable = (outsideCatalogPreview ?? []).filter((category) => (category._count?.products ?? 0) === 0);
+    const blocked = (outsideCatalogPreview ?? []).filter((category) => (category._count?.products ?? 0) > 0);
+    if (blocked.length > 0) {
+      toast.error("Ürün bağlı kategoriler silinmedi. Önce ürünleri doğru perde kategorisine taşıyın.");
+      return;
+    }
+    if (deletable.length === 0) return;
+    if (!confirm(`${deletable.length} katalog dışı kategori silinecek. Emin misiniz?`)) return;
+
+    setIsOutsideDeleting(true);
+    try {
+      const res = await fetch("/api/admin/fix-categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "outside" }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      toast.success(data.message);
+      setOutsideCatalogPreview(null);
+      setCategories((prev) => prev.filter((category) => (category._count?.products ?? 0) > 0));
+    } catch (e: any) {
+      toast.error(e.message ?? "Katalog dışı kategoriler silinemedi.");
+    } finally {
+      setIsOutsideDeleting(false);
     }
   };
 
@@ -223,6 +272,14 @@ export default function AdminCategoriesClient({ categories: initial }: { categor
               ? <><Loader2 className="w-4 h-4 animate-spin" /> Durdur</>
               : <><ImageIcon className="w-4 h-4" /> Resimleri Otomatik Çek</>}
           </button>
+          <button
+            onClick={previewOutsideCatalog}
+            disabled={isOutsidePreviewing || isOutsideDeleting}
+            className="flex items-center gap-2 bg-red-950 hover:bg-red-900 disabled:opacity-50 text-red-200 border border-red-800 font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors"
+          >
+            <Tags className="w-4 h-4" />
+            {isOutsidePreviewing ? "Taranıyor…" : "Perde Dışı Kategorileri Tara"}
+          </button>
         </div>
       </div>
 
@@ -270,6 +327,63 @@ export default function AdminCategoriesClient({ categories: initial }: { categor
               İptal
             </button>
           </div>
+        </div>
+      )}
+
+      {outsideCatalogPreview !== null && (
+        <div className="bg-red-950/30 border border-red-700/50 rounded-2xl p-5 space-y-4">
+          <div className="flex items-center gap-2 text-red-400">
+            <Tags className="w-5 h-5" />
+            <h2 className="font-bold text-base">
+              {outsideCatalogPreview.length} perde kataloğu dışı kategori tespit edildi
+            </h2>
+          </div>
+          {outsideCatalogPreview.length === 0 ? (
+            <p className="text-sm text-green-300">Kategori kaynağı temiz görünüyor.</p>
+          ) : (
+            <>
+              <p className="text-sm text-red-300/80">
+                Ürün bağlı olmayanlar silinebilir. Ürün bağlı olan kategoriler güvenlik nedeniyle otomatik silinmez;
+                önce ürünleri doğru perde kategorisine taşıyın.
+              </p>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-red-800/50">
+                      <th className="text-left py-2 px-3 text-red-400 text-xs uppercase">Kategori</th>
+                      <th className="text-left py-2 px-3 text-red-400 text-xs uppercase">Slug</th>
+                      <th className="text-left py-2 px-3 text-red-400 text-xs uppercase">Ürün</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-red-900/30">
+                    {outsideCatalogPreview.map((category) => (
+                      <tr key={category.id}>
+                        <td className="py-2 px-3 text-red-200">{category.name}</td>
+                        <td className="py-2 px-3 font-mono text-red-400/70 text-xs">{category.slug}</td>
+                        <td className="py-2 px-3 text-red-200">{category._count?.products ?? 0}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="flex flex-wrap gap-3 pt-1">
+                <button
+                  onClick={deleteOutsideCatalog}
+                  disabled={isOutsideDeleting || outsideCatalogPreview.some((category) => (category._count?.products ?? 0) > 0)}
+                  className="flex items-center gap-2 bg-red-700 hover:bg-red-600 disabled:opacity-50 text-white font-bold px-6 py-2.5 rounded-xl text-sm transition-colors"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  {isOutsideDeleting ? "Siliniyor…" : "Ürünsüz Kategorileri Sil"}
+                </button>
+                <button
+                  onClick={() => setOutsideCatalogPreview(null)}
+                  className="px-5 py-2.5 rounded-xl text-sm text-zinc-400 hover:text-white border border-zinc-700 hover:border-zinc-500 transition-colors"
+                >
+                  Kapat
+                </button>
+              </div>
+            </>
+          )}
         </div>
       )}
 

@@ -157,6 +157,11 @@ export default function ProductInfo({ product }: { product: any }) {
     unit: measurementRequirements.kind === "area" ? "m²" : measurementRequirements.kind === "meter" ? "mt" : product.unit ?? "adet",
   };
   const measuredUnitPrice = calculateCurtainPrice(product, dimensions);
+  const validPile = getPileOptions().some((option) => Number(option.value) === pileValue);
+  const canAdd = (product.stock ?? 0) > 0
+    && hasWidth
+    && hasHeight
+    && (!measurementRequirements.requiresPile || validPile);
 
   const handleAdd = () => {
     if ((product.stock ?? 0) < 1) { toast.error("Bu ürün stokta yok."); return; }
@@ -164,7 +169,7 @@ export default function ProductInfo({ product }: { product: any }) {
       toast.error("Sipariş için ürün ölçülerini girin.");
       return;
     }
-    if (measurementRequirements.requiresPile && !Number.isFinite(pileValue)) {
+    if (measurementRequirements.requiresPile && !validPile) {
       toast.error("Pile seçimi zorunludur.");
       return;
     }
@@ -223,6 +228,58 @@ export default function ProductInfo({ product }: { product: any }) {
       </button>
     </div>
   );
+
+  const MeasurementFields = ({ compact = false }: { compact?: boolean }) => {
+    if (!needsMeasurement) return null;
+    const inputClass = compact
+      ? "mt-1 w-full min-w-0 rounded-lg border border-[var(--line)] bg-[var(--surface)] px-2 py-1.5 text-xs font-semibold outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold-light)]"
+      : "mt-1.5 w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold-light)]";
+    return (
+      <div className={`grid grid-cols-2 ${compact ? "gap-1.5" : "gap-3"}`}>
+        {measurementRequirements.requiresWidth && (
+          <label className={`${compact ? "text-[10px]" : "text-xs"} font-bold text-[var(--navy)]`}>
+            En (m)
+            <input
+              inputMode="decimal"
+              value={width}
+              onChange={(event) => setWidth(event.target.value)}
+              placeholder="2.40"
+              aria-label="En ölçüsü, metre"
+              className={inputClass}
+            />
+          </label>
+        )}
+        {measurementRequirements.requiresHeight && (
+          <label className={`${compact ? "text-[10px]" : "text-xs"} font-bold text-[var(--navy)]`}>
+            Boy (m)
+            <input
+              inputMode="decimal"
+              value={height}
+              onChange={(event) => setHeight(event.target.value)}
+              placeholder="2.60"
+              aria-label="Boy ölçüsü, metre"
+              className={inputClass}
+            />
+          </label>
+        )}
+        {measurementRequirements.requiresPile && (
+          <label className={`${compact ? "col-span-2 text-[10px]" : "col-span-2 text-xs"} font-bold text-[var(--navy)]`}>
+            Pile sıklığı
+            <select
+              value={pileFactor}
+              onChange={(event) => setPileFactor(event.target.value)}
+              aria-label="Pile sıklığı"
+              className={inputClass}
+            >
+              {getPileOptions().map((option) => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </label>
+        )}
+      </div>
+    );
+  };
 
   return (
     <motion.div
@@ -368,49 +425,15 @@ export default function ProductInfo({ product }: { product: any }) {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
-            {measurementRequirements.requiresWidth && (
-              <label className="text-xs font-bold text-[var(--navy)]">
-                En (m)
-                <input
-                  inputMode="decimal"
-                  value={width}
-                  onChange={(event) => setWidth(event.target.value)}
-                  placeholder="Örn. 2.40"
-                  className="mt-1.5 w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold-light)]"
-                />
-              </label>
-            )}
-            {measurementRequirements.requiresHeight && (
-              <label className="text-xs font-bold text-[var(--navy)]">
-                Boy (m)
-                <input
-                  inputMode="decimal"
-                  value={height}
-                  onChange={(event) => setHeight(event.target.value)}
-                  placeholder="Örn. 2.60"
-                  className="mt-1.5 w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold-light)]"
-                />
-              </label>
-            )}
-            {measurementRequirements.requiresPile && (
-              <label className="col-span-2 text-xs font-bold text-[var(--navy)]">
-                Pile sıklığı
-                <select
-                  value={pileFactor}
-                  onChange={(event) => setPileFactor(event.target.value)}
-                  className="mt-1.5 w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold-light)]"
-                >
-                  {getPileOptions().map((option) => (
-                    <option key={option.value} value={option.value}>{option.label}</option>
-                  ))}
-                </select>
-              </label>
-            )}
+          <div className="hidden md:block">
+            <MeasurementFields />
           </div>
+          <p className="mt-3 text-xs font-semibold text-[var(--ink-muted)] md:hidden">
+            Ölçüleri aşağıdaki sepete ekle çubuğundan girin.
+          </p>
           {((measurementRequirements.kind === "tul" && widthValue > 0 && pileValue > 0)
             || (measurementRequirements.kind === "area" && area > 0)
-            || (measurementRequirements.kind === "meter" && widthValue > 0)) && (
+             || (measurementRequirements.kind === "meter" && area > 0)) && (
             <p className="mt-3 text-xs font-bold text-[var(--gold)]">
               Hesaplanan ürün tutarı: ₺{measuredUnitPrice.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}
             </p>
@@ -437,8 +460,9 @@ export default function ProductInfo({ product }: { product: any }) {
             <QtySelector />
             <motion.button
               onClick={handleAdd}
+              disabled={!canAdd}
               whileTap={{ scale: 0.97 }}
-              className={`flex-1 h-12 flex items-center justify-center gap-2.5 rounded-xl font-bold text-sm transition-all shadow-lg ${added ? "bg-green-600 shadow-green-200" : "bg-zinc-900 hover:bg-[#B8973E] shadow-zinc-200/80"} text-white`}
+              className={`flex-1 h-12 flex items-center justify-center gap-2.5 rounded-xl font-bold text-sm transition-all shadow-lg disabled:cursor-not-allowed disabled:opacity-50 ${added ? "bg-green-600 shadow-green-200" : "bg-zinc-900 hover:bg-[#B8973E] shadow-zinc-200/80"} text-white`}
             >
               {added ? (
                 <><Check className="w-4 h-4" /> Sepete Eklendi!</>
@@ -663,6 +687,11 @@ export default function ProductInfo({ product }: { product: any }) {
               <p className="text-xs text-[#B8973E] font-black">₺{Number(product.price).toLocaleString("tr-TR")}</p>
             </div>
             {/* Qty */}
+            {needsMeasurement && (
+              <div className="w-[17rem] flex-shrink-0 rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] p-2">
+                <MeasurementFields compact />
+              </div>
+            )}
             <div className="flex items-center rounded-lg border border-[#E8E0D5] overflow-hidden h-9 flex-shrink-0">
               <button onClick={() => setQty((q) => Math.max(1, q - 1))} className="px-2.5 text-zinc-500 hover:bg-[#F0EAE0] h-full transition-colors"><Minus className="w-3 h-3" /></button>
               <span className="px-3 text-sm font-bold text-zinc-900 min-w-[2rem] text-center">{qty}</span>
@@ -671,8 +700,9 @@ export default function ProductInfo({ product }: { product: any }) {
             {/* Sepete Ekle */}
             <motion.button
               onClick={handleAdd}
+              disabled={!canAdd}
               whileTap={{ scale: 0.97 }}
-              className={`flex items-center gap-2 px-5 py-2 rounded-xl font-bold text-sm transition-all shadow-sm ${added ? "bg-green-600 text-white" : "bg-zinc-900 hover:bg-[#B8973E] text-white"}`}
+              className={`flex items-center gap-2 px-5 py-2 rounded-xl font-bold text-sm transition-all shadow-sm disabled:cursor-not-allowed disabled:opacity-50 ${added ? "bg-green-600 text-white" : "bg-zinc-900 hover:bg-[#B8973E] text-white"}`}
             >
               {added ? <><Check className="w-4 h-4" />Eklendi!</> : <><ShoppingCart className="w-4 h-4" />Sepete Ekle</>}
             </motion.button>
@@ -690,8 +720,19 @@ export default function ProductInfo({ product }: { product: any }) {
 
       {/* ── MOBILE STICKY BAR ── */}
        <div className="mobile-cart-sticky fixed left-0 right-0 z-[90] px-4 pb-2 md:hidden">
-         <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)]/95 dark:bg-[var(--surface)]/95 p-3 shadow-xl backdrop-blur-md flex items-center gap-2">
-          <div className="flex items-center rounded-xl border border-[#E8E0D5] bg-[#FAF7F2] overflow-hidden flex-shrink-0">
+         <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)]/95 dark:bg-[var(--surface)]/95 p-3 shadow-xl backdrop-blur-md flex flex-col gap-2">
+           {needsMeasurement && (
+             <div className="rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] p-2">
+               <MeasurementFields compact />
+               {!canAdd && (
+                 <p className="mt-1 text-[10px] font-semibold text-[var(--ink-muted)]">
+                   En ve boy ölçülerini girin.
+                 </p>
+               )}
+             </div>
+           )}
+           <div className="flex items-center gap-2">
+           <div className="flex items-center rounded-xl border border-[#E8E0D5] bg-[#FAF7F2] overflow-hidden flex-shrink-0">
              <button
               onClick={() => setQty((q) => Math.max(1, q - 1))}
                className="touch-target px-3 py-2.5 text-zinc-600 hover:text-zinc-900 hover:bg-[#F0EAE0] transition-colors"
@@ -708,7 +749,7 @@ export default function ProductInfo({ product }: { product: any }) {
           </div>
            <button
             onClick={handleAdd}
-            disabled={(product.stock ?? 0) < 1}
+             disabled={!canAdd}
              className="touch-target flex-1 flex items-center justify-center gap-2 rounded-xl bg-[#B8973E] hover:bg-[#9E7F32] text-white font-bold py-2.5 text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
           >
             <ShoppingCart className="w-4 h-4" />
@@ -720,6 +761,7 @@ export default function ProductInfo({ product }: { product: any }) {
           >
             <Heart className={`w-4 h-4 ${isWishlisted ? "fill-red-500" : ""}`} />
           </button>
+           </div>
         </div>
       </div>
     </motion.div>

@@ -50,6 +50,7 @@ export default function EditorialMediaEditor({
 }) {
   const [activeKind, setActiveKind] = useState<EditorialMediaKind>("projects");
   const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [uploadingBatch, setUploadingBatch] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
   const items = media[activeKind];
@@ -111,6 +112,54 @@ export default function EditorialMediaEditor({
     }
   }
 
+  async function uploadMultiple(files: FileList | null) {
+    const selectedFiles = Array.from(files ?? []);
+    if (selectedFiles.length === 0) return;
+
+    setUploadingBatch(true);
+    setMessage(null);
+    const uploadedItems: EditorialMediaItem[] = [];
+    const failedFiles: string[] = [];
+
+    for (const file of selectedFiles) {
+      try {
+        const imageUrl = await uploadAdminImage(file);
+        const label =
+          file.name
+            .replace(/\.[^/.]+$/, "")
+            .replace(/[-_]+/g, " ")
+            .trim() || "Yeni görsel";
+        uploadedItems.push({
+          id: createId(activeKind),
+          imageUrl,
+          label,
+          alt: `${label} perde uygulaması`,
+          visible: true,
+        });
+      } catch {
+        failedFiles.push(file.name);
+      }
+    }
+
+    if (uploadedItems.length > 0) {
+      onChange({
+        ...media,
+        [activeKind]: [...items, ...uploadedItems],
+      });
+    }
+
+    if (failedFiles.length > 0) {
+      setMessage(
+        `${uploadedItems.length} görsel yüklendi. ${failedFiles.length} görsel yüklenemedi: ${failedFiles.join(", ")}`,
+      );
+    } else {
+      setMessage(
+        `${uploadedItems.length} görsel yüklendi. Değişiklikleri kaydetmeyi unutmayın.`,
+      );
+    }
+    setUploadingBatch(false);
+  }
+
   return (
     <div className="space-y-4 rounded-2xl border border-amber-500/15 bg-amber-500/[0.035] p-4 sm:p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -127,14 +176,41 @@ export default function EditorialMediaEditor({
             Görsel seçme düğmesi telefon ve bilgisayarda çalışır.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={addItem}
-          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-amber-500 px-3.5 py-2.5 text-xs font-black text-zinc-950 transition-colors hover:bg-amber-400"
-        >
-          <Plus className="h-4 w-4" />
-          Görsel ekle
-        </button>
+        <div className="flex shrink-0 flex-wrap justify-end gap-2">
+          <label
+            className={`inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-amber-500 px-3.5 py-2.5 text-xs font-black text-zinc-950 transition-colors hover:bg-amber-400 ${
+              uploadingBatch ? "pointer-events-none opacity-60" : ""
+            }`}
+          >
+            {uploadingBatch ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <ImagePlus className="h-4 w-4" />
+            )}
+            {uploadingBatch ? "Görseller yükleniyor..." : "Birden fazla görsel seç"}
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              disabled={uploadingBatch}
+              onChange={(event) => {
+                const files = event.target.files;
+                event.target.value = "";
+                void uploadMultiple(files);
+              }}
+            />
+          </label>
+          <button
+            type="button"
+            onClick={addItem}
+            disabled={uploadingBatch}
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3.5 py-2.5 text-xs font-bold text-zinc-300 transition-colors hover:border-amber-500 hover:text-amber-300 disabled:opacity-50"
+          >
+            <Plus className="h-4 w-4" />
+            Boş kayıt ekle
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2 rounded-xl bg-zinc-950/60 p-1">
@@ -185,7 +261,7 @@ export default function EditorialMediaEditor({
               item={item}
               index={index}
               total={items.length}
-              uploading={uploadingId === item.id}
+              uploading={uploadingId === item.id || uploadingBatch}
               onChange={(patch) => updateItem(item.id, patch)}
               onUpload={(file) => uploadItem(item.id, file)}
               onMove={(direction) => moveItem(index, direction)}

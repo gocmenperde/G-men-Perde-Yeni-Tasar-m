@@ -22,6 +22,93 @@ import {
 const SaleCountdown = dynamic(() => import("@/components/store/sale-countdown"), { ssr: false });
 const SameDayShipping = dynamic(() => import("@/components/store/same-day-shipping"), { ssr: false });
 
+type MeasurementRequirements = ReturnType<typeof getCurtainMeasurementRequirements>;
+
+function MeasurementFields({
+  compact = false,
+  requirements,
+  width,
+  height,
+  pileFactor,
+  onWidthChange,
+  onHeightChange,
+  onPileChange,
+}: {
+  compact?: boolean;
+  requirements: MeasurementRequirements;
+  width: string;
+  height: string;
+  pileFactor: string;
+  onWidthChange: (value: string) => void;
+  onHeightChange: (value: string) => void;
+  onPileChange: (value: string) => void;
+}) {
+  if (
+    !requirements.requiresWidth
+    && !requirements.requiresHeight
+    && !requirements.requiresPile
+  ) {
+    return null;
+  }
+
+  const inputClass = compact
+    ? "mt-1 w-full min-w-0 rounded-lg border border-[var(--line)] bg-[var(--surface)] px-2 py-1.5 text-xs font-semibold outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold-light)]"
+    : "mt-1.5 w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold-light)]";
+  const labelClass = compact ? "text-[10px]" : "text-xs";
+
+  return (
+    <div className={`grid grid-cols-2 ${compact ? "gap-1.5" : "gap-3"}`}>
+      {requirements.requiresWidth && (
+        <label className={`${labelClass} font-bold text-[var(--navy)]`}>
+          En (m)
+          <input
+            type="text"
+            inputMode="decimal"
+            enterKeyHint="next"
+            autoComplete="off"
+            value={width}
+            onChange={(event) => onWidthChange(event.target.value.replace(/,/g, "."))}
+            placeholder="2.40"
+            aria-label="En ölçüsü, metre"
+            className={inputClass}
+          />
+        </label>
+      )}
+      {requirements.requiresHeight && (
+        <label className={`${labelClass} font-bold text-[var(--navy)]`}>
+          Boy (m)
+          <input
+            type="text"
+            inputMode="decimal"
+            enterKeyHint="done"
+            autoComplete="off"
+            value={height}
+            onChange={(event) => onHeightChange(event.target.value.replace(/,/g, "."))}
+            placeholder="2.60"
+            aria-label="Boy ölçüsü, metre"
+            className={inputClass}
+          />
+        </label>
+      )}
+      {requirements.requiresPile && (
+        <label className={`${compact ? "col-span-2 text-[10px]" : "col-span-2 text-xs"} font-bold text-[var(--navy)]`}>
+          Pile sıklığı
+          <select
+            value={pileFactor}
+            onChange={(event) => onPileChange(event.target.value)}
+            aria-label="Pile sıklığı"
+            className={inputClass}
+          >
+            {getPileOptions().map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
+        </label>
+      )}
+    </div>
+  );
+}
+
 export default function ProductInfo({ product }: { product: any }) {
   const [qty, setQty] = useState(1);
   const [viewers, setViewers] = useState(0);
@@ -229,58 +316,6 @@ export default function ProductInfo({ product }: { product: any }) {
     </div>
   );
 
-  const MeasurementFields = ({ compact = false }: { compact?: boolean }) => {
-    if (!needsMeasurement) return null;
-    const inputClass = compact
-      ? "mt-1 w-full min-w-0 rounded-lg border border-[var(--line)] bg-[var(--surface)] px-2 py-1.5 text-xs font-semibold outline-none focus:border-[var(--gold)] focus:ring-1 focus:ring-[var(--gold-light)]"
-      : "mt-1.5 w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold-light)]";
-    return (
-      <div className={`grid grid-cols-2 ${compact ? "gap-1.5" : "gap-3"}`}>
-        {measurementRequirements.requiresWidth && (
-          <label className={`${compact ? "text-[10px]" : "text-xs"} font-bold text-[var(--navy)]`}>
-            En (m)
-            <input
-              inputMode="decimal"
-              value={width}
-              onChange={(event) => setWidth(event.target.value)}
-              placeholder="2.40"
-              aria-label="En ölçüsü, metre"
-              className={inputClass}
-            />
-          </label>
-        )}
-        {measurementRequirements.requiresHeight && (
-          <label className={`${compact ? "text-[10px]" : "text-xs"} font-bold text-[var(--navy)]`}>
-            Boy (m)
-            <input
-              inputMode="decimal"
-              value={height}
-              onChange={(event) => setHeight(event.target.value)}
-              placeholder="2.60"
-              aria-label="Boy ölçüsü, metre"
-              className={inputClass}
-            />
-          </label>
-        )}
-        {measurementRequirements.requiresPile && (
-          <label className={`${compact ? "col-span-2 text-[10px]" : "col-span-2 text-xs"} font-bold text-[var(--navy)]`}>
-            Pile sıklığı
-            <select
-              value={pileFactor}
-              onChange={(event) => setPileFactor(event.target.value)}
-              aria-label="Pile sıklığı"
-              className={inputClass}
-            >
-              {getPileOptions().map((option) => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </label>
-        )}
-      </div>
-    );
-  };
-
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -426,7 +461,15 @@ export default function ProductInfo({ product }: { product: any }) {
             </div>
           </div>
           <div className="hidden md:block">
-            <MeasurementFields />
+            <MeasurementFields
+              requirements={measurementRequirements}
+              width={width}
+              height={height}
+              pileFactor={pileFactor}
+              onWidthChange={setWidth}
+              onHeightChange={setHeight}
+              onPileChange={setPileFactor}
+            />
           </div>
           <p className="mt-3 text-xs font-semibold text-[var(--ink-muted)] md:hidden">
             Ölçüleri aşağıdaki sepete ekle çubuğundan girin.
@@ -689,7 +732,16 @@ export default function ProductInfo({ product }: { product: any }) {
             {/* Qty */}
             {needsMeasurement && (
               <div className="w-[17rem] flex-shrink-0 rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] p-2">
-                <MeasurementFields compact />
+                <MeasurementFields
+                  compact
+                  requirements={measurementRequirements}
+                  width={width}
+                  height={height}
+                  pileFactor={pileFactor}
+                  onWidthChange={setWidth}
+                  onHeightChange={setHeight}
+                  onPileChange={setPileFactor}
+                />
               </div>
             )}
             <div className="flex items-center rounded-lg border border-[#E8E0D5] overflow-hidden h-9 flex-shrink-0">
@@ -723,7 +775,16 @@ export default function ProductInfo({ product }: { product: any }) {
          <div className="rounded-2xl border border-[var(--line)] bg-[var(--surface)]/95 dark:bg-[var(--surface)]/95 p-3 shadow-xl backdrop-blur-md flex flex-col gap-2">
            {needsMeasurement && (
              <div className="rounded-xl border border-[var(--line)] bg-[var(--surface-muted)] p-2">
-               <MeasurementFields compact />
+                <MeasurementFields
+                  compact
+                  requirements={measurementRequirements}
+                  width={width}
+                  height={height}
+                  pileFactor={pileFactor}
+                  onWidthChange={setWidth}
+                  onHeightChange={setHeight}
+                  onPileChange={setPileFactor}
+                />
                {!canAdd && (
                  <p className="mt-1 text-[10px] font-semibold text-[var(--ink-muted)]">
                    En ve boy ölçülerini girin.

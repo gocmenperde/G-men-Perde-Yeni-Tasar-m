@@ -6,21 +6,21 @@ import { ArrowRight, House, Quote, Ruler, Scissors, Sparkles, Star } from "lucid
 import type { HomepageSection } from "@/lib/homepage-config";
 
 const PROJECT_IMAGES = [
-  { src: "/showcase/customer-1.jpg", alt: "Salon tül ve fon perde uygulaması", label: "Salon uygulaması" },
-  { src: "/showcase/customer-2.jpg", alt: "Pencere önünde tül perde uygulaması", label: "Tül perde" },
-  { src: "/showcase/customer-3.jpg", alt: "Geniş pencerede fon perde uygulaması", label: "Fon perde" },
-  { src: "/showcase/customer-4.jpg", alt: "Oturma odasında tamamlanan perde uygulaması", label: "Oturma odası" },
-  { src: "/showcase/customer-5.jpg", alt: "Modern yaşam alanında perde uygulaması", label: "Modern yaşam alanı" },
-  { src: "/showcase/inspiration-1.jpg", alt: "Özel ölçü perde uygulaması", label: "Özel ölçü" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto6.jpg", alt: "Bursa salon perde uygulaması", label: "Salon uygulaması" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto8.jpg", alt: "Nilüfer zebra ve fon perde uygulaması", label: "Zebra & fon" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto11.jpg", alt: "Yatak odası perde dönüşümü", label: "Yatak odası" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto1.jpg", alt: "Çekirge fon perde uygulaması", label: "Fon perde" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto3.jpg", alt: "Görükle oturma odası uygulaması", label: "Oturma odası" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto5.jpg", alt: "Mudanya tül perde uygulaması", label: "Tül perde" },
 ];
 
 const INSPIRATION_IMAGES = [
-  { src: "/showcase/inspiration-1.jpg", alt: "Modern salonda perde uygulaması", label: "Salon" },
-  { src: "/showcase/inspiration-2.jpg", alt: "Katlamalı perde uygulaması", label: "Gün ışığı" },
-  { src: "/showcase/customer-2.jpg", alt: "Tül perde ve pencere uygulaması", label: "Tül" },
-  { src: "/showcase/customer-3.jpg", alt: "Fon perde ve tül kombinasyonu", label: "Fon & tül" },
-  { src: "/showcase/customer-4.jpg", alt: "Oturma odası perde uygulaması", label: "Oturma odası" },
-  { src: "/showcase/customer-5.jpg", alt: "Dekorasyona uyumlu perde", label: "Dekorasyon" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto1.jpg", alt: "Salon tül perde uygulaması", label: "Salon tül" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto2.jpg", alt: "Zebra perde montajı", label: "Zebra sistem" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472202/gocmenperde/gocmenperde/foto9.jpg", alt: "Yatak odası fon perde uygulaması", label: "Fon kombin" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto10.jpg", alt: "Balkon plise perde uygulaması", label: "Plise alan" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto11.jpg", alt: "Ofis stor perde uygulaması", label: "Ofis stor" },
+  { src: "https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto3.jpg", alt: "Çocuk odası perde uygulaması", label: "Çocuk odası" },
 ];
 
 const REVIEWS = [
@@ -130,7 +130,7 @@ export function CurtainStorySection({ section }: { section: HomepageSection }) {
         </div>
         <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-[#16252A] shadow-[0_24px_70px_rgba(0,0,0,.22)]">
           <ShowcaseImage
-            src="/showcase/story.jpg"
+            src="https://res.cloudinary.com/ddb9lvapm/image/upload/v1781472200/gocmenperde/gocmenperde/foto1.jpg"
             alt="Göçmen Perde'nin perde uygulamalarından bir görünüm"
             className="h-full min-h-[330px] w-full object-cover"
           />

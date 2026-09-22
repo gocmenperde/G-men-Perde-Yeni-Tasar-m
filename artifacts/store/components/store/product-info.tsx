@@ -15,6 +15,7 @@ import dynamic from "next/dynamic";
 import ProductImage from "@/components/store/product-image";
 import {
   calculateCurtainPrice,
+  getBillableWidth,
   getCurtainMeasurementRequirements,
   getPileOptions,
 } from "@/lib/curtain-measurements";
@@ -144,7 +145,8 @@ export default function ProductInfo({ product }: { product: any }) {
   const pileValue = Number(pileFactor);
   const hasWidth = !measurementRequirements.requiresWidth || (Number.isFinite(widthValue) && widthValue > 0);
   const hasHeight = !measurementRequirements.requiresHeight || (Number.isFinite(heightValue) && heightValue > 0);
-  const area = widthValue > 0 && heightValue > 0 ? widthValue * heightValue : 0;
+  const billableWidth = getBillableWidth(product, widthValue);
+  const area = widthValue > 0 && heightValue > 0 ? billableWidth * heightValue : 0;
   const dimensions = {
     ...(widthValue > 0 ? { width: widthValue } : {}),
     ...(heightValue > 0 ? { height: heightValue } : {}),

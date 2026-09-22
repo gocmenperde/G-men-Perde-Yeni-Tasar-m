@@ -10,10 +10,9 @@ export type CurtainDimensions = {
 };
 
 const PILE_OPTIONS = [
-  { value: "1.5", label: "Az pile (1,5)" },
-  { value: "2", label: "Orta pile (2)" },
-  { value: "2.5", label: "Sık pile (2,5)" },
-  { value: "3", label: "Çok sık pile (3)" },
+  { value: "2", label: "Seyrek pile (2)" },
+  { value: "2.5", label: "Orta pile (2,5)" },
+  { value: "3", label: "Sık pile (3)" },
 ] as const;
 
 export function getPileOptions() {
@@ -49,7 +48,7 @@ export function getCurtainMeasurementRequirements(product: {
       requiresHeight: true,
       requiresPile: true,
       title: "Tül perde ölçüsü",
-      description: "En × pile × metre fiyatı üzerinden hesaplanır.",
+      description: "Müşteri eni × pile katsayısı × metre fiyatı üzerinden hesaplanır.",
     };
   }
   if (kind === "fon") {
@@ -69,7 +68,7 @@ export function getCurtainMeasurementRequirements(product: {
       requiresHeight: true,
       requiresPile: false,
       title: "En ve boy ölçüsü",
-      description: "En × boy × m² fiyatı üzerinden hesaplanır.",
+      description: "En × boy × m² fiyatı üzerinden hesaplanır. En az 1 metre kabul edilir.",
     };
   }
   if (kind === "meter") {
@@ -92,6 +91,14 @@ export function getCurtainMeasurementRequirements(product: {
   };
 }
 
+export function getBillableWidth(
+  product: { category?: { slug?: string | null } | null; isSquareMeter?: boolean | null },
+  width: number,
+) {
+  const kind = getCurtainMeasurementKind(product);
+  return kind === "area" && width > 0 ? Math.max(width, 1) : width;
+}
+
 export function calculateCurtainPrice(
   product: { price: unknown; category?: { slug?: string | null } | null; isMeter?: boolean | null; isSquareMeter?: boolean | null },
   dimensions: CurtainDimensions = {},
@@ -104,7 +111,9 @@ export function calculateCurtainPrice(
 
   if (!Number.isFinite(basePrice) || basePrice <= 0) return 0;
   if (kind === "tul" && width > 0 && pileFactor > 0) return basePrice * width * pileFactor;
-  if (kind === "area" && width > 0 && height > 0) return basePrice * width * height;
+  if (kind === "area" && width > 0 && height > 0) {
+    return basePrice * getBillableWidth(product, width) * height;
+  }
   if (kind === "meter" && width > 0) return basePrice * width;
   return basePrice;
 }

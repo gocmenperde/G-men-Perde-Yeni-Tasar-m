@@ -3,6 +3,7 @@ import { db, catalogDb } from "@/lib/db";
 import { serializeProducts } from "@/lib/serialize";
 import { homepageProductSelect } from "@/lib/product-selects";
 import { getPublicImageUrl } from "@/lib/image-url";
+import { CURTAIN_CATALOG_CATEGORY_SLUGS } from "@/lib/catalog-taxonomy";
 
 type HomepageCatalogResult = {
   featured: any[];
@@ -10,6 +11,7 @@ type HomepageCatalogResult = {
   categories: any[];
   brands: any[];
   curated: any[];
+  categoryProducts: Record<string, any[]>;
 };
 
 const homepageBannerSelect = {
@@ -77,7 +79,7 @@ const getCachedHomepageCatalog = unstable_cache(
   async (selectedProductIdsJson: string): Promise<HomepageCatalogResult> => {
     const selectedProductIds: string[] = JSON.parse(selectedProductIdsJson);
 
-    const [featuredRaw, newestRaw, categories, brandCatalogRaw, curatedRaw] =
+    const [featuredRaw, newestRaw, categories, brandCatalogRaw, curatedRaw, categoryProductsRaw] =
       await Promise.all([
         catalogDb.product.findMany({
           where: { isFeatured: true, isActive: true, stock: { gt: 0 } },
@@ -131,6 +133,12 @@ const getCachedHomepageCatalog = unstable_cache(
               select: homepageProductSelect,
             })
           : Promise.resolve([]),
+        catalogDb.product.findMany({
+          where: { isActive: true, stock: { gt: 0 } },
+          select: homepageProductSelect,
+          orderBy: { createdAt: "desc" },
+          take: CURTAIN_CATALOG_CATEGORY_SLUGS.length * 4,
+        }),
       ]);
 
     return {
@@ -149,6 +157,17 @@ const getCachedHomepageCatalog = unstable_cache(
         products: serializeProducts(brand.products, { imageLimit: 1 }),
       })),
       curated: serializeProducts(curatedRaw, { imageLimit: 1 }),
+      categoryProducts: Object.fromEntries(
+        CURTAIN_CATALOG_CATEGORY_SLUGS.map((slug) => [
+          slug,
+          serializeProducts(
+            categoryProductsRaw
+              .filter((product) => product.category?.slug === slug)
+              .slice(0, 4),
+            { imageLimit: 1 },
+          ),
+        ]),
+      ),
     };
   },
   ["storefront-homepage-catalog-v4"],

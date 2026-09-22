@@ -111,6 +111,7 @@ export default async function HomePage() {
   let banners: any[] = [];
   let brandCatalog: any[] = [];
   let curatedProducts: any[] = [];
+  let categoryProducts: Record<string, any[]> = {};
   const settings = await getCachedSettings().catch(() => null);
   const homepageConfig = parseHomepageConfig(settings?.popularSetsJson);
   const selectedProductIds = Array.from(
@@ -130,6 +131,7 @@ export default async function HomePage() {
     categories = catalog.categories;
     brandCatalog = catalog.brands;
     curatedProducts = catalog.curated;
+    categoryProducts = catalog.categoryProducts;
     banners = activeBanners;
   } catch {}
 
@@ -155,6 +157,7 @@ export default async function HomePage() {
             categories={categories}
             brands={brandCatalog}
             banners={bannersWithProducts}
+            categoryProducts={categoryProducts}
             homepageConfig={settings?.popularSetsJson}
           />
       </div>

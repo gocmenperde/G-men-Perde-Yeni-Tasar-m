@@ -60,7 +60,112 @@ type BannerSlide = Banner & {
   accent: string;
   description: string;
   className: string;
+  categorySlug?: string;
+  categoryName?: string;
+  categoryProducts?: Product[];
 };
+
+const CATEGORY_BANNER_DEFINITIONS = [
+  {
+    slug: "carsaf",
+    eyebrow: "KONFORUN İLK DOKUNUŞU",
+    title: "Yumuşak dokunuşla",
+    accent: "güne güzel başlayın",
+    description: "Yatak odanız için ferah, rahat ve özenli çarşaf seçeneklerini keşfedin.",
+    gradient: "cream",
+    darkText: true,
+    ctaText: "Çarşafları keşfet",
+    cta2Text: "Koleksiyonu gör",
+  },
+  {
+    slug: "tul-perde",
+    eyebrow: "TÜL PERDE KOLEKSİYONU",
+    title: "Gün ışığını",
+    accent: "zarafetle içeri alın",
+    description: "Hafif dokular ve doğru pileyle odanıza ferahlık katan tül perdeler.",
+    gradient: "ivory",
+    darkText: true,
+    ctaText: "Tül perdeleri keşfet",
+    cta2Text: "Ölçü desteği al",
+  },
+  {
+    slug: "plise-perde",
+    eyebrow: "AKILLI PENCERE ÇÖZÜMÜ",
+    title: "Her pencereye",
+    accent: "sade bir uyum",
+    description: "Modern çizgisi ve pratik kullanımıyla plise perdeler, her köşeye uyum sağlar.",
+    gradient: "sage",
+    darkText: false,
+    ctaText: "Plise perdeleri keşfet",
+    cta2Text: "Penceren için seç",
+  },
+  {
+    slug: "stor-perde",
+    eyebrow: "MODERN IŞIK KONTROLÜ",
+    title: "Işığı kontrol edin,",
+    accent: "yaşamı güzelleştirin",
+    description: "Temiz çizgiler, kolay kullanım ve günün her saatine uyum sağlayan stor perdeler.",
+    gradient: "amber",
+    darkText: false,
+    ctaText: "Stor perdeleri keşfet",
+    cta2Text: "Modelleri incele",
+  },
+  {
+    slug: "zebra-perde",
+    eyebrow: "GÜNÜN RİTMİNE UYUM",
+    title: "Işığı dilediğiniz gibi",
+    accent: "ayarlayın",
+    description: "Zebra perdelerle mahremiyet ve gün ışığı arasında pratik bir denge kurun.",
+    gradient: "sand",
+    darkText: true,
+    ctaText: "Zebra perdeleri keşfet",
+    cta2Text: "Seçenekleri gör",
+  },
+  {
+    slug: "koltuk",
+    eyebrow: "EVİNİZİN SEVİLEN KÖŞESİ",
+    title: "Koltuklarınıza",
+    accent: "yenilenen bir görünüm",
+    description: "Yaşam alanınıza taze bir dokunuş katan kullanışlı ve şık koltuk seçenekleri.",
+    gradient: "terracotta",
+    darkText: false,
+    ctaText: "Koltuk ürünlerini gör",
+    cta2Text: "Yeni görünümü keşfet",
+  },
+  {
+    slug: "ormetulperde",
+    eyebrow: "DOKUSU GÖRÜNEN ŞIKLIK",
+    title: "Karakteri olan",
+    accent: "özgün bir atmosfer",
+    description: "Örme tüllerin kendine özgü dokusuyla pencerenize sıcak ve seçkin bir ifade katın.",
+    gradient: "plum",
+    darkText: false,
+    ctaText: "Örme tülleri keşfet",
+    cta2Text: "Dokuları incele",
+  },
+  {
+    slug: "guneslik",
+    eyebrow: "GÜNEŞİN KEYFİ",
+    title: "Güneşin keyfi,",
+    accent: "rahatsız eden ışık olmadan",
+    description: "Güneşlik perdelerle odalarınızı daha huzurlu, dengeli ve serin hissettirin.",
+    gradient: "sky",
+    darkText: true,
+    ctaText: "Güneşlikleri keşfet",
+    cta2Text: "Işık çözümlerini gör",
+  },
+  {
+    slug: "fonperdeler",
+    eyebrow: "DEKORASYONUN SON DOKUNUŞU",
+    title: "Odanın karakterini",
+    accent: "tek dokunuşla değiştirin",
+    description: "Fon perdelerle renk, derinlik ve güçlü bir dekorasyon etkisi kazandırın.",
+    gradient: "rose",
+    darkText: false,
+    ctaText: "Fon perdeleri keşfet",
+    cta2Text: "Renkleri keşfet",
+  },
+] as const;
 
 function money(value: unknown) {
   return `₺${Number(value || 0).toLocaleString("tr-TR", { minimumFractionDigits: 2 })}`;
@@ -119,10 +224,14 @@ function BookBanner({
   products,
   fallbackProducts,
   banners,
+  categories,
+  categoryProducts,
 }: {
   products: Product[];
   fallbackProducts: Product[];
   banners: Banner[];
+  categories: any[];
+  categoryProducts: Record<string, Product[]>;
 }) {
   const [index, setIndex] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
@@ -175,15 +284,42 @@ function BookBanner({
       darkText: false,
     },
   ];
-  const slides: BannerSlide[] = banners.length
-    ? banners.map((banner) => ({
-        ...banner,
-        eyebrow: banner.badge || "GÖÇMEN PERDE",
-        accent: banner.subtitle || "",
-        description: banner.subtitle ? "" : "Seçili ürünleri keşfedin.",
-        className: `book-banner--${banner.gradient || "amber"}`,
-        productIds: banner.productIds ?? [],
-      }))
+  const categorySlides: BannerSlide[] = CATEGORY_BANNER_DEFINITIONS.map((definition) => {
+    const category = categories.find(
+      (candidate) => normalizeCategoryValue(candidate.slug) === normalizeCategoryValue(definition.slug),
+    );
+    return {
+      id: `category-${definition.slug}`,
+      title: definition.title,
+      subtitle: definition.accent,
+      badge: definition.eyebrow,
+      ctaText: definition.ctaText,
+      ctaHref: category?.slug ? `/kategori/${category.slug}` : `/kategori/${definition.slug}`,
+      cta2Text: definition.cta2Text,
+      cta2Href: "/contact",
+      imageUrl: null,
+      gradient: definition.gradient,
+      darkText: definition.darkText,
+      eyebrow: definition.eyebrow,
+      accent: definition.accent,
+      description: definition.description,
+      className: `book-banner--${definition.gradient}`,
+      categorySlug: definition.slug,
+      categoryName: category?.name || definition.slug,
+      categoryProducts: categoryProducts[definition.slug] ?? [],
+      productIds: [],
+    };
+  });
+  const adminSlides: BannerSlide[] = banners.map((banner) => ({
+    ...banner,
+    eyebrow: banner.badge || "GÖÇMEN PERDE",
+    accent: banner.subtitle || "",
+    description: banner.subtitle ? "" : "Seçili ürünleri keşfedin.",
+    className: `book-banner--${banner.gradient || "amber"}`,
+    productIds: banner.productIds ?? [],
+  }));
+  const slides: BannerSlide[] = categorySlides.length
+    ? [...categorySlides, ...adminSlides]
     : fallbackSlides.map((slide) => ({ ...slide, productIds: [] }));
   useEffect(() => {
     if (isDragging || dragOffset !== 0) return;
@@ -197,13 +333,15 @@ function BookBanner({
     };
   }, []);
 
-  const getSlideProducts = (slide: BannerSlide) =>
-    slide.productIds?.length
+  const getSlideProducts = (slide: BannerSlide) => {
+    if (slide.categorySlug) return (slide.categoryProducts ?? []).slice(0, 4);
+    return slide.productIds?.length
       ? slide.productIds
           .map((productId) => productById.get(productId))
           .filter((product): product is Product => Boolean(product))
           .slice(0, 4)
       : featuredCovers;
+  };
 
   const handleTouchStart = (event: TouchEvent<HTMLElement>) => {
     const touch = event.touches[0];
@@ -249,76 +387,110 @@ function BookBanner({
     }, 360);
   };
 
+  const activeSlide = slides[index] ?? slides[0];
+
   return (
-    <section
-      className="book-banner book-banner--premium book-swipe-zone"
-      aria-label="Öne çıkan kampanyalar"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      <div
-        className={`book-banner__track ${isDragging ? "is-dragging" : ""}`}
-        style={{ transform: `translate3d(calc(${index * -100}% + ${dragOffset}px), 0, 0)` }}
+    <>
+      <section
+        className="book-banner book-banner--premium book-swipe-zone"
+        aria-label="Perde kategorileri ve kampanyalar"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
-        {slides.map((slide, slideIndex) => (
-          <article className={`book-banner__premium-slide ${slide.className} ${slide.darkText ? "book-banner--dark-text" : ""}`} key={slide.id || slideIndex}>
-            <div className="book-banner__premium-copy">
-              <p className="book-banner__premium-kicker">{slide.eyebrow}</p>
-              <h1>
-                {slide.title}
-                {slide.accent && <strong>{slide.accent}</strong>}
-              </h1>
-              <p className="book-banner__premium-description">{slide.description}</p>
-              {slide.ctaText !== null && (
-                <div className="book-banner__premium-actions">
-                   <Link href={slide.ctaHref || "/products?featured=true"} className="book-banner__premium-primary">
-                    {slide.ctaText || "Keşfet"} <span className="book-inline-arrow" aria-hidden="true" />
-                  </Link>
-                  {slide.cta2Text && (
-                    <Link href={slide.cta2Href || "/products"} className="book-banner__premium-secondary">{slide.cta2Text}</Link>
-                  )}
-                </div>
-              )}
-            </div>
-            <div className="book-banner__premium-stage">
-              <div className="book-banner__premium-halo" aria-hidden="true" />
-              <div className="book-banner__premium-products">
-                 {getSlideProducts(slide).length ? getSlideProducts(slide).map((product, coverIndex) => (
-                   <Link
-                     href={`/products/${product.slug}`}
-                     prefetch={false}
-                     className="book-banner__premium-product"
-                     key={`${product.id}-${coverIndex}`}
-                     aria-label={`${product.name} ürününü incele`}
-                     style={{ "--rotation": `${(coverIndex - 1.5) * 5}deg`, "--lift": `${Math.abs(coverIndex - 1.5) * 8}px` } as CSSProperties}
-                   >
-                     <ProductImage src={product.images} alt={product.name} fill sizes="(max-width: 767px) 76px, 122px" className="book-banner__premium-product-image object-contain p-2" priority={slideIndex === index && coverIndex === 0} fallbackLabel="" />
-                     <span className="book-banner__premium-product-number">0{coverIndex + 1}</span>
-                     <span className="book-banner__premium-product-label">{product.brand?.name || product.category?.name || "Seçki"}</span>
-                   </Link>
-                 )) : (
-                  <div className="book-banner__premium-empty"><span className="book-placeholder-glyph" aria-hidden="true" /></div>
+        <div
+          className={`book-banner__track ${isDragging ? "is-dragging" : ""}`}
+          style={{ transform: `translate3d(calc(${index * -100}% + ${dragOffset}px), 0, 0)` }}
+        >
+          {slides.map((slide, slideIndex) => (
+            <article className={`book-banner__premium-slide ${slide.className} ${slide.darkText ? "book-banner--dark-text" : ""}`} key={slide.id || slideIndex}>
+              <div className="book-banner__premium-copy">
+                <p className="book-banner__premium-kicker">{slide.eyebrow}</p>
+                <h1>
+                  {slide.title}
+                  {slide.accent && <strong>{slide.accent}</strong>}
+                </h1>
+                <p className="book-banner__premium-description">{slide.description}</p>
+                {slide.ctaText !== null && (
+                  <div className="book-banner__premium-actions">
+                     <Link href={slide.ctaHref || "/products?featured=true"} className="book-banner__premium-primary">
+                      {slide.ctaText || "Keşfet"} <span className="book-inline-arrow" aria-hidden="true" />
+                    </Link>
+                    {slide.cta2Text && (
+                      <Link href={slide.cta2Href || "/products"} className="book-banner__premium-secondary">{slide.cta2Text}</Link>
+                    )}
+                  </div>
                 )}
               </div>
-              <div className="book-banner__premium-meta">
-                <span>{slide.eyebrow}</span>
-                <strong>{String(slideIndex + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</strong>
+              <div className="book-banner__premium-stage">
+                <div className="book-banner__premium-halo" aria-hidden="true" />
+                <div className="book-banner__premium-products">
+                   {getSlideProducts(slide).length ? getSlideProducts(slide).map((product, coverIndex) => (
+                     <Link
+                       href={`/products/${product.slug}`}
+                       prefetch={false}
+                       className="book-banner__premium-product"
+                       key={`${product.id}-${coverIndex}`}
+                       aria-label={`${product.name} ürününü incele`}
+                       style={{ "--rotation": `${(coverIndex - 1.5) * 5}deg`, "--lift": `${Math.abs(coverIndex - 1.5) * 8}px` } as CSSProperties}
+                     >
+                       <ProductImage src={product.images} alt={product.name} fill sizes="(max-width: 767px) 76px, 122px" className="book-banner__premium-product-image object-contain p-2" priority={slideIndex === index && coverIndex === 0} fallbackLabel="" />
+                       <span className="book-banner__premium-product-number">0{coverIndex + 1}</span>
+                       <span className="book-banner__premium-product-label">{product.brand?.name || product.category?.name || "Seçki"}</span>
+                     </Link>
+                   )) : (
+                    <div className="book-banner__premium-empty"><span className="book-placeholder-glyph" aria-hidden="true" /></div>
+                  )}
+                </div>
+                <div className="book-banner__premium-meta">
+                  <span>{slide.categoryName || slide.eyebrow}</span>
+                  <strong>{String(slideIndex + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</strong>
+                </div>
               </div>
+            </article>
+          ))}
+        </div>
+        {slides.length > 1 && (
+          <>
+            <button type="button" className="book-banner__arrow book-banner__arrow--left" onClick={() => setIndex((index - 1 + slides.length) % slides.length)} aria-label="Önceki kampanya"><span className="book-banner-arrow-glyph book-banner-arrow-glyph--left" aria-hidden="true" /></button>
+            <button type="button" className="book-banner__arrow book-banner__arrow--right" onClick={() => setIndex((index + 1) % slides.length)} aria-label="Sonraki kampanya"><span className="book-banner-arrow-glyph book-banner-arrow-glyph--right" aria-hidden="true" /></button>
+            <div className="book-banner__premium-nav">
+              <div className="book-banner__premium-progress"><span style={{ width: `${((index + 1) / slides.length) * 100}%` }} /></div>
+              <div className="book-banner__premium-count">{String(index + 1).padStart(2, "0")} — {String(slides.length).padStart(2, "0")}</div>
             </div>
-          </article>
-        ))}
-      </div>
-      {slides.length > 1 && (
-        <>
-          <button type="button" className="book-banner__arrow book-banner__arrow--left" onClick={() => setIndex((index - 1 + slides.length) % slides.length)} aria-label="Önceki kampanya"><span className="book-banner-arrow-glyph book-banner-arrow-glyph--left" aria-hidden="true" /></button>
-          <button type="button" className="book-banner__arrow book-banner__arrow--right" onClick={() => setIndex((index + 1) % slides.length)} aria-label="Sonraki kampanya"><span className="book-banner-arrow-glyph book-banner-arrow-glyph--right" aria-hidden="true" /></button>
-          <div className="book-banner__premium-nav">
-            <div className="book-banner__premium-progress"><span style={{ width: `${((index + 1) / slides.length) * 100}%` }} /></div>
-            <div className="book-banner__premium-count">{String(index + 1).padStart(2, "0")} — {String(slides.length).padStart(2, "0")}</div>
+          </>
+        )}
+      </section>
+      {activeSlide?.categorySlug && activeSlide.categoryProducts?.length ? (
+        <CategoryBannerProducts slide={activeSlide} />
+      ) : null}
+    </>
+  );
+}
+
+function CategoryBannerProducts({ slide }: { slide: BannerSlide }) {
+  const products = slide.categoryProducts ?? [];
+  if (!products.length || !slide.categorySlug) return null;
+
+  return (
+    <section className="book-category-banner-products" aria-label={`${slide.categoryName || "Kategori"} ürünleri`}>
+      <div className="book-section-width">
+        <div className="book-category-banner-products__heading">
+          <div>
+            <span className="book-kicker">Bu kategoriden seçtiklerimiz</span>
+            <h2>{slide.categoryName || "Perde seçkisi"}</h2>
+            <p>Bu slayttaki kategoriye ait seçili ürünleri inceleyin.</p>
           </div>
-        </>
-      )}
+          <Link href={`/kategori/${slide.categorySlug}`} className="book-all-link">
+            Tümünü gör <ArrowRight size={15} aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="book-category-banner-products__grid">
+          {products.map((product, index) => (
+            <ProductTile key={product.id} product={product} featured={index === 0} />
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
@@ -987,6 +1159,7 @@ export default function BookstoreHome({
   categories,
   brands,
   banners = [],
+  categoryProducts = {},
   homepageConfig,
 }: {
   products: Product[];
@@ -995,6 +1168,7 @@ export default function BookstoreHome({
   categories: any[];
   brands: any[];
   banners?: Banner[];
+  categoryProducts?: Record<string, Product[]>;
   homepageConfig?: string | null;
 }) {
   const config = parseHomepageConfig(homepageConfig);
@@ -1013,6 +1187,8 @@ export default function BookstoreHome({
                 products={allProducts.length ? allProducts : newProducts}
                 fallbackProducts={products.length ? products : newProducts}
                 banners={banners}
+                categories={categories}
+                categoryProducts={categoryProducts}
               />
             );
           case "brandSignature":

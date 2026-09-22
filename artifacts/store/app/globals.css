@@ -968,6 +968,20 @@ h1, h2, h3, h4, h5, h6 {
   color: rgba(48, 43, 35, .72);
 }
 
+.book-banner__premium-slide.book-banner--dark-text .book-banner__premium-product-name {
+  border-color: rgba(48,43,35,.25);
+  color: rgba(48,43,35,.82);
+}
+
+.book-banner__premium-slide.book-banner--dark-text .book-banner__premium-product-name:hover {
+  background: rgba(48,43,35,.08);
+  color: #302b23;
+}
+
+.book-banner__premium-slide.book-banner--dark-text .book-banner__premium-product-name-copy small {
+  color: rgba(48,43,35,.56);
+}
+
 .book-category-banner-products {
   overflow: hidden;
   padding: 30px 0 42px;
@@ -1098,7 +1112,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .book-banner__premium-stage {
   position: relative;
-  min-height: 300px;
+  min-height: 430px;
   margin-right: max(24px, calc((100vw - 1180px) / 2 + 24px));
 }
 
@@ -1116,7 +1130,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .book-banner__premium-products {
   position: absolute;
-  inset: 0;
+  inset: 0 0 106px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1161,14 +1175,17 @@ h1, h2, h3, h4, h5, h6 {
   left: 10px;
   z-index: 2;
   overflow: hidden;
+  display: -webkit-box;
   color: rgba(30,25,18,.7);
   font-size: 8px;
   font-weight: 800;
-  letter-spacing: .08em;
+  letter-spacing: .02em;
+  line-height: 1.25;
   text-align: center;
   text-overflow: ellipsis;
-  text-transform: uppercase;
-  white-space: nowrap;
+  text-transform: none;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
 
 .book-banner__premium-product-label::before {
@@ -1177,6 +1194,67 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: 7px;
   background: rgba(30,25,18,.36);
   content: "";
+}
+
+.book-banner__premium-product-names {
+  position: absolute;
+  right: 0;
+  bottom: 27px;
+  left: 0;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.book-banner__premium-product-name {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 7px;
+  padding: 8px 9px;
+  border-top: 1px solid rgba(248,243,234,.28);
+  color: rgba(248,243,234,.86);
+  text-decoration: none;
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.book-banner__premium-product-name:hover {
+  background: rgba(248,243,234,.1);
+  color: #fff;
+}
+
+.book-banner__premium-product-name-number {
+  padding-top: 1px;
+  color: #d3ae62;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 11px;
+}
+
+.book-banner__premium-product-name-copy {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+}
+
+.book-banner__premium-product-name-copy strong {
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.book-banner__premium-product-name-copy small {
+  overflow: hidden;
+  color: rgba(248,243,234,.55);
+  font-size: 8px;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .book-banner__premium-material {
@@ -1378,12 +1456,17 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .book-banner__premium-stage {
-    min-height: 260px;
+    min-height: 405px;
     margin: 18px 26px 0;
   }
 
   .book-banner__premium-halo {
     width: 260px;
+  }
+
+  .book-banner__premium-products {
+    inset: 0 0 132px;
+    gap: 7px;
   }
 
   .book-banner__premium-product {
@@ -1394,6 +1477,40 @@ h1, h2, h3, h4, h5, h6 {
   .book-banner__premium-material {
     width: 74px;
     height: 154px;
+  }
+
+  .book-banner__premium-product-label {
+    right: 7px;
+    bottom: 12px;
+    left: 7px;
+    font-size: 7px;
+  }
+
+  .book-banner__premium-product-names {
+    right: 0;
+    bottom: 27px;
+    left: 0;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px 8px;
+  }
+
+  .book-banner__premium-product-name {
+    min-height: 51px;
+    padding: 6px 5px;
+    gap: 5px;
+  }
+
+  .book-banner__premium-product-name-number {
+    font-size: 10px;
+  }
+
+  .book-banner__premium-product-name-copy strong {
+    font-size: 9px;
+    -webkit-line-clamp: 2;
+  }
+
+  .book-banner__premium-product-name-copy small {
+    font-size: 7px;
   }
 
   .book-banner__premium-nav {

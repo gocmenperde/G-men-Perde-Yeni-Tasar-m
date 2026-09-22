@@ -460,10 +460,30 @@ function BookBanner({
                           }}
                         />
                        <span className="book-banner__premium-product-number">0{coverIndex + 1}</span>
-                       <span className="book-banner__premium-product-label">{product.brand?.name || product.category?.name || "Seçki"}</span>
+                        <span className="book-banner__premium-product-label">{product.name}</span>
                      </Link>
                     ))}
                 </div>
+                 {slide === activeSlide && activeProducts.length > 0 && (
+                   <div className="book-banner__premium-product-names" aria-label="Banner ürünleri">
+                     {activeProducts.map((product, productIndex) => (
+                       <Link
+                         href={`/products/${product.slug}`}
+                         prefetch={false}
+                         className="book-banner__premium-product-name"
+                         key={`name-${product.id}`}
+                       >
+                         <span className="book-banner__premium-product-name-number">
+                           0{productIndex + 1}
+                         </span>
+                         <span className="book-banner__premium-product-name-copy">
+                           <strong>{product.name}</strong>
+                           <small>{product.brand?.name || product.category?.name || "Göçmen seçkisi"}</small>
+                         </span>
+                       </Link>
+                     ))}
+                   </div>
+                 )}
                 <div className="book-banner__premium-meta">
                   <span>{slide.categoryName || slide.eyebrow}</span>
                   <strong>{String(slideIndex + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</strong>

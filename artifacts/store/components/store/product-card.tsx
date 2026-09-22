@@ -9,6 +9,7 @@ import ProductImage from "@/components/store/product-image";
 import { useCartStore } from "@/lib/store/cart";
 import { useComparisonStore } from "@/lib/store/comparison";
 import { useWishlistStore } from "@/lib/store/wishlist";
+import { getCurtainMeasurementRequirements } from "@/lib/curtain-measurements";
 
 const QuickViewModal = dynamic(() => import("@/components/store/quick-view-modal"), { ssr: false });
 
@@ -34,6 +35,10 @@ export default function ProductCard({
   const { add: addComparison, remove: removeComparison, has: hasComparison } = useComparisonStore();
   const isWished = hasWishlist(product.id);
   const isCompared = hasComparison(product.id);
+  const measurementRequirements = getCurtainMeasurementRequirements(product);
+  const needsMeasurement = measurementRequirements.requiresWidth
+    || measurementRequirements.requiresHeight
+    || measurementRequirements.requiresPile;
   const href = `/products/${product.slug}`;
   const discount = product.comparePrice
     ? Math.round((1 - Number(product.price) / Number(product.comparePrice)) * 100)
@@ -51,6 +56,10 @@ export default function ProductCard({
   const handleAdd = useCallback((event: MouseEvent) => {
     stop(event);
     if (!product.stock || adding) return;
+    if (needsMeasurement) {
+      router.push(href);
+      return;
+    }
     addItem({
       id: product.id,
       slug: product.slug,
@@ -62,7 +71,7 @@ export default function ProductCard({
     setAdding(true);
     window.setTimeout(() => setAdding(false), 1500);
     toast.success("Sepete eklendi.", { style: { fontSize: "13px" } });
-  }, [addItem, adding, product]);
+  }, [addItem, adding, href, needsMeasurement, product, router]);
 
   const handleWishlist = useCallback((event: MouseEvent) => {
     stop(event);
@@ -124,8 +133,8 @@ export default function ProductCard({
           <button type="button" onClick={handleWishlist} aria-label="Favorilere ekle" className={`touch-target rounded-xl border p-2 ${isWished ? "border-[#D96C54] bg-[#D96C54] text-white" : "border-[var(--line)] text-[var(--ink-muted)] hover:text-[#D96C54]"}`}>
             <Heart className={`h-3.5 w-3.5 ${isWished ? "fill-current" : ""}`} />
           </button>
-          <button type="button" onClick={handleAdd} disabled={!product.stock} aria-label="Sepete ekle" className={`touch-target rounded-xl border p-2 ${adding ? "border-[var(--success)] bg-[var(--success)] text-white" : "border-[var(--navy)] bg-[var(--navy)] text-white disabled:border-[var(--line)] disabled:bg-[var(--surface-muted)] disabled:text-[var(--ink-muted)]"}`}>
-            {adding ? <Check className="h-3.5 w-3.5" /> : <ShoppingCart className="h-3.5 w-3.5" />}
+           <button type="button" onClick={handleAdd} disabled={!product.stock} aria-label={needsMeasurement ? "Ölçü seç" : "Sepete ekle"} className={`touch-target rounded-xl border p-2 ${adding ? "border-[var(--success)] bg-[var(--success)] text-white" : "border-[var(--navy)] bg-[var(--navy)] text-white disabled:border-[var(--line)] disabled:bg-[var(--surface-muted)] disabled:text-[var(--ink-muted)]"}`}>
+             {adding ? <Check className="h-3.5 w-3.5" /> : needsMeasurement ? <span className="text-[10px] font-bold">ÖLÇÜ</span> : <ShoppingCart className="h-3.5 w-3.5" />}
           </button>
         </div>
       </div>
@@ -170,8 +179,8 @@ export default function ProductCard({
           <span className={`text-[10px] font-bold ${product.stock > 0 ? "text-[var(--success)]" : "text-[var(--ink-muted)]"}`}>{product.stock > 0 ? "Stokta" : "Tükendi"}</span>
         </div>
         {product.stock > 0 && <div className="mt-3 flex items-center gap-1.5 rounded-lg border border-[var(--line)] bg-[var(--surface-muted)] px-2 py-1.5 text-[10px] font-bold text-[var(--ink-muted)]"><Truck className="h-3 w-3 text-[var(--gold)]" /> Hızlı teslimat</div>}
-        <button type="button" onClick={handleAdd} disabled={!product.stock} className={`mt-3 flex min-h-10 w-full items-center justify-center gap-1.5 rounded-xl text-xs font-extrabold transition-colors ${adding ? "bg-[var(--success)] text-white" : "bg-[var(--navy)] text-white hover:bg-[var(--gold)] disabled:bg-[var(--surface-muted)] disabled:text-[var(--ink-muted)]"}`}>
-          {adding ? <><Check className="h-3.5 w-3.5" /> Eklendi</> : product.stock > 0 ? <><ShoppingCart className="h-3.5 w-3.5" /> Sepete ekle</> : "Tükendi"}
+         <button type="button" onClick={handleAdd} disabled={!product.stock} className={`mt-3 flex min-h-10 w-full items-center justify-center gap-1.5 rounded-xl text-xs font-extrabold transition-colors ${adding ? "bg-[var(--success)] text-white" : "bg-[var(--navy)] text-white hover:bg-[var(--gold)] disabled:bg-[var(--surface-muted)] disabled:text-[var(--ink-muted)]"}`}>
+           {adding ? <><Check className="h-3.5 w-3.5" /> Eklendi</> : product.stock > 0 ? needsMeasurement ? <><Eye className="h-3.5 w-3.5" /> Ölçü seç</> : <><ShoppingCart className="h-3.5 w-3.5" /> Sepete ekle</> : "Tükendi"}
         </button>
       </div>
       {quickView && <QuickViewModal product={product} onClose={() => setQuickView(false)} />}

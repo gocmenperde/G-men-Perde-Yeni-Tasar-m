@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { db } from "@/lib/db";
+import {
+  calculateCurtainPrice,
+  getCurtainMeasurementRequirements,
+  getPileOptions,
+} from "@/lib/curtain-measurements";
 
 export async function POST(request: NextRequest) {
   const token = await getToken({
@@ -27,7 +32,18 @@ export async function POST(request: NextRequest) {
     const productIds = items.map((i: any) => i.productId);
     const products = await db.product.findMany({
       where: { id: { in: productIds }, isActive: true },
-      select: { id: true, name: true, price: true, stock: true },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        stock: true,
+        unit: true,
+        isMeter: true,
+        isSquareMeter: true,
+        requiresWidth: true,
+        requiresHeight: true,
+        category: { select: { slug: true, name: true } },
+      },
     });
 
     const productMap = new Map(products.map((p) => [p.id, p]));
@@ -38,11 +54,25 @@ export async function POST(request: NextRequest) {
       if (product.stock < item.quantity) {
         return NextResponse.json({ error: `"${product.name}" için yeterli stok yok. Stok: ${product.stock}` }, { status: 400 });
       }
+      const requirements = getCurtainMeasurementRequirements(product);
+      const width = Number(item.dimensions?.width);
+      const height = Number(item.dimensions?.height);
+      const pileFactor = Number(item.dimensions?.pileFactor);
+      if (requirements.requiresWidth && (!Number.isFinite(width) || width <= 0)) {
+        return NextResponse.json({ error: `"${product.name}" için en ölçüsü zorunludur.` }, { status: 400 });
+      }
+      if (requirements.requiresHeight && (!Number.isFinite(height) || height <= 0)) {
+        return NextResponse.json({ error: `"${product.name}" için boy ölçüsü zorunludur.` }, { status: 400 });
+      }
+      if (requirements.requiresPile && !getPileOptions().some((option) => Number(option.value) === pileFactor)) {
+        return NextResponse.json({ error: `"${product.name}" için geçerli bir pile sıklığı seçin.` }, { status: 400 });
+      }
     }
 
     const subtotal = items.reduce((sum: number, item: any) => {
       const product = productMap.get(item.productId);
-      return sum + Number(product?.price ?? item.price) * item.quantity;
+      if (!product) return sum;
+      return sum + calculateCurtainPrice(product, item.dimensions ?? {}) * item.quantity;
     }, 0);
 
     // Kargo ayarlarını DB'den oku
@@ -111,7 +141,11 @@ export async function POST(request: NextRequest) {
             create: items.map((item: any) => ({
               productId: item.productId,
               quantity: item.quantity,
-              price: Number(productMap.get(item.productId)?.price ?? item.price),
+              price: Number(calculateCurtainPrice(
+                productMap.get(item.productId)!,
+                item.dimensions ?? {},
+              ).toFixed(2)),
+              dimensions: item.dimensions ?? undefined,
             })),
           },
         },

@@ -13,6 +13,11 @@ import SocialShare from "@/components/store/social-share";
 import { trackRecentlyViewed } from "@/components/store/recently-viewed";
 import dynamic from "next/dynamic";
 import ProductImage from "@/components/store/product-image";
+import {
+  calculateCurtainPrice,
+  getCurtainMeasurementRequirements,
+  getPileOptions,
+} from "@/lib/curtain-measurements";
 const SaleCountdown = dynamic(() => import("@/components/store/sale-countdown"), { ssr: false });
 const SameDayShipping = dynamic(() => import("@/components/store/same-day-shipping"), { ssr: false });
 
@@ -29,6 +34,7 @@ export default function ProductInfo({ product }: { product: any }) {
   const [showDesktopBar, setShowDesktopBar] = useState(false);
   const [width, setWidth] = useState("");
   const [height, setHeight] = useState("");
+  const [pileFactor, setPileFactor] = useState("2");
   const ctaRef = useRef<HTMLDivElement>(null);
 
   const copyBarcode = useCallback(() => {
@@ -129,20 +135,26 @@ export default function ProductInfo({ product }: { product: any }) {
     : null;
   const reviewCount = validRatings.length;
 
-  const needsMeasurement = Boolean(
-    product.requiresWidth || product.requiresHeight || product.isMeter || product.isSquareMeter,
-  );
+  const measurementRequirements = getCurtainMeasurementRequirements(product);
+  const needsMeasurement = measurementRequirements.requiresWidth
+    || measurementRequirements.requiresHeight
+    || measurementRequirements.requiresPile;
   const widthValue = Number(width.replace(",", "."));
   const heightValue = Number(height.replace(",", "."));
-  const hasWidth = !product.requiresWidth || (Number.isFinite(widthValue) && widthValue > 0);
-  const hasHeight = !product.requiresHeight || (Number.isFinite(heightValue) && heightValue > 0);
+  const pileValue = Number(pileFactor);
+  const hasWidth = !measurementRequirements.requiresWidth || (Number.isFinite(widthValue) && widthValue > 0);
+  const hasHeight = !measurementRequirements.requiresHeight || (Number.isFinite(heightValue) && heightValue > 0);
   const area = widthValue > 0 && heightValue > 0 ? widthValue * heightValue : 0;
-  const measuredUnitPrice =
-    product.isSquareMeter && area > 0
-      ? Number(product.price) * area
-      : product.isMeter && widthValue > 0
-        ? Number(product.price) * widthValue
-        : Number(product.price);
+  const dimensions = {
+    ...(widthValue > 0 ? { width: widthValue } : {}),
+    ...(heightValue > 0 ? { height: heightValue } : {}),
+    ...(area > 0 ? { area: Number(area.toFixed(2)) } : {}),
+    ...(measurementRequirements.requiresPile
+      ? { pile: getPileOptions().find((option) => option.value === pileFactor)?.label, pileFactor: pileValue }
+      : {}),
+    unit: measurementRequirements.kind === "area" ? "m²" : measurementRequirements.kind === "meter" ? "mt" : product.unit ?? "adet",
+  };
+  const measuredUnitPrice = calculateCurtainPrice(product, dimensions);
 
   const handleAdd = () => {
     if ((product.stock ?? 0) < 1) { toast.error("Bu ürün stokta yok."); return; }
@@ -150,16 +162,13 @@ export default function ProductInfo({ product }: { product: any }) {
       toast.error("Sipariş için ürün ölçülerini girin.");
       return;
     }
-    const measurement = needsMeasurement
-      ? {
-          ...(widthValue > 0 ? { width: widthValue } : {}),
-          ...(heightValue > 0 ? { height: heightValue } : {}),
-          ...(area > 0 ? { area: Number(area.toFixed(2)) } : {}),
-          unit: product.isSquareMeter ? "m²" : product.isMeter ? "mt" : product.unit ?? "adet",
-        }
-      : undefined;
+    if (measurementRequirements.requiresPile && !Number.isFinite(pileValue)) {
+      toast.error("Pile seçimi zorunludur.");
+      return;
+    }
+    const measurement = needsMeasurement ? dimensions : undefined;
     const itemId = measurement
-      ? `${product.id}:${measurement.width ?? ""}:${measurement.height ?? ""}`
+      ? `${product.id}:${measurement.width ?? ""}:${measurement.height ?? ""}:${measurement.pileFactor ?? ""}`
       : product.id;
     addItem({
       id: itemId,
@@ -188,6 +197,9 @@ export default function ProductInfo({ product }: { product: any }) {
     const parts = [
       widthValue > 0 ? ` En: ${widthValue} m` : "",
       heightValue > 0 ? ` Boy: ${heightValue} m` : "",
+      measurementRequirements.requiresPile && pileValue > 0
+        ? ` Pile: ${getPileOptions().find((option) => option.value === pileFactor)?.label ?? pileFactor}`
+        : "",
     ].filter(Boolean);
     return parts.length ? ` Ölçüler:${parts.join(",")}` : "";
   }
@@ -348,14 +360,14 @@ export default function ProductInfo({ product }: { product: any }) {
           <div className="mb-3 flex items-center gap-2">
             <Ruler className="h-4 w-4 text-[var(--gold)]" aria-hidden="true" />
             <div>
-              <p className="text-sm font-extrabold text-[var(--navy)]">Özel ölçünüzü girin</p>
+              <p className="text-sm font-extrabold text-[var(--navy)]">{measurementRequirements.title}</p>
               <p className="text-xs text-[var(--ink-muted)]">
-                Fiyat {product.isSquareMeter ? "m²" : product.isMeter ? "metre" : "ürün"} üzerinden hesaplanır.
+                {measurementRequirements.description}
               </p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {(product.requiresWidth || product.isMeter || product.isSquareMeter) && (
+            {measurementRequirements.requiresWidth && (
               <label className="text-xs font-bold text-[var(--navy)]">
                 En (m)
                 <input
@@ -367,7 +379,7 @@ export default function ProductInfo({ product }: { product: any }) {
                 />
               </label>
             )}
-            {(product.requiresHeight || product.isSquareMeter) && (
+            {measurementRequirements.requiresHeight && (
               <label className="text-xs font-bold text-[var(--navy)]">
                 Boy (m)
                 <input
@@ -379,10 +391,31 @@ export default function ProductInfo({ product }: { product: any }) {
                 />
               </label>
             )}
+            {measurementRequirements.requiresPile && (
+              <label className="col-span-2 text-xs font-bold text-[var(--navy)]">
+                Pile sıklığı
+                <select
+                  value={pileFactor}
+                  onChange={(event) => setPileFactor(event.target.value)}
+                  className="mt-1.5 w-full rounded-xl border border-[var(--line)] bg-[var(--surface)] px-3 py-2.5 text-sm font-semibold outline-none focus:border-[var(--gold)] focus:ring-2 focus:ring-[var(--gold-light)]"
+                >
+                  {getPileOptions().map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+              </label>
+            )}
           </div>
-          {((product.isSquareMeter && area > 0) || (product.isMeter && widthValue > 0)) && (
+          {((measurementRequirements.kind === "tul" && widthValue > 0 && pileValue > 0)
+            || (measurementRequirements.kind === "area" && area > 0)
+            || (measurementRequirements.kind === "meter" && widthValue > 0)) && (
             <p className="mt-3 text-xs font-bold text-[var(--gold)]">
               Hesaplanan ürün tutarı: ₺{measuredUnitPrice.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}
+            </p>
+          )}
+          {measurementRequirements.kind === "fon" && heightValue > 0 && (
+            <p className="mt-3 text-xs font-bold text-[var(--gold)]">
+              Boy ölçünüz sipariş notuna eklenecektir: {heightValue} m
             </p>
           )}
         </div>

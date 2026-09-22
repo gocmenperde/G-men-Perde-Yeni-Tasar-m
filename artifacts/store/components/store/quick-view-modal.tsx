@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   X, ChevronLeft, ChevronRight, ShoppingCart, Heart,
   ExternalLink, ImageOff, Package,
@@ -11,6 +12,7 @@ import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import toast from "react-hot-toast";
 import ProductImage from "@/components/store/product-image";
+import { getCurtainMeasurementRequirements } from "@/lib/curtain-measurements";
 
 interface Props {
   product: any;
@@ -21,7 +23,12 @@ export default function QuickViewModal({ product, onClose }: Props) {
   const [imgIdx, setImgIdx] = useState(0);
   const addItem = useCartStore((s) => s.addItem);
   const { toggle, has } = useWishlistStore();
+  const router = useRouter();
   const wished = has(product.id);
+  const measurementRequirements = getCurtainMeasurementRequirements(product);
+  const needsMeasurement = measurementRequirements.requiresWidth
+    || measurementRequirements.requiresHeight
+    || measurementRequirements.requiresPile;
 
   const images: string[] = product.images ?? [];
 
@@ -48,6 +55,11 @@ export default function QuickViewModal({ product, onClose }: Props) {
 
   const handleAdd = () => {
     if (product.stock === 0) return;
+    if (needsMeasurement) {
+      onClose();
+      router.push(`/products/${product.slug}`);
+      return;
+    }
     addItem({
       id: product.id,
       slug: product.slug,
@@ -212,13 +224,13 @@ export default function QuickViewModal({ product, onClose }: Props) {
             {/* Butonlar */}
             <div className="px-5 pb-5 pt-2 flex flex-col gap-2.5">
               <div className="flex gap-2">
-                <button
+                  <button
                   onClick={handleAdd}
                   disabled={product.stock === 0}
                   className="flex-1 flex items-center justify-center gap-2 bg-zinc-900 dark:bg-amber-500 hover:bg-zinc-700 dark:hover:bg-amber-400 text-white dark:text-zinc-900 font-bold py-3 rounded-xl transition-colors disabled:opacity-40 disabled:cursor-not-allowed text-sm shadow-lg"
                 >
-                  <ShoppingCart className="w-4 h-4" />
-                  {product.stock === 0 ? "Stokta Yok" : "Sepete Ekle"}
+                   {needsMeasurement ? <ExternalLink className="w-4 h-4" /> : <ShoppingCart className="w-4 h-4" />}
+                   {product.stock === 0 ? "Stokta Yok" : needsMeasurement ? "Ölçü Seç" : "Sepete Ekle"}
                 </button>
                 <button
                   onClick={handleWish}

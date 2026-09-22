@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUserFromToken } from "@/lib/get-user-token";
 import { sanitizeImageList } from "@/lib/image-url";
+import {
+  calculateCurtainPrice,
+  getCurtainMeasurementRequirements,
+  getPileOptions,
+} from "@/lib/curtain-measurements";
 
 export const dynamic = "force-dynamic";
 
@@ -78,35 +83,59 @@ export async function POST(req: NextRequest) {
     const productIds = items.map((i: { productId: string }) => i.productId);
     const products = await db.product.findMany({
       where: { id: { in: productIds }, isActive: true },
+      include: { category: { select: { slug: true, name: true } } },
     });
 
     let subtotal = 0;
     const orderItems = items.map((item: {
       productId: string;
       quantity: number;
-      dimensions?: { width?: number; height?: number; area?: number; unit?: string } | null;
+      dimensions?: {
+        width?: number;
+        height?: number;
+        area?: number;
+        pile?: string;
+        pileFactor?: number;
+        unit?: string;
+      } | null;
     }) => {
       const product = products.find((p) => p.id === item.productId);
       if (!product) throw new Error(`Ürün bulunamadı: ${item.productId}`);
       if (product.stock < item.quantity)
         throw new Error(`"${product.name}" için yeterli stok yok. Mevcut: ${product.stock}`);
+      const requirements = getCurtainMeasurementRequirements(product);
       const width = Number(item.dimensions?.width);
       const height = Number(item.dimensions?.height);
+      const pileFactor = Number(item.dimensions?.pileFactor);
       const hasWidth = Number.isFinite(width) && width > 0;
       const hasHeight = Number.isFinite(height) && height > 0;
-      if ((product.isMeter || product.requiresWidth) && !hasWidth) {
+      if (requirements.requiresWidth && !hasWidth) {
         throw new Error(`"${product.name}" için en ölçüsü zorunludur.`);
       }
-      if ((product.isSquareMeter || product.requiresHeight) && !hasHeight) {
+      if (requirements.requiresHeight && !hasHeight) {
         throw new Error(`"${product.name}" için boy ölçüsü zorunludur.`);
       }
-      const measuredArea = hasWidth && hasHeight ? width * height : 0;
-      const price =
-        product.isSquareMeter
-          ? Number(product.price) * measuredArea
-          : product.isMeter
-            ? Number(product.price) * width
-            : Number(product.price);
+      if (requirements.requiresPile && (!Number.isFinite(pileFactor) || pileFactor <= 0)) {
+        throw new Error(`"${product.name}" için pile sıklığı seçimi zorunludur.`);
+      }
+      if (requirements.requiresPile && !getPileOptions().some((option) => Number(option.value) === pileFactor)) {
+        throw new Error(`"${product.name}" için geçersiz pile sıklığı.`);
+      }
+      const dimensions = requirements.kind === "none"
+        ? (item.dimensions ?? undefined)
+        : {
+            ...(hasWidth ? { width } : {}),
+            ...(hasHeight ? { height } : {}),
+            ...(hasWidth && hasHeight ? { area: Number((width * height).toFixed(2)) } : {}),
+            ...(requirements.requiresPile
+              ? {
+                  pileFactor,
+                  pile: getPileOptions().find((option) => Number(option.value) === pileFactor)?.label,
+                }
+              : {}),
+            unit: requirements.kind === "area" ? "m²" : requirements.kind === "meter" ? "mt" : product.unit ?? "adet",
+          };
+      const price = calculateCurtainPrice(product, dimensions);
       if (!Number.isFinite(price) || price <= 0) {
         throw new Error(`"${product.name}" için geçerli bir ölçü girin.`);
       }
@@ -115,7 +144,7 @@ export async function POST(req: NextRequest) {
         productId: item.productId,
         quantity: item.quantity,
         price: Number(price.toFixed(2)),
-        dimensions: item.dimensions ?? undefined,
+        dimensions,
       };
     });
 

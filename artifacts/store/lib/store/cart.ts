@@ -14,6 +14,8 @@ export interface CartItem {
     width?: number;
     height?: number;
     area?: number;
+    pile?: string;
+    pileFactor?: number;
     unit?: string;
   };
 }

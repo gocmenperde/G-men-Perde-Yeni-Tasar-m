@@ -118,13 +118,13 @@ export default async function EditorialPage({ kind }: { kind: EditorialPageKind 
       <PageHero kind={kind} />
       {kind === "inspiration" && (
         <>
-          <InspirationSection section={section} media={inspirationMedia} />
-          <CustomerProjectsSection section={projectsSection} media={projectsMedia} />
+          <InspirationSection section={section} media={inspirationMedia} showAll />
+          <CustomerProjectsSection section={projectsSection} media={projectsMedia} showAll />
         </>
       )}
       {kind === "projects" && (
         <>
-          <CustomerProjectsSection section={section} media={projectsMedia} />
+          <CustomerProjectsSection section={section} media={projectsMedia} showAll />
           <CustomerReviewsSection section={{ ...projectsSection, title: "Müşterilerimiz Anlatıyor", subtitle: "Ölçüden montaja kadar yaşanan gerçek deneyimler.", limit: 3 }} />
         </>
       )}

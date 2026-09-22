@@ -136,11 +136,14 @@ export function CurtainStorySection({ section }: { section: HomepageSection }) {
 export function CustomerProjectsSection({
   section,
   media = PROJECT_IMAGES,
+  showAll = false,
 }: {
   section: HomepageSection;
   media?: EditorialMediaItem[];
+  showAll?: boolean;
 }) {
-  const images = media.filter((image) => image.visible).slice(0, section.limit);
+  const visibleImages = media.filter((image) => image.visible);
+  const images = showAll ? visibleImages : visibleImages.slice(-section.limit);
 
   return (
     <section className="bg-[var(--cream)] py-14 sm:py-20">
@@ -197,11 +200,14 @@ export function CustomerReviewsSection({ section }: { section: HomepageSection }
 export function InspirationSection({
   section,
   media = INSPIRATION_IMAGES,
+  showAll = false,
 }: {
   section: HomepageSection;
   media?: EditorialMediaItem[];
+  showAll?: boolean;
 }) {
-  const images = media.filter((image) => image.visible).slice(0, section.limit);
+  const visibleImages = media.filter((image) => image.visible);
+  const images = showAll ? visibleImages : visibleImages.slice(-section.limit);
 
   return (
     <section className="bg-[var(--surface)] py-14 sm:py-20">

@@ -21,6 +21,9 @@ import {
   Truck,
   Trophy,
   Ruler,
+  Sun,
+  RotateCcw,
+  ArrowUpRight,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import ProductImage from "@/components/store/product-image";
@@ -581,6 +584,169 @@ function CategoryRail({ categories, section }: { categories: any[]; section: Hom
             </Link>
           ))}
         </div>
+        <CurtainFinder categories={categories} />
+      </div>
+    </section>
+  );
+}
+
+type CurtainFinderKey = "light" | "privacy" | "room";
+
+const CURTAIN_FINDER_STEPS: Array<{
+  key: CurtainFinderKey;
+  label: string;
+  question: string;
+  options: Array<{ value: string; label: string; hint: string }>;
+}> = [
+  {
+    key: "light",
+    label: "Işık",
+    question: "Odanızda nasıl bir gün ışığı istersiniz?",
+    options: [
+      { value: "soft", label: "Yumuşak ve ferah", hint: "Gün ışığı içeri süzülsün" },
+      { value: "balanced", label: "Dengeli", hint: "Işık ve mahremiyet birlikte" },
+      { value: "controlled", label: "Kontrollü", hint: "Parlama ve sıcaklık azalsın" },
+    ],
+  },
+  {
+    key: "privacy",
+    label: "Mahremiyet",
+    question: "Mahremiyet sizin için ne kadar önemli?",
+    options: [
+      { value: "light", label: "Hafif", hint: "Aydınlık ve açık bir atmosfer" },
+      { value: "medium", label: "Dengeli", hint: "Gündüz konforlu bir perdeleme" },
+      { value: "high", label: "Yüksek", hint: "Daha sakin ve korunaklı bir alan" },
+    ],
+  },
+  {
+    key: "room",
+    label: "Yaşam alanı",
+    question: "Perdeyi hangi alanda kullanacaksınız?",
+    options: [
+      { value: "living", label: "Salon", hint: "Dekorasyonun güçlü tamamlayıcısı" },
+      { value: "bedroom", label: "Yatak odası", hint: "Huzurlu ve yumuşak bir atmosfer" },
+      { value: "work", label: "Mutfak / çalışma alanı", hint: "Pratik ve kolay kullanım" },
+    ],
+  },
+];
+
+function getCurtainFinderRecommendation(answers: Partial<Record<CurtainFinderKey, string>>) {
+  if (answers.room === "work" || answers.light === "controlled") {
+    return {
+      slug: answers.privacy === "high" ? "stor-perde" : "zebra-perde",
+      title: "Zebra veya stor perde",
+      description: "Işığı günün saatine göre ayarlayabileceğiniz, pratik bir çözüm.",
+    };
+  }
+  if (answers.room === "bedroom" && answers.privacy === "high") {
+    return {
+      slug: "fonperdeler",
+      title: "Fon perde",
+      description: "Yatak odanıza derinlik ve daha korunaklı bir his kazandırır.",
+    };
+  }
+  if (answers.light === "soft" || answers.privacy === "light") {
+    return {
+      slug: "tul-perde",
+      title: "Tül perde",
+      description: "Gün ışığını yumuşatır, odanıza ferah ve zarif bir görünüm verir.",
+    };
+  }
+  return {
+    slug: "fonperdeler",
+    title: "Tül + fon perde",
+    description: "Katmanlı kullanım ile hem gün ışığını hem de dekorasyonu kontrol edin.",
+  };
+}
+
+function CurtainFinder({ categories }: { categories: any[] }) {
+  const [answers, setAnswers] = useState<Partial<Record<CurtainFinderKey, string>>>({});
+  const [step, setStep] = useState(0);
+  const currentStep = CURTAIN_FINDER_STEPS[step];
+  const isComplete = CURTAIN_FINDER_STEPS.every(({ key }) => answers[key]);
+  const recommendation = getCurtainFinderRecommendation(answers);
+  const category = findCategory(categories, [recommendation.slug]);
+  const recommendationHref = categoryHref(category, [recommendation.slug]);
+
+  const choose = (value: string) => {
+    setAnswers((current) => ({ ...current, [currentStep.key]: value }));
+    setStep((current) => Math.min(current + 1, CURTAIN_FINDER_STEPS.length - 1));
+  };
+
+  const reset = () => {
+    setAnswers({});
+    setStep(0);
+  };
+
+  return (
+    <section className="book-curtain-finder" aria-label="Perde seçim rehberi">
+      <div className="book-curtain-finder__intro">
+        <div className="book-curtain-finder__seal" aria-hidden="true"><Sun size={19} strokeWidth={1.6} /></div>
+        <div>
+          <span className="book-kicker">Kişisel seçim rehberi</span>
+          <h3>Size en uygun perdeyi bulun.</h3>
+          <p>Üç kısa seçimle ışık, mahremiyet ve kullanım alanınıza uygun kategoriyi keşfedin.</p>
+        </div>
+      </div>
+
+      <div className="book-curtain-finder__body">
+        <div className="book-curtain-finder__steps" role="tablist" aria-label="Perde seçim adımları">
+          {CURTAIN_FINDER_STEPS.map((item, index) => (
+            <button
+              type="button"
+              role="tab"
+              key={item.key}
+              aria-selected={step === index}
+              className={step === index ? "is-active" : answers[item.key] ? "is-complete" : ""}
+              onClick={() => setStep(index)}
+            >
+              <span>0{index + 1}</span>
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        {!isComplete ? (
+          <div className="book-curtain-finder__question">
+            <div className="book-curtain-finder__question-heading">
+              <span>Adım {step + 1} / {CURTAIN_FINDER_STEPS.length}</span>
+              <strong>{currentStep.question}</strong>
+            </div>
+            <div className="book-curtain-finder__options">
+              {currentStep.options.map((option) => (
+                <button
+                  type="button"
+                  className={answers[currentStep.key] === option.value ? "is-selected" : ""}
+                  key={option.value}
+                  onClick={() => choose(option.value)}
+                >
+                  <span>
+                    <strong>{option.label}</strong>
+                    <small>{option.hint}</small>
+                  </span>
+                  <ArrowUpRight size={16} aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="book-curtain-finder__result">
+            <div>
+              <span className="book-curtain-finder__result-label">Sizin için önerimiz</span>
+              <strong>{recommendation.title}</strong>
+              <p>{recommendation.description}</p>
+            </div>
+            <div className="book-curtain-finder__result-actions">
+              <Link href={recommendationHref} className="book-curtain-finder__result-link">
+                Seçkiyi keşfet <ArrowUpRight size={15} aria-hidden="true" />
+              </Link>
+              <Link href="/contact" className="book-curtain-finder__measure-link">Ölçü desteği al</Link>
+              <button type="button" onClick={reset} aria-label="Perde seçim rehberini baştan başlat">
+                <RotateCcw size={14} aria-hidden="true" /> Baştan başla
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

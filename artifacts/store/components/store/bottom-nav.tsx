@@ -67,7 +67,7 @@ export default function BottomNav() {
             >
                <div className="flex items-center justify-between mb-4">
                  <div>
-                   <p className="text-[10px] font-black tracking-[0.14em] text-[var(--gold)]">Göçmen Kırtasiye</p>
+                    <p className="text-[10px] font-black tracking-[0.14em] text-[var(--gold)]">Göçmen Perde</p>
                    <p className="text-lg font-black text-[var(--ink)]">Menü</p>
                  </div>
                  <button onClick={() => setMenuOpen(false)} className="touch-target flex items-center justify-center rounded-full bg-[var(--surface-muted)] text-[var(--ink-muted)]" aria-label="Menüyü kapat">

@@ -62,10 +62,10 @@ export default function StationeryTips() {
         >
           <span className="section-label mb-3 justify-center block">Bilgi Köşesi</span>
           <h2 className="text-3xl md:text-4xl font-black text-zinc-900 mb-3">
-            Kırtasiye İpuçları
+            Perde İpuçları
           </h2>
           <p className="text-zinc-500 max-w-lg mx-auto text-[15px]">
-            Ürünlerinizden maksimum verim alın. Uzmanlarımızdan pratik bilgiler ve kullanım tüyoları.
+            Perdelerinizden maksimum verim alın. Uzmanlarımızdan pratik bilgiler ve kullanım tüyoları.
           </p>
         </motion.div>
 

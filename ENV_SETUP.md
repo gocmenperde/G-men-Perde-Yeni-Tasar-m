@@ -60,6 +60,8 @@ pnpm dev
 Vercel ortamında mağazanın mevcut kimlik doğrulama sırrı tanımlı olmalıdır:
 
 - `NEXTAUTH_SECRET` (tercih edilen) veya `AUTH_SECRET`
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
 
 Bu değer olmadan yönetici oturumu ve ürün önizleme token'ı üretilemez. `PRODUCT_SEARCH_BACKEND_URL` ve `SEARCH_PROXY_SECRET` artık bu akış için gerekli değildir.
 

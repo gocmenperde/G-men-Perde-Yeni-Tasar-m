@@ -275,7 +275,7 @@ model BarcodeImage {
 
 model SiteSettings {
   id                       String   @id @default("global")
-  siteName            String   @default("Göçmen Kırtasiye")
+  siteName            String   @default("Göçmen Perde")
   indexNowKey              String?
   logoUrl             String?
   faviconUrl          String?

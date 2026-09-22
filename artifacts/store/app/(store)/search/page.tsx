@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 const BASE_URL = "https://www.gocmenkirtasiye.com.tr";
 
 export const metadata: Metadata = {
-  title: "Ürün Ara — Göçmen Kırtasiye",
+  title: "Ürün Ara — Göçmen Perde",
   robots: { index: false, follow: true },
   // canonical eklenmezse Google "kullanıcı tarafından seçilen standart sayfa olmadan kopya" olarak işaretler.
   alternates: { canonical: `${BASE_URL}/products` },

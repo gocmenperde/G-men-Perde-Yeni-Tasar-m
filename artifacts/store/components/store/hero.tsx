@@ -35,16 +35,13 @@ interface HeroSettings {
 }
 
 function trustText(value: string | null | undefined, fallback: string) {
-  if (!value || /iade|cayma|koşulsuz|kosulsuz|30\s*gün/i.test(value)) return fallback;
-  return value.replace(/\bherşey\b/gi, "Her şey").replace(/\bkırtasiye\b/gi, "Kırtasiye");
+  if (!value || /iade|cayma|koşulsuz|kosulsuz|30\s*gün|kırtasiye|kitap|defter|kalem|okul|sanat/i.test(value)) return fallback;
+  return value.replace(/\bherşey\b/gi, "Her şey");
 }
 
 function heroText(value: string | null | undefined, fallback: string) {
-  if (!value || /iade|cayma|koşulsuz|kosulsuz|30\s*gün/i.test(value)) return fallback;
-  if (/kırtasiyeye\s+dair\s+herşey/i.test(value) || /kırtasiyeye\s+dair\s+her\s+şey/i.test(value)) {
-    return fallback;
-  }
-  return value.replace(/\bherşey\b/gi, "Her şey").replace(/\bkırtasiye\b/gi, "Kırtasiye");
+  if (!value || /iade|cayma|koşulsuz|kosulsuz|30\s*gün|kırtasiye|kitap|defter|kalem|okul|sanat/i.test(value)) return fallback;
+  return value.replace(/\bherşey\b/gi, "Her şey");
 }
 
 function premiumLabel(value: string | null | undefined, fallback: string) {
@@ -64,12 +61,12 @@ const quickCategories = [
 ];
 
 export default function Hero({ settings }: { settings?: HeroSettings }) {
-  const title = heroText(settings?.heroTitle, "Göçmen Kırtasiye");
-  const subtitle = heroText(settings?.heroSubtitle, "Her şey, iyi fikirlerle başlar.");
+  const title = heroText(settings?.heroTitle, "Göçmen Perde");
+  const subtitle = heroText(settings?.heroSubtitle, "Eviniz, iyi seçimlerle güzelleşir.");
   const description =
     heroText(
       settings?.heroDesc,
-      "Bursa’dan Türkiye’nin her yerine; okul, ofis ve sanat için seçilmiş malzemeler. Her ürün, daha iyi bir başlangıç için seçilir.",
+      "Bursa’dan Türkiye’nin her yerine; tül, fon, stor, zebra ve plise perdeler. Her ölçü, özenli bir başlangıç için hazırlanır.",
     );
   const primaryText = settings?.heroCtaPrimaryText || "Ürünleri keşfet";
   const primaryHref = settings?.heroCtaPrimaryHref || "/products";
@@ -151,9 +148,9 @@ export default function Hero({ settings }: { settings?: HeroSettings }) {
               <PenLine className="h-6 w-6" aria-hidden="true" />
             </div>
             <div className="max-w-[220px]">
-              <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#8A6D4A]">Bugünün masası</p>
-              <h2 className="mt-3 font-display text-3xl font-bold leading-[.95]">Yaz, çiz, başla.</h2>
-              <p className="mt-3 text-xs leading-5 text-[#667276]">Günün fikrine eşlik edecek malzemeler, tek yerde.</p>
+              <p className="text-[10px] font-extrabold uppercase tracking-[.18em] text-[#8A6D4A]">Bugünün seçimi</p>
+              <h2 className="mt-3 font-display text-3xl font-bold leading-[.95]">Ölç, seç, yenile.</h2>
+              <p className="mt-3 text-xs leading-5 text-[#667276]">Evinizin ışığına ve tarzına uygun perdeler, tek yerde.</p>
             </div>
             <div className="mt-7 grid grid-cols-3 gap-2.5">
               {quickCategories.map(({ name, href, icon: Icon, tone }) => (

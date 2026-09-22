@@ -4,7 +4,7 @@ import CheckoutClient from "@/components/store/checkout-client";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Güvenli Ödeme | Göçmen Kırtasiye",
+  title: "Güvenli Ödeme | Göçmen Perde",
   robots: { index: false, follow: false },
 };
 

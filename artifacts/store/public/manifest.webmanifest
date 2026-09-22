@@ -1,7 +1,7 @@
 {
-  "name": "Göçmen Kırtasiye",
+  "name": "Göçmen Perde",
   "short_name": "Göçmen",
-  "description": "Bursa'nın Kırtasiye Uzmanı — kalem, defter, sanat malzemeleri ve okul gereçleri.",
+  "description": "Bursa'nın perde uzmanı — tül, fon, stor, zebra ve plise perde modelleri.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -10,7 +10,7 @@
   "background_color": "#FFFFFF",
   "lang": "tr",
   "dir": "ltr",
-  "categories": ["shopping", "education"],
+  "categories": ["shopping", "home"],
   "icons": [
     {
       "src": "/api/pwa/icon?size=192",
@@ -31,7 +31,7 @@
       "sizes": "1200x630",
       "type": "image/jpeg",
       "form_factor": "wide",
-      "label": "Göçmen Kırtasiye Ana Sayfa"
+      "label": "Göçmen Perde Ana Sayfa"
     }
   ],
   "shortcuts": [

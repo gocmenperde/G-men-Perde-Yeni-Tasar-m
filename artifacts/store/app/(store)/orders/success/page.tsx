@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CheckCircle, Package, ArrowRight, Truck, ShoppingBag, Mail } from "lucide-react";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Ödeme Başarılı | Göçmen Kırtasiye" };
+export const metadata: Metadata = { title: "Ödeme Başarılı | Göçmen Perde" };
 
 interface Props {
   searchParams: Promise<{ orderId?: string }>;

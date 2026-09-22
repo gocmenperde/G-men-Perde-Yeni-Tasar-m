@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import { CreditCard, AlertTriangle, Clock3, RefreshCw, Truck, CheckCircle2, XCircle } from "lucide-react";
 import { getPublicImageUrl } from "@/lib/image-url";
 
-export const metadata: Metadata = { title: "Sipariş Detayı | Göçmen Kırtasiye" };
+export const metadata: Metadata = { title: "Sipariş Detayı | Göçmen Perde" };
 
 const STATUS: Record<string, { label: string; color: string; icon: typeof CreditCard }> = {
   AWAITING_PAYMENT: { label: "Ödeme Bekleniyor", color: "bg-orange-100 text-orange-700", icon: CreditCard },

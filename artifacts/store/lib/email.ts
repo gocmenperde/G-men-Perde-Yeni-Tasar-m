@@ -45,7 +45,7 @@ function baseTemplate(content: string, preheader = "") {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Göçmen Kırtasiye</title>
+  <title>Göçmen Perde</title>
 </head>
 <body style="${BASE_STYLE}">
   ${preheader ? `<span style="display:none;font-size:1px;color:#f5f0e8;max-height:0;">${preheader}</span>` : ""}
@@ -54,7 +54,7 @@ function baseTemplate(content: string, preheader = "") {
     <div style="background: linear-gradient(135deg, #1c1c1e 0%, #2d2b26 100%); padding: 28px 36px; text-align: center;">
       <p style="color: #D4AF5A; font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin: 0 0 6px;">BURSA · EST. 1993</p>
       <h1 style="color: #ffffff; font-size: 22px; font-weight: 900; margin: 0; letter-spacing: -0.5px;">
-        GÖÇMEN <span style="color: #D4AF5A;">KIRTASİYE</span>
+        GÖÇMEN <span style="color: #D4AF5A;">PERDE</span>
       </h1>
     </div>
     <!-- Body -->
@@ -63,7 +63,7 @@ function baseTemplate(content: string, preheader = "") {
     </div>
     <!-- Footer -->
     <div style="background: #faf7f2; border-top: 1px solid #e8e0d5; padding: 20px 36px; text-align: center;">
-      <p style="color: #a09880; font-size: 12px; margin: 0 0 4px;">Göçmen Kırtasiye · Bursa, Osmangazi</p>
+      <p style="color: #a09880; font-size: 12px; margin: 0 0 4px;">Göçmen Perde · Bursa, Osmangazi</p>
       <p style="color: #c0b090; font-size: 11px; margin: 0;">Bu e-postayı sipariş verdiğiniz için alıyorsunuz.</p>
     </div>
   </div>
@@ -217,7 +217,7 @@ export async function sendOrderStatusEmail(order: {
 
   try {
     await transporter.sendMail({
-      from: `"Göçmen Kırtasiye" <${from}>`,
+      from: `"Göçmen Perde" <${from}>`,
       to: order.user.email,
       subject,
       html,

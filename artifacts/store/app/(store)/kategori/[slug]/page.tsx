@@ -44,14 +44,14 @@ export async function generateMetadata({
     const isPaged = page > 1;
     const url = `${BASE_URL}/kategori/${params.slug}`;
     const title = isPaged
-      ? `${category.name} Çeşitleri — Sayfa ${page} | Göçmen Kırtasiye`
-      : `${category.name} Çeşitleri ve Fiyatları | Göçmen Kırtasiye`;
-    const description = `${category.name} — Göçmen Kırtasiye'de en uygun fiyat, orijinal ürün garantisi, ücretsiz kargo. Kaliteli ${category.name.toLowerCase()} çeşitleri online alışveriş. Bursa ve Türkiye geneli hızlı teslimat.`;
+      ? `${category.name} Çeşitleri — Sayfa ${page} | Göçmen Perde`
+      : `${category.name} Çeşitleri ve Fiyatları | Göçmen Perde`;
+    const description = `${category.name} — Göçmen Perde'de uygun fiyat, güvenilir kalite ve hızlı teslimat. Bursa'nın perde uzmanı.`;
 
     const firstImage = getPublicImageUrl(firstProduct?.images?.[0]);
     const ogImage = firstImage
-      ? { url: firstImage, width: 800, height: 800, alt: `${category.name} — Göçmen Kırtasiye` }
-      : { url: `${BASE_URL}/og-image.svg`, width: 1200, height: 630, alt: `${category.name} — Göçmen Kırtasiye` };
+      ? { url: firstImage, width: 800, height: 800, alt: `${category.name} — Göçmen Perde` }
+      : { url: `${BASE_URL}/og-image.svg`, width: 1200, height: 630, alt: `${category.name} — Göçmen Perde` };
 
     return {
       title,
@@ -66,7 +66,7 @@ export async function generateMetadata({
         title,
         description,
         url,
-        siteName: "Göçmen Kırtasiye",
+        siteName: "Göçmen Perde",
         locale: "tr_TR",
         images: [ogImage],
       },
@@ -134,7 +134,7 @@ export default async function CategoryPage({
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: `${category.name} Ürünleri`,
-    description: `Göçmen Kırtasiye ${category.name} kategorisi`,
+    description: `Göçmen Perde ${category.name} kategorisi`,
     url: canonicalUrl,
     numberOfItems: total,
     itemListElement: products.slice(0, 10).map((p: any, i: number) => ({

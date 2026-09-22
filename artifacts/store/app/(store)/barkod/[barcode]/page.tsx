@@ -6,7 +6,7 @@ export const revalidate = false;
 export const dynamicParams = true;
 
 export const metadata: Metadata = {
-  title: "Ürün Barkodu | Göçmen Kırtasiye",
+  title: "Ürün Barkodu | Göçmen Perde",
   robots: { index: false, follow: true },
 };
 

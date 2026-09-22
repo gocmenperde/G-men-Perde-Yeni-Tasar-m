@@ -84,11 +84,11 @@ export default function StationeryShowcase() {
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
               }}>
-                Göçmen Kırtasiye?
+                Göçmen Perde?
               </span>
             </h2>
             <p className="text-[#62584D] max-w-lg mx-auto text-[16px] leading-relaxed">
-              30 yıllık tecrübemiz ve müşteri odaklı hizmet anlayışımızla kırtasiye alışverişini yeniden tanımlıyoruz.
+              30 yıllık tecrübemiz ve müşteri odaklı hizmet anlayışımızla perde alışverişini yeniden tanımlıyoruz.
             </p>
           </motion.div>
 

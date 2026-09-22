@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ChevronRight, Truck, Clock3, ShieldCheck } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Teslimat Koşulları | Göçmen Kırtasiye",
-  description: "Göçmen Kırtasiye kargo, teslimat süreleri ve teslimat koşulları.",
+  title: "Teslimat Koşulları | Göçmen Perde",
+  description: "Göçmen Perde kargo, teslimat süreleri ve teslimat koşulları.",
   alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/delivery" },
 };
 

@@ -41,16 +41,16 @@ export async function generateMetadata({ searchParams: searchParamsPromise }: Pr
   const isSale = searchParams.sale === "true";
   const isFeatured = searchParams.featured === "true";
   const title = isSale
-    ? "İndirimli Ürünler | Göçmen Kırtasiye"
+    ? "İndirimli Ürünler | Göçmen Perde"
     : isFeatured
-    ? "Öne Çıkan Ürünler | Göçmen Kırtasiye"
-    : `${label} | Göçmen Kırtasiye`;
+    ? "Öne Çıkan Ürünler | Göçmen Perde"
+    : `${label} | Göçmen Perde`;
 
   const description = categoryName
-    ? `${categoryName} — Göçmen Kırtasiye'de en uygun fiyat, orijinal ürün garantisi ve hızlı kargo. Bursa'nın güvenilir kırtasiye mağazası.`
+    ? `${categoryName} — Göçmen Perde'de uygun fiyat, güvenilir kalite ve hızlı teslimat. Bursa'nın perde uzmanı.`
     : brandName
-    ? `${brandName} ürünleri Göçmen Kırtasiye'de! Orijinal, garantili ${brandName} kırtasiye ürünleri. Ücretsiz kargo, hızlı teslimat.`
-    : "Göçmen Kırtasiye'de kalem, defter, boya, sanat malzemeleri, okul ve ofis gereçleri. 500'den fazla ürün çeşidi, uygun fiyat, ücretsiz kargo fırsatı.";
+    ? `${brandName} ürünleri Göçmen Perde'de! ${brandName} perde koleksiyonlarını keşfedin. Hızlı teslimat.`
+    : "Göçmen Perde'de tül, fon, stor, zebra ve plise perde modelleri. Özel ölçü, profesyonel dikim ve montaj hizmeti.";
 
   const pageNum = parseInt(searchParams.page ?? "1");
 

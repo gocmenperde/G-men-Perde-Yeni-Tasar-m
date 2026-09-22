@@ -103,8 +103,12 @@ async function main() {
   }
 
   // ─── KULLANICILAR ─────────────────────────────────────────────────────────
+  const configuredAdminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const configuredAdminPassword = process.env.ADMIN_PASSWORD;
   const users = [
-    { email: "muhammedeminturk.16@gmail.com", name: "Admin", role: "ADMIN", pass: "Emin.016" },
+    ...(configuredAdminEmail && configuredAdminPassword
+      ? [{ email: configuredAdminEmail, name: "Admin", role: "ADMIN", pass: configuredAdminPassword }]
+      : []),
     { email: "ahmet@test.com",         name: "Ahmet Yılmaz", role: "USER",  pass: "test123"  },
     { email: "ayse@test.com",          name: "Ayşe Kaya",   role: "USER",  pass: "test123"  },
   ];

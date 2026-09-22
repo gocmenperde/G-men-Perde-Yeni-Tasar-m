@@ -251,7 +251,7 @@ export default function AccountClient({ user, orders }: { user: any; orders: any
           {(user?.name ?? user?.email ?? "U")[0].toUpperCase()}
         </div>
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[.16em] text-[#B8973E]">Göçmen Kırtasiye hesabın</p>
+          <p className="text-[10px] font-black uppercase tracking-[.16em] text-[#B8973E]">Göçmen Perde hesabın</p>
           <h1 className="mt-1 text-2xl font-black text-zinc-900">Hoş geldin, {(user?.name ?? "Kullanıcı").split(/\s+/)[0]}</h1>
           <p className="text-zinc-400 text-sm">{user?.email}</p>
         </div>

@@ -87,7 +87,7 @@ export default function NewsletterCta() {
             </h2>
 
             <p className="text-zinc-400 text-[16px] leading-relaxed mb-8 max-w-md">
-              Haftada bir e-posta. Spam yok. Sadece gerçek fırsatlar, yeni ürünler ve kırtasiye dünyasından haberler.
+              Haftada bir e-posta. Spam yok. Sadece gerçek fırsatlar, yeni ürünler ve perde dünyasından haberler.
             </p>
 
             {/* Perks */}

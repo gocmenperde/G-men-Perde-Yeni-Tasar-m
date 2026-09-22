@@ -99,8 +99,8 @@ function CatalogProductCard({ product }: { product: CatalogProduct }) {
 
 export default function BrandCatalog({
   brands,
-  title = "Kırtasiyede aradığın her şey.",
-  subtitle = "Sevdiğin markayı seç, rafındaki ürünleri tek yerde keşfet.",
+  title = "Perdede aradığın her şey.",
+  subtitle = "Sevdiğin markayı seç, koleksiyonunu tek yerde keşfet.",
 }: {
   brands: CatalogBrand[];
   title?: string;

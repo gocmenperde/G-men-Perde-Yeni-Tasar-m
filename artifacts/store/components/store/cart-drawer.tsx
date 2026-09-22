@@ -140,7 +140,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
           >
             <header className="flex items-center justify-between border-b border-[var(--line)] px-5 py-4 md:px-6">
               <div>
-                <p className="section-label">Göçmen Kırtasiye</p>
+                 <p className="section-label">Göçmen Perde</p>
                 <h2 className="mt-1 font-display text-2xl text-[var(--ink)]">Sepetim <span className="font-body text-sm font-bold text-[var(--ink-muted)]">({itemCount})</span></h2>
               </div>
               <button type="button" onClick={onClose} className="touch-target flex items-center justify-center rounded-2xl border border-[var(--line)] bg-[var(--surface-muted)] text-[var(--ink-muted)] hover:text-[var(--ink)]" aria-label="Sepeti kapat" data-testid="button-close-cart-drawer">
@@ -155,7 +155,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                     <Sparkles className="h-8 w-8" aria-hidden="true" />
                   </div>
                   <h3 className="mt-5 font-display text-2xl text-[var(--ink)]">Sepetiniz henüz boş</h3>
-                  <p className="mt-2 max-w-xs text-sm leading-relaxed text-[var(--ink-muted)]">Aradığınız kırtasiye ürünlerini bulun, sepetinizi birlikte hazırlayalım.</p>
+                   <p className="mt-2 max-w-xs text-sm leading-relaxed text-[var(--ink-muted)]">Aradığınız perde ürünlerini bulun, sepetinizi birlikte hazırlayalım.</p>
                   <Link href="/products" onClick={onClose} className="mt-6 inline-flex items-center gap-2 rounded-2xl bg-[var(--navy)] px-5 py-3 text-sm font-black text-[var(--surface)] hover:bg-[var(--gold)]" data-testid="link-drawer-start-shopping">
                     Ürünlere göz at <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Link>

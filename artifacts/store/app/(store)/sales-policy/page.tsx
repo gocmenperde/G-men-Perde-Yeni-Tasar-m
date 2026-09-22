@@ -3,8 +3,8 @@ import Link from "next/link";
 import { ChevronRight, FileText, CreditCard, Receipt } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Satış Politikası | Göçmen Kırtasiye",
-  description: "Göçmen Kırtasiye satış politikası, sipariş onayı, fiyatlandırma ve ödeme kuralları.",
+  title: "Satış Politikası | Göçmen Perde",
+  description: "Göçmen Perde satış politikası, sipariş onayı, fiyatlandırma ve ödeme kuralları.",
   alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/sales-policy" },
 };
 

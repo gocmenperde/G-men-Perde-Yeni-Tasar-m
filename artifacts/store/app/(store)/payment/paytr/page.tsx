@@ -4,7 +4,7 @@ import PaytrFrameClient from "./paytr-frame-client";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Ödeme | Göçmen Kırtasiye",
+  title: "Ödeme | Göçmen Perde",
   robots: { index: false, follow: false },
 };
 

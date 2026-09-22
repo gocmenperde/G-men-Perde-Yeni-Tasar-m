@@ -5,7 +5,7 @@ export const runtime = "edge";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const title = searchParams.get("title") ?? "Göçmen Kırtasiye";
+  const title = searchParams.get("title") ?? "Göçmen Perde";
   const price = searchParams.get("price");
   const category = searchParams.get("category");
   const imageUrl = searchParams.get("image");
@@ -64,7 +64,7 @@ export async function GET(req: NextRequest) {
                   textTransform: "uppercase",
                 }}
               >
-                GÖÇMEN KIRTASİYE
+                GÖÇMEN PERDE
               </span>
               <span
                 style={{

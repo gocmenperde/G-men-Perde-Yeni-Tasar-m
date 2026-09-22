@@ -9,19 +9,15 @@ const bcrypt = await import("bcryptjs");
 const db = new PrismaClient();
 
 async function main() {
-  const OLD_EMAIL = "admin@premiumstore.com";
-  const NEW_EMAIL = "muhammedeminturk.16@gmail.com";
-  const NEW_PASSWORD = "Emin.016";
+  const NEW_EMAIL = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const NEW_PASSWORD = process.env.ADMIN_PASSWORD;
   const NEW_NAME = "Admin";
 
-  const hashedPassword = await bcrypt.default.hash(NEW_PASSWORD, 10);
-
-  // Eski admin varsa sil
-  const oldAdmin = await db.user.findUnique({ where: { email: OLD_EMAIL } });
-  if (oldAdmin) {
-    await db.user.delete({ where: { email: OLD_EMAIL } });
-    console.log(`✅ Eski admin silindi: ${OLD_EMAIL}`);
+  if (!NEW_EMAIL || !NEW_PASSWORD) {
+    throw new Error("ADMIN_EMAIL ve ADMIN_PASSWORD env değişkenleri gerekli.");
   }
+
+  const hashedPassword = await bcrypt.default.hash(NEW_PASSWORD, 10);
 
   // Yeni admin oluştur ya da güncelle
   await db.user.upsert({

@@ -46,7 +46,7 @@ export default function LoginClient() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex flex-col items-center leading-none mb-4">
             <span className="text-2xl font-black text-zinc-900">
-              GÖÇMEN <span className="text-[#B8973E]">KIRTASİYE</span>
+              GÖÇMEN <span className="text-[#B8973E]">PERDE</span>
             </span>
             <span className="text-[9px] tracking-widest text-zinc-400 uppercase mt-0.5">Bursa · EST. 1993</span>
           </Link>
@@ -63,6 +63,7 @@ export default function LoginClient() {
                 <input
                   {...register("email", { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ })}
                   type="email"
+                   autoComplete="username"
                   placeholder="ornek@email.com"
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E8E0D5] bg-[#FAF7F2] focus:outline-none focus:ring-2 focus:ring-[#D4AF5A] focus:border-transparent transition text-sm text-zinc-800"
                 />
@@ -77,6 +78,7 @@ export default function LoginClient() {
                 <input
                   {...register("password", { required: true, minLength: 6 })}
                   type={showPass ? "text" : "password"}
+                   autoComplete="current-password"
                   placeholder="••••••••"
                   className="w-full pl-10 pr-10 py-3 rounded-xl border border-[#E8E0D5] bg-[#FAF7F2] focus:outline-none focus:ring-2 focus:ring-[#D4AF5A] focus:border-transparent transition text-sm text-zinc-800"
                 />

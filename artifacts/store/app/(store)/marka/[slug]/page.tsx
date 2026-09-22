@@ -42,14 +42,14 @@ export async function generateMetadata({
     const isPaged = page > 1;
     const url = `${BASE_URL}/marka/${slug}`;
     const title = isPaged
-      ? `${brand.name} Ürünleri — Sayfa ${page} | Göçmen Kırtasiye`
-      : `${brand.name} Ürünleri | Göçmen Kırtasiye`;
-    const description = `${brand.name} markasının tüm ürünleri — Göçmen Kırtasiye'de orijinal ve garantili ${brand.name} kırtasiye ürünleri. Hızlı teslimat, uygun fiyat.`;
+      ? `${brand.name} Ürünleri — Sayfa ${page} | Göçmen Perde`
+      : `${brand.name} Ürünleri | Göçmen Perde`;
+    const description = `${brand.name} markasının tüm ürünleri — Göçmen Perde'de güvenilir ve kaliteli ${brand.name} ürünleri. Hızlı teslimat, uygun fiyat.`;
 
     const firstImage = getPublicImageUrl(firstProduct?.images?.[0]);
     const ogImage = firstImage
-      ? { url: firstImage, width: 800, height: 800, alt: `${brand.name} — Göçmen Kırtasiye` }
-      : { url: `${BASE_URL}/og-image.svg`, width: 1200, height: 630, alt: `${brand.name} — Göçmen Kırtasiye` };
+      ? { url: firstImage, width: 800, height: 800, alt: `${brand.name} — Göçmen Perde` }
+      : { url: `${BASE_URL}/og-image.svg`, width: 1200, height: 630, alt: `${brand.name} — Göçmen Perde` };
 
     return {
       title,
@@ -64,7 +64,7 @@ export async function generateMetadata({
         title,
         description,
         url,
-        siteName: "Göçmen Kırtasiye",
+        siteName: "Göçmen Perde",
         locale: "tr_TR",
         images: [ogImage],
       },
@@ -132,7 +132,7 @@ export default async function BrandPage({
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: `${brand.name} Ürünleri`,
-    description: `Göçmen Kırtasiye ${brand.name} ürünleri`,
+    description: `Göçmen Perde ${brand.name} ürünleri`,
     url: canonicalUrl,
     numberOfItems: total,
     itemListElement: products.slice(0, 10).map((p: any, i: number) => ({

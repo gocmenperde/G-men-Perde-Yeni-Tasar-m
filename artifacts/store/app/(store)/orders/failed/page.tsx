@@ -2,7 +2,7 @@ import Link from "next/link";
 import { XCircle, RefreshCcw, ShoppingCart, Phone } from "lucide-react";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = { title: "Ödeme Başarısız | Göçmen Kırtasiye" };
+export const metadata: Metadata = { title: "Ödeme Başarısız | Göçmen Perde" };
 
 export default function OrderFailedPage() {
   return (

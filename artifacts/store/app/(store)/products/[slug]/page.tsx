@@ -52,11 +52,11 @@ export async function generateMetadata({
   const barcodeVal = product.barcode ?? product.sku ?? null;
   const titleBase = product.name;
   const titleBarcode = barcodeVal ? ` | ${barcodeVal}` : "";
-  const title = `${product.metaTitle ?? titleBase}${titleBarcode} | Göçmen Kırtasiye`;
+  const title = `${product.metaTitle ?? titleBase}${titleBarcode} | Göçmen Perde`;
   const description =
     product.metaDescription ??
     product.description ??
-    `${product.name} ${barcodeVal ? `(Barkod: ${barcodeVal})` : ""} — Göçmen Kırtasiye'de uygun fiyatla satın al. ${product.brand?.name ? `Marka: ${product.brand.name}.` : ""} ${product.category?.name ? `Kategori: ${product.category.name}.` : ""} Türkiye geneli ücretsiz kargo.`.trim();
+    `${product.name} ${barcodeVal ? `(Barkod: ${barcodeVal})` : ""} — Göçmen Perde'de uygun fiyatla satın al. ${product.brand?.name ? `Marka: ${product.brand.name}.` : ""} ${product.category?.name ? `Kategori: ${product.category.name}.` : ""} Türkiye geneli teslimat.`.trim();
 
   const firstImage = getPublicImageUrl(product.images?.[0]);
 
@@ -87,8 +87,8 @@ export async function generateMetadata({
       "product:price:currency": "TRY",
       "product:availability": (product.stock ?? 0) > 0 ? "in stock" : "out of stock",
       "product:retailer_item_id": product.sku ?? product.id,
-      "product:brand": product.brand?.name ?? "Göçmen Kırtasiye",
-      "product:category": product.category?.name ?? "Kırtasiye",
+      "product:brand": product.brand?.name ?? "Göçmen Perde",
+      "product:category": product.category?.name ?? "Perde",
       "product:condition": "new",
       ...(barcodeVal ? { "product:barcode": barcodeVal, "og:upc": barcodeVal } : {}),
       ...(product.sku ? { "product:sku": product.sku } : {}),
@@ -98,7 +98,7 @@ export async function generateMetadata({
       url: canonicalUrl,
       title,
       description,
-      siteName: "Göçmen Kırtasiye",
+      siteName: "Göçmen Perde",
       locale: "tr_TR",
       images: [
         { url: ogImage, width: 800, height: 800, alt: product.name },
@@ -176,7 +176,7 @@ export default async function ProductDetailPage({
   // description: ürün açıklaması yoksa otomatik oluştur
   const descriptionText =
     product.description ??
-    `${product.name}${barcodeField ? ` (Barkod: ${barcodeField})` : ""} — Göçmen Kırtasiye'de uygun fiyatla satın al.${product.brand?.name ? ` Marka: ${product.brand.name}.` : ""}${product.category?.name ? ` Kategori: ${product.category.name}.` : ""} Türkiye geneli kargo imkânı.`;
+    `${product.name}${barcodeField ? ` (Barkod: ${barcodeField})` : ""} — Göçmen Perde'de uygun fiyatla satın al.${product.brand?.name ? ` Marka: ${product.brand.name}.` : ""}${product.category?.name ? ` Kategori: ${product.category.name}.` : ""} Türkiye geneli teslimat imkânı.`;
 
   // sku: UUID geçersiz sayılabilir; sku varsa kullan, yoksa barkod, yoksa "GK-{id-prefix}"
   const skuValue = product.sku
@@ -215,7 +215,7 @@ export default async function ProductDetailPage({
       validFrom,
       seller: {
         "@type": "Organization",
-        name: "Göçmen Kırtasiye",
+        name: "Göçmen Perde",
         url: BASE_URL,
       },
       // shippingDetails: Google Merchant için zorunlu — Türkiye geneli ücretsiz kargo

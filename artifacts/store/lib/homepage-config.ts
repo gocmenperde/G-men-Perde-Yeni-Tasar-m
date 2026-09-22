@@ -121,10 +121,10 @@ const SECTION_DEFAULTS: HomepageSection[] = [
   },
   {
     id: "stationery",
-    label: "Kırtasiye seçkileri",
-    description: "Masa başı, okul ve üretim kategorileri",
+    label: "Perde seçkileri",
+    description: "Tül, fon, stor ve dekorasyon kategorileri",
     visible: false,
-    title: "Kırtasiye seçkileri",
+    title: "Perde seçkileri",
     subtitle: "Bu bölüm perde mağazasında kullanılmaz.",
     limit: 4,
     productIds: [],

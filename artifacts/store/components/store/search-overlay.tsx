@@ -18,7 +18,7 @@ interface SearchResult {
   brand?: { name?: string } | null;
 }
 
-const POPULAR_SEARCHES = ["Fosforlu kalem", "Spiralli defter", "Suluboya", "Kırtasiye seti"];
+const POPULAR_SEARCHES = ["Tül perde", "Fon perde", "Stor perde", "Zebra perde"];
 
 function money(value: number | string) {
   return `₺${Number(value).toLocaleString("tr-TR", { maximumFractionDigits: 2 })}`;

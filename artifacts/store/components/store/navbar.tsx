@@ -131,7 +131,7 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Perde", ca
   const firstName = session?.user?.name?.trim().split(/\s+/)[0];
   const brandDescriptor = siteName?.toLocaleLowerCase("tr-TR").includes("perde")
     ? "Perde & Ev Tekstili"
-    : "Kitap & Kırtasiye";
+    : "Perde & Ev Tekstili";
   const menuCategories: NonNullable<NavbarProps["categories"]> = categories.length
     ? categories.slice(0, 12)
     : MENU_GROUPS.map(({ label, href }) => ({ id: href, name: label, slug: href.split("/").pop() ?? "" }));

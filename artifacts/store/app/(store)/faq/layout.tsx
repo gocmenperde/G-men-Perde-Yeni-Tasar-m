@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sık Sorulan Sorular | Göçmen Kırtasiye",
+  title: "Sık Sorulan Sorular | Göçmen Perde",
   description:
-    "Göçmen Kırtasiye hakkında sık sorulan sorular — sipariş, ödeme, kargo, iade ve ürün bilgileri.",
+    "Göçmen Perde hakkında sık sorulan sorular — sipariş, ödeme, kargo, iade ve ürün bilgileri.",
   alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/faq" },
 };
 

@@ -25,7 +25,7 @@ export default function HomepageVideo({
   const ytId = videoUrl && videoSource === "youtube" ? extractYouTubeId(videoUrl) : null;
 
   return (
-    <section id="homepage-video" ref={ref} aria-label="Göçmen Kırtasiye marka filmi" className="relative overflow-hidden bg-[var(--navy)] py-14 md:py-24">
+    <section id="homepage-video" ref={ref} aria-label="Göçmen Perde marka filmi" className="relative overflow-hidden bg-[var(--navy)] py-14 md:py-24">
       {/* Ambient background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute left-1/2 top-1/2 h-[400px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#E5B96F]/10 blur-[120px]" />
@@ -59,7 +59,7 @@ export default function HomepageVideo({
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-2xl font-black leading-tight text-white sm:text-3xl md:text-5xl"
           >
-            Göçmen Kırtasiye&apos;yi{" "}
+            Göçmen Perde&apos;yi{" "}
             <span className="bg-gradient-to-r from-[#E5B96F] to-[#F0C986] bg-clip-text text-transparent">
               Yakından Tanıyın
             </span>
@@ -71,7 +71,7 @@ export default function HomepageVideo({
             transition={{ duration: 0.6, delay: 0.3 }}
             className="mx-auto mt-3 max-w-xl text-base text-[#B9C5C2] md:mt-4 md:text-lg"
           >
-            1993'ten bu yana Bursa'da kırtasiye tutkunlarının adresi.
+            1993'ten bu yana Bursa'da perde tutkunlarının adresi.
           </motion.p>
         </motion.div>
 
@@ -102,8 +102,8 @@ export default function HomepageVideo({
                     {/* Fallback içerik, thumbnail yüklenene kadar siyah boşluk oluşmasını önler. */}
                     <div className="absolute inset-0 bg-gradient-to-br from-zinc-950 via-zinc-900 to-amber-950/80 flex items-center justify-center">
                       <div className="text-center px-6">
-                        <p className="text-amber-300 text-xs font-bold uppercase tracking-[0.2em] mb-2">Göçmen Kırtasiye</p>
-                        <p className="text-white/80 text-sm">1993&apos;ten beri kırtasiye tutkunlarının adresi</p>
+                        <p className="text-amber-300 text-xs font-bold uppercase tracking-[0.2em] mb-2">Göçmen Perde</p>
+                        <p className="text-white/80 text-sm">1993&apos;ten beri perde tutkunlarının adresi</p>
                       </div>
                     </div>
                     <Image
@@ -145,7 +145,7 @@ export default function HomepageVideo({
                 ) : (
                   <iframe
                     src={`https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&color=white`}
-                    title="Göçmen Kırtasiye Tanıtım Videosu"
+                     title="Göçmen Perde Tanıtım Videosu"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     allowFullScreen
                     className="absolute inset-0 w-full h-full"
@@ -168,9 +168,9 @@ export default function HomepageVideo({
                   <div className="mb-5 grid h-16 w-16 place-items-center rounded-2xl border border-[#E5B96F]/40 bg-[#E5B96F]/15 text-[#E5B96F] shadow-[0_0_50px_rgba(229,185,111,.16)]">
                     <Play className="ml-1 h-7 w-7 fill-current" aria-hidden="true" />
                   </div>
-                  <p className="text-[10px] font-extrabold uppercase tracking-[.24em] text-[#E5B96F]">Göçmen Kırtasiye · Marka Filmi</p>
+                   <p className="text-[10px] font-extrabold uppercase tracking-[.24em] text-[#E5B96F]">Göçmen Perde · Marka Filmi</p>
                   <p className="mt-3 max-w-md font-display text-2xl font-bold leading-tight text-white sm:text-3xl">İyi fikirlerin başladığı yeri keşfedin.</p>
-                  <p className="mt-3 max-w-sm text-sm leading-6 text-[#B9C5C2]">Mağazamızın seçimini, hikâyesini ve kırtasiye tutkusunu yakında burada izleyin.</p>
+                   <p className="mt-3 max-w-sm text-sm leading-6 text-[#B9C5C2]">Mağazamızın seçimini, hikâyesini ve perde tutkusunu yakında burada izleyin.</p>
                   <Link href="/about" className="mt-6 inline-flex items-center gap-2 rounded-full border border-[#E5B96F]/40 px-4 py-2 text-xs font-bold text-[#F4E6CB] transition-colors hover:border-[#E5B96F] hover:bg-[#E5B96F]/10">
                     Hikâyemizi okuyun
                     <span aria-hidden="true">↗</span>

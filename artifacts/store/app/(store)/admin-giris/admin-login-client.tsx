@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
@@ -15,7 +14,6 @@ interface LoginForm {
 }
 
 export default function AdminLoginClient() {
-  const router = useRouter();
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>();
@@ -26,8 +24,9 @@ export default function AdminLoginClient() {
       const res = await signIn("credentials", { email, password, redirect: false });
       if (res?.error) throw new Error("E-posta veya şifre hatalı.");
       toast.success("Admin girişi başarılı!");
-      router.push("/admin/dashboard");
-      router.refresh();
+      // Cookie yazıldıktan sonra tam navigasyon, mobil Safari ve proxied
+      // production preview'larında eski RSC/auth ağacının kullanılmasını önler.
+      window.location.replace("/admin/dashboard");
     } catch (err: any) {
       toast.error(err.message ?? "Giriş yapılamadı.");
     } finally {
@@ -47,7 +46,7 @@ export default function AdminLoginClient() {
             <ShieldCheck className="w-8 h-8 text-white" />
           </div>
           <Link href="/" className="text-2xl font-black text-zinc-900">
-            GÖÇMEN<span className="text-amber-500"> KIRTASİYE</span>
+            GÖÇMEN<span className="text-amber-500"> PERDE</span>
           </Link>
           <h1 className="text-xl font-black text-zinc-900 mt-3">Yönetici Girişi</h1>
           <p className="text-zinc-500 text-sm mt-1">Bu alan yalnızca yetkili yöneticilere açıktır.</p>
@@ -62,6 +61,7 @@ export default function AdminLoginClient() {
                 <input
                   {...register("email", { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ })}
                   type="email"
+                  autoComplete="username"
                   placeholder="admin@email.com"
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
                 />
@@ -76,6 +76,7 @@ export default function AdminLoginClient() {
                 <input
                   {...register("password", { required: true, minLength: 6 })}
                   type={showPass ? "text" : "password"}
+                  autoComplete="current-password"
                   placeholder="••••••••"
                   className="w-full pl-10 pr-10 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
                 />

@@ -3,15 +3,15 @@ import Link from "next/link";
 import { FileText, ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Kullanım Koşulları | Göçmen Kırtasiye",
-  description: "Göçmen Kırtasiye kullanım koşulları ve satış sözleşmesi.",
+  title: "Kullanım Koşulları | Göçmen Perde",
+  description: "Göçmen Perde kullanım koşulları ve satış sözleşmesi.",
   alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/terms" },
 };
 
 const sections = [
   {
     title: "1. Genel Hükümler",
-    content: `Göçmen Kırtasiye web sitesini ve hizmetlerini kullanarak aşağıdaki kullanım koşullarını kabul etmiş olursunuz. Bu koşullar, sitemizle olan ilişkinizi düzenler.\n\nSitemizi kullanmaya devam etmek, bu koşulları kabul ettiğiniz anlamına gelir. Koşulları kabul etmiyorsanız lütfen sitemizi kullanmayın.`,
+    content: `Göçmen Perde web sitesini ve hizmetlerini kullanarak aşağıdaki kullanım koşullarını kabul etmiş olursunuz. Bu koşullar, sitemizle olan ilişkinizi düzenler.\n\nSitemizi kullanmaya devam etmek, bu koşulları kabul ettiğiniz anlamına gelir. Koşulları kabul etmiyorsanız lütfen sitemizi kullanmayın.`,
   },
   {
     title: "2. Hesap Oluşturma",
@@ -35,11 +35,11 @@ const sections = [
   },
   {
     title: "7. Fikri Mülkiyet",
-    content: `Sitemizdeki tüm içerik (görseller, metinler, logolar, tasarımlar) Göçmen Kırtasiye'ye ait olup telif hakkıyla korunmaktadır. İzinsiz kopyalanamaz, dağıtılamaz veya değiştirilemez.`,
+    content: `Sitemizdeki tüm içerik (görseller, metinler, logolar, tasarımlar) Göçmen Perde'ye ait olup telif hakkıyla korunmaktadır. İzinsiz kopyalanamaz, dağıtılamaz veya değiştirilemez.`,
   },
   {
     title: "8. Sorumluluk Sınırı",
-    content: `Göçmen Kırtasiye, internet bağlantısı sorunları, teknik arızalar veya üçüncü tarafların eylemleri nedeniyle oluşan kayıplardan sorumlu tutulamaz. Yasal sınırlar dahilinde, sorumluluğumuz satın aldığınız ürünlerin tutarıyla sınırlıdır.`,
+    content: `Göçmen Perde, internet bağlantısı sorunları, teknik arızalar veya üçüncü tarafların eylemleri nedeniyle oluşan kayıplardan sorumlu tutulamaz. Yasal sınırlar dahilinde, sorumluluğumuz satın aldığınız ürünlerin tutarıyla sınırlıdır.`,
   },
   {
     title: "9. Değişiklikler",
@@ -70,7 +70,7 @@ export default function TermsPage() {
             </div>
           </div>
           <p className="text-zinc-600 leading-relaxed">
-            Bu kullanım koşulları, Göçmen Kırtasiye web sitesini ve hizmetlerini kullanımınızı düzenleyen yasal sözleşmeyi oluşturur. Lütfen dikkatlice okuyun.
+            Bu kullanım koşulları, Göçmen Perde web sitesini ve hizmetlerini kullanımınızı düzenleyen yasal sözleşmeyi oluşturur. Lütfen dikkatlice okuyun.
           </p>
         </div>
 

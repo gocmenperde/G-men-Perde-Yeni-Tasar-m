@@ -44,7 +44,7 @@ export default async function OrdersPage() {
         {/* Header */}
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[.16em] text-[#B8973E]">Göçmen Kırtasiye</p>
+            <p className="text-[10px] font-black uppercase tracking-[.16em] text-[#B8973E]">Göçmen Perde</p>
             <h1 className="mt-1 text-3xl font-black text-zinc-900">Siparişlerim</h1>
             <p className="text-zinc-400 text-sm mt-1">Hoş geldin, {token.name?.split(/\s+/)[0] ?? "değerli müşterimiz"} · {orders.length} sipariş</p>
           </div>

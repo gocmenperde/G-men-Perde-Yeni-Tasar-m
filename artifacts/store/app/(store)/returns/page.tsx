@@ -16,9 +16,9 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "İade, Değişim & Cayma Hakkı Politikası | Göçmen Kırtasiye",
+  title: "İade, Değişim & Cayma Hakkı Politikası | Göçmen Perde",
   description:
-    "Göçmen Kırtasiye iade, değişim ve cayma hakkı politikası — Mesafeli Sözleşmeler Yönetmeliği kapsamındaki başvuru ve süreç bilgileri.",
+    "Göçmen Perde iade, değişim ve cayma hakkı politikası — Mesafeli Sözleşmeler Yönetmeliği kapsamındaki başvuru ve süreç bilgileri.",
   alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/returns" },
 };
 

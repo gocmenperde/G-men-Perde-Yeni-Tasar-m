@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Barkod Tara | Göçmen Kırtasiye",
+  title: "Barkod Tara | Göçmen Perde",
   robots: { index: false, follow: false },
 };
 

@@ -33,13 +33,13 @@ export async function POST(req: NextRequest) {
     const from = process.env.SMTP_FROM ?? user;
 
     await transporter.sendMail({
-      from: `"Göçmen Kırtasiye" <${from}>`,
+      from: `"Göçmen Perde" <${from}>`,
       to: target,
       subject: "✅ Mail Sistemi Çalışıyor — Test Maili",
       html: `
         <div style="font-family:Arial,sans-serif;max-width:520px;margin:0 auto;padding:24px;background:#f5f0e8;">
           <div style="background:#1c1c1e;padding:20px 28px;border-radius:12px 12px 0 0;text-align:center;">
-            <h2 style="color:#D4AF5A;margin:0;font-size:20px;">GÖÇMEN KIRTASİYE</h2>
+            <h2 style="color:#D4AF5A;margin:0;font-size:20px;">GÖÇMEN PERDE</h2>
             <p style="color:#aaa;font-size:12px;margin:4px 0 0;">Mail Sistemi Test</p>
           </div>
           <div style="background:#fff;padding:28px;border-radius:0 0 12px 12px;border:1px solid #e8e0d5;border-top:none;text-align:center;">
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
               <tr><td style="color:#999;padding:4px 0;">Alıcı:</td><td style="color:#333;font-weight:600;">${target}</td></tr>
             </table>
           </div>
-          <p style="color:#aaa;font-size:11px;text-align:center;margin-top:12px;">Göçmen Kırtasiye Admin Paneli</p>
+          <p style="color:#aaa;font-size:11px;text-align:center;margin-top:12px;">Göçmen Perde Admin Paneli</p>
         </div>
       `,
     });

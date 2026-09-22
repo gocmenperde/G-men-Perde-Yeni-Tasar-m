@@ -58,7 +58,7 @@ export async function GET() {
       const barcode       = p.barcode ?? null;
       const sku           = p.sku ?? null;
       const description   = p.description
-        ?? `${p.name}${p.brand?.name ? ` — ${p.brand.name}` : ""}${p.category?.name ? ` — ${p.category.name}` : ""}. Göçmen Kırtasiye'de uygun fiyatla satın alın.`;
+        ?? `${p.name}${p.brand?.name ? ` — ${p.brand.name}` : ""}${p.category?.name ? ` — ${p.category.name}` : ""}. Göçmen Perde'de uygun fiyatla satın alın.`;
 
       // Doğru fiyat mantığı:
       // İndirim yoksa: g:price = satış fiyatı, g:sale_price yok
@@ -82,7 +82,7 @@ export async function GET() {
       <g:availability>${inStock ? "in_stock" : "out_of_stock"}</g:availability>
       <g:price>${listedPrice} TRY</g:price>
       ${salePrice ? `<g:sale_price>${salePrice} TRY</g:sale_price>` : ""}
-      <g:brand>${escapeXml(p.brand?.name ?? "Göçmen Kırtasiye")}</g:brand>
+      <g:brand>${escapeXml(p.brand?.name ?? "Göçmen Perde")}</g:brand>
       <g:condition>new</g:condition>
       <g:google_product_category>${escapeXml(GOOGLE_CATEGORY)}</g:google_product_category>
       ${p.category?.name ? `<g:product_type>${escapeXml(p.category.name)}</g:product_type>` : ""}
@@ -100,9 +100,9 @@ export async function GET() {
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">
   <channel>
-    <title>Göçmen Kırtasiye — Google Shopping Feed</title>
+    <title>Göçmen Perde — Google Shopping Feed</title>
     <link>${BASE_URL}</link>
-    <description>Göçmen Kırtasiye tüm ürün kataloğu</description>
+    <description>Göçmen Perde tüm ürün kataloğu</description>
     <lastBuildDate>${now}</lastBuildDate>
 ${items.join("\n")}
   </channel>

@@ -49,7 +49,7 @@ export default function RegisterClient() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-flex flex-col items-center leading-none mb-4">
             <span className="text-2xl font-black text-zinc-900">
-              GÖÇMEN <span className="text-[#B8973E]">KIRTASİYE</span>
+              GÖÇMEN <span className="text-[#B8973E]">PERDE</span>
             </span>
             <span className="text-[9px] tracking-widest text-zinc-400 uppercase mt-0.5">Bursa · EST. 1993</span>
           </Link>
@@ -72,7 +72,7 @@ export default function RegisterClient() {
               <label className={LABEL}>E-posta</label>
               <div className="relative">
                 <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <input {...register("email", { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ })} type="email" placeholder="ornek@email.com" className={INPUT} />
+                 <input {...register("email", { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ })} type="email" autoComplete="email" placeholder="ornek@email.com" className={INPUT} />
               </div>
               {errors.email && <p className="text-red-500 text-xs mt-1">Geçerli e-posta girin.</p>}
             </div>
@@ -81,7 +81,7 @@ export default function RegisterClient() {
               <label className={LABEL}>Şifre</label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <input {...register("password", { required: true, minLength: 6 })} type={showPass ? "text" : "password"} placeholder="En az 6 karakter" className="w-full pl-10 pr-10 py-3 rounded-xl border border-[#E8E0D5] bg-[#FAF7F2] focus:outline-none focus:ring-2 focus:ring-[#D4AF5A] focus:border-transparent transition text-sm text-zinc-800" />
+                 <input {...register("password", { required: true, minLength: 6 })} type={showPass ? "text" : "password"} autoComplete="new-password" placeholder="En az 6 karakter" className="w-full pl-10 pr-10 py-3 rounded-xl border border-[#E8E0D5] bg-[#FAF7F2] focus:outline-none focus:ring-2 focus:ring-[#D4AF5A] focus:border-transparent transition text-sm text-zinc-800" />
                 <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors">
                   {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -93,7 +93,7 @@ export default function RegisterClient() {
               <label className={LABEL}>Şifre Tekrar</label>
               <div className="relative">
                 <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-                <input {...register("confirmPassword", { validate: (v) => v === watch("password") || "Şifreler eşleşmiyor" })} type="password" placeholder="Şifrenizi tekrar girin" className={INPUT} />
+                 <input {...register("confirmPassword", { validate: (v) => v === watch("password") || "Şifreler eşleşmiyor" })} type="password" autoComplete="new-password" placeholder="Şifrenizi tekrar girin" className={INPUT} />
               </div>
               {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword.message}</p>}
             </div>

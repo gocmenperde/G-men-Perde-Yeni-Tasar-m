@@ -34,7 +34,7 @@ export default function AboutPage() {
               <span className="section-label">Osmangazi, Bursa · Est. 1993</span>
               <h1 className="mt-5 max-w-3xl font-display text-5xl font-bold leading-[.95] tracking-[-.045em] text-[var(--navy)] sm:text-7xl">
                 Göçmen{" "}
-                <span className="text-[var(--gold)]">Kırtasiye</span>
+                 <span className="text-[var(--gold)]">Perde</span>
               </h1>
               <p className="mt-6 max-w-xl text-base leading-7 text-[var(--ink-muted)] sm:text-lg">
                 Yalnızca ürün göndermiyoruz. İhtiyacı anlayıp doğru malzemeyi, doğru bilgiyle ve özenli bir deneyimle buluşturuyoruz.
@@ -69,7 +69,7 @@ export default function AboutPage() {
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
         <motion.div {...reveal()} className="mb-8 max-w-2xl">
           <span className="section-label">Farkımız</span>
-          <h2 className="mt-3 font-display text-4xl font-bold leading-none tracking-[-.035em] text-[var(--navy)] sm:text-5xl">Kırtasiye alışverişini daha iyi hissettirmek.</h2>
+          <h2 className="mt-3 font-display text-4xl font-bold leading-none tracking-[-.035em] text-[var(--navy)] sm:text-5xl">Perde alışverişini daha iyi hissettirmek.</h2>
         </motion.div>
         <div className="grid gap-4 md:grid-cols-3">
           {pillars.map(({ icon: Icon, title, text }, index) => (
@@ -105,8 +105,8 @@ export default function AboutPage() {
             <span className="section-label !text-[#E5B96F]">Hikâyemiz</span>
             <h2 className="mt-4 font-display text-3xl font-bold leading-tight sm:text-4xl">Bir mahalle mağazasından, her yere ulaşan bir seçkiye.</h2>
             <div className="mt-6 grid gap-4 text-sm leading-7 text-[#C9D3D0] sm:grid-cols-2">
-              <p>Göçmen Kırtasiye, 1993 yılında Bursa Osmangazi&apos;nde küçük bir mağaza olarak başladı. Bugün aynı özeni online alışveriş deneyimine taşıyoruz.</p>
-              <p>Öğrencilerden sanatçılara, ofis çalışanlarından ev kullanıcılarına kadar herkes için güvenilir markaları ve doğru malzemeyi bir araya getiriyoruz.</p>
+              <p>Göçmen Perde, 1993 yılında Bursa Osmangazi&apos;nde küçük bir mağaza olarak başladı. Bugün aynı özeni online alışveriş deneyimine taşıyoruz.</p>
+              <p>Evini yenilemek isteyen herkes için güvenilir kumaşları, doğru ölçüyü ve özenli işçiliği bir araya getiriyoruz.</p>
             </div>
           </motion.div>
           <motion.div {...reveal(0.08)} className="rounded-[2rem] border border-[var(--line)] bg-[var(--surface)] p-7 sm:p-8">
@@ -130,10 +130,10 @@ export default function AboutPage() {
         <motion.div {...reveal()} className="rounded-[2rem] bg-gradient-to-br from-[#1B3036] to-[#243B43] p-7 text-center text-[#F8F3EA] shadow-[0_24px_60px_rgba(36,59,67,.16)] sm:p-10">
           <span className="section-label justify-center !text-[#E5B96F]">Misyonumuz</span>
           <h2 className="mx-auto mt-4 max-w-2xl font-display text-3xl font-bold leading-tight sm:text-4xl">Herkes için iyi malzemeye, iyi bir deneyimle ulaşmak.</h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#C9D3D0]">İhtiyacı anlayan, seçimi kolaylaştıran ve her siparişi özenle hazırlayan bir kırtasiye olmak.</p>
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-[#C9D3D0]">İhtiyacı anlayan, seçimi kolaylaştıran ve her siparişi özenle hazırlayan bir perde mağazası olmak.</p>
           <div className="mx-auto mt-7 inline-flex items-center gap-3 rounded-2xl border border-white/15 bg-white/5 px-4 py-3 text-left">
             <div className="grid h-10 w-10 place-items-center rounded-full bg-[#E5B96F] text-xs font-black text-[#243B43]">ZT</div>
-            <div><p className="text-sm font-extrabold">Zeynel Türkoğlu</p><p className="text-xs text-[#AABAB6]">Göçmen Kırtasiye</p></div>
+            <div><p className="text-sm font-extrabold">Zeynel Türkoğlu</p><p className="text-xs text-[#AABAB6]">Göçmen Perde</p></div>
           </div>
         </motion.div>
       </section>

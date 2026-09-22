@@ -42,14 +42,14 @@ export async function POST(req: NextRequest) {
     if (transporter) {
       const from = process.env.SMTP_FROM ?? process.env.SMTP_USER;
       await transporter.sendMail({
-        from: `"Göçmen Kırtasiye İletişim" <${from}>`,
+        from: `"Göçmen Perde İletişim" <${from}>`,
         to: toEmail,
         replyTo: `"${name}" <${email}>`,
         subject: `[İletişim] ${subject}`,
         html: `
           <div style="font-family:Arial,sans-serif;max-width:560px;margin:0 auto;padding:24px;background:#f5f0e8;">
             <div style="background:#1c1c1e;padding:20px 28px;border-radius:12px 12px 0 0;">
-              <h2 style="color:#D4AF5A;margin:0;font-size:18px;">Göçmen Kırtasiye — Yeni Mesaj</h2>
+              <h2 style="color:#D4AF5A;margin:0;font-size:18px;">Göçmen Perde — Yeni Mesaj</h2>
             </div>
             <div style="background:#fff;padding:24px 28px;border-radius:0 0 12px 12px;border:1px solid #e8e0d5;border-top:none;">
               <table width="100%" cellpadding="0" cellspacing="0">

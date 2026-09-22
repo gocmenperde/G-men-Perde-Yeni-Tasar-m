@@ -598,7 +598,7 @@ export default function SettingsClient({
               <input
                 value={form.siteName ?? ""}
                 onChange={(e) => set("siteName", e.target.value)}
-                placeholder="Göçmen Kırtasiye"
+                placeholder="Göçmen Perde"
                 className={inputCls}
               />
             </Field>
@@ -720,7 +720,7 @@ export default function SettingsClient({
                 <input
                   value={form.heroTitle ?? ""}
                   onChange={(e) => set("heroTitle", e.target.value)}
-                  placeholder="Göçmen Kırtasiye"
+                  placeholder="Göçmen Perde"
                   className={inputCls}
                 />
               </Field>
@@ -1338,7 +1338,7 @@ export default function SettingsClient({
                     {form.logoUrl ? (
                       <img src={form.logoUrl} alt="Logo" className="h-8 max-w-[120px] object-contain" />
                     ) : (
-                      <span className="font-black text-zinc-900 text-sm">{form.siteName || "Göçmen Kırtasiye"}</span>
+                      <span className="font-black text-zinc-900 text-sm">{form.siteName || "Göçmen Perde"}</span>
                     )}
                   </div>
                   <div className="flex items-center gap-3">
@@ -1360,7 +1360,7 @@ export default function SettingsClient({
                   <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider mb-2">Tarayıcı Sekmesi (Favicon)</p>
                   <div className="bg-zinc-800 rounded-xl px-4 py-3 flex items-center gap-3 border border-zinc-700">
                     <img src={form.faviconUrl} alt="Favicon" className="w-5 h-5 object-contain flex-shrink-0" />
-                    <span className="text-xs text-zinc-300 truncate">{form.siteName || "Göçmen Kırtasiye"}</span>
+                    <span className="text-xs text-zinc-300 truncate">{form.siteName || "Göçmen Perde"}</span>
                     <div className="ml-auto flex gap-1">
                       <div className="w-2 h-2 rounded-full bg-zinc-600" />
                       <div className="w-2 h-2 rounded-full bg-zinc-600" />

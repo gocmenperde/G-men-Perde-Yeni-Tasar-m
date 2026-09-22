@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Shield, ChevronRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Gizlilik Politikası | Göçmen Kırtasiye",
-  description: "Göçmen Kırtasiye gizlilik politikası — kişisel verilerinizin nasıl toplandığı, kullanıldığı ve korunduğu hakkında bilgi.",
+  title: "Gizlilik Politikası | Göçmen Perde",
+  description: "Göçmen Perde gizlilik politikası — kişisel verilerinizin nasıl toplandığı, kullanıldığı ve korunduğu hakkında bilgi.",
   alternates: { canonical: "https://www.gocmenkirtasiye.com.tr/privacy" },
 };
 
@@ -62,7 +62,7 @@ export default function PrivacyPage() {
             </div>
           </div>
           <p className="text-zinc-600 leading-relaxed">
-            Göçmen Kırtasiye olarak kişisel verilerinizin gizliliğini ciddiye alıyoruz. Bu politika, sitemizi kullandığınızda hangi bilgileri topladığımızı, bunları nasıl kullandığımızı ve haklarınızı açıklamaktadır.
+            Göçmen Perde olarak kişisel verilerinizin gizliliğini ciddiye alıyoruz. Bu politika, sitemizi kullandığınızda hangi bilgileri topladığımızı, bunları nasıl kullandığımızı ve haklarınızı açıklamaktadır.
           </p>
         </div>
 

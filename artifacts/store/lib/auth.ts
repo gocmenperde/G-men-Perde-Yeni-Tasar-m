@@ -41,29 +41,19 @@ export const authOptions: NextAuthOptions = {
         const normalizedLogin = rawLogin.toLowerCase().trim();
         const normalizedEmail = normalizedLogin;
 
-        // Deployment'taki admin hesabı veritabanında henüz yoksa ilk başarılı
-        // girişte oluşturulur. Kullanıcı zaten varsa, deployment parolası
-        // değişmiş olsa bile mevcut bcrypt parolasına düşebilmek gerekir.
+        // Deployment admin hesabı veritabanındaki User kaydına bağlı değildir.
+        // Vercel'deki legacy şemalarda yeni User kolonları eksik olabildiği
+        // için doğru deployment kimlik bilgileriyle doğrudan admin JWT'si
+        // üretmek gerekir. Admin API'leri rolü JWT'den doğrular.
         const configuredAdmin = getConfiguredAdminCredentials();
         if (configuredAdmin && configuredAdmin.identifiers.includes(normalizedLogin)) {
           if (credentials.password === configuredAdmin.password) {
-            const admin = await db.user.upsert({
-              where: { email: configuredAdmin.email },
-              update: {
-                role: "ADMIN",
-                password: await bcrypt.hash(configuredAdmin.password, 10),
-                isBlocked: false,
-              },
-              create: {
-                email: configuredAdmin.email,
-                name: "Admin",
-                role: "ADMIN",
-                password: await bcrypt.hash(configuredAdmin.password, 10),
-              },
-              select: { id: true, email: true, name: true, role: true },
-            });
-
-            return { id: admin.id, email: admin.email, name: admin.name, role: "ADMIN" };
+            return {
+              id: `admin:${configuredAdmin.email}`,
+              email: configuredAdmin.email,
+              name: "Admin",
+              role: "ADMIN",
+            };
           }
         }
 

@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Check, ChevronRight, Minus, Plus, ShieldCheck, Sparkles, Trash2, Truck, X } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import { useSiteSettings } from "@/lib/store/site-settings";
+import CouponOfferCard, { type CouponOffer } from "@/components/store/coupon-offer-card";
 import toast from "react-hot-toast";
 
 interface Recommendation {
@@ -36,8 +37,12 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
   const removeItem = useCartStore((state) => state.removeItem);
   const total = useCartStore((state) => state.total);
   const addItem = useCartStore((state) => state.addItem);
+  const appliedCouponCode = useCartStore((state) => state.appliedCouponCode);
+  const setAppliedCouponCode = useCartStore((state) => state.setAppliedCouponCode);
   const { freeShippingThreshold, shippingFee, load } = useSiteSettings();
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [availableCoupons, setAvailableCoupons] = useState<CouponOffer[]>([]);
+  const [applyingCouponCode, setApplyingCouponCode] = useState("");
   const [loadingRecommendations, setLoadingRecommendations] = useState(false);
   const [celebrate, setCelebrate] = useState(false);
 
@@ -91,6 +96,14 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
   }, [items, open]);
 
   useEffect(() => {
+    if (!open) return;
+    fetch("/api/coupons/available", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((payload) => setAvailableCoupons(Array.isArray(payload.data) ? payload.data : []))
+      .catch(() => setAvailableCoupons([]));
+  }, [open]);
+
+  useEffect(() => {
     if (!open || subtotal < freeShippingThreshold || subtotal === 0) return;
     setCelebrate(true);
     const timer = window.setTimeout(() => setCelebrate(false), 2200);
@@ -116,6 +129,32 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
     toast.success("Tamamlayıcı ürün sepete eklendi.");
   };
 
+  const applyCoupon = async (code: string) => {
+    setApplyingCouponCode(code);
+    try {
+      const response = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          code,
+          items: items.map((item) => ({
+            productId: item.productId ?? item.id,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        }),
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error ?? "Kupon şu anda bu sepette kullanılamıyor.");
+      setAppliedCouponCode(code);
+      toast.success(`Kupon uygulandı: ${code}`);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Kupon uygulanamadı.");
+    } finally {
+      setApplyingCouponCode("");
+    }
+  };
+
   return (
     <AnimatePresence>
       {open && (
@@ -129,11 +168,11 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
             aria-hidden="true"
           />
           <motion.aside
-            initial={{ x: "100%" }}
+            initial={false}
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", stiffness: 330, damping: 34 }}
-            className="fixed inset-y-0 right-0 z-[80] flex w-full max-w-[460px] flex-col border-l border-[var(--line)] bg-[var(--surface)] shadow-[-20px_0_60px_rgba(38,53,59,0.18)]"
+            className="fixed inset-y-0 left-0 right-0 z-[80] flex h-[100dvh] w-screen max-w-none min-w-0 flex-col overflow-x-hidden border-[var(--line)] bg-[var(--surface)] shadow-[-20px_0_60px_rgba(38,53,59,0.18)] md:left-auto md:w-full md:max-w-[460px] md:border-l"
             role="dialog"
             aria-modal="true"
             aria-label="Sepetim"
@@ -148,7 +187,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
               </button>
             </header>
 
-            <div className="drawer-scroll flex-1 overflow-y-auto">
+            <div className="drawer-scroll min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
               {items.length === 0 ? (
                 <div className="flex min-h-[55vh] flex-col items-center justify-center px-8 text-center">
                   <div className="flex h-20 w-20 items-center justify-center rounded-[26px] border border-[var(--line)] bg-[var(--surface-muted)] text-[var(--gold)]">
@@ -188,6 +227,30 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                       <span className={`text-xs font-black ${remaining === 0 ? "text-emerald-700 dark:text-emerald-200" : "text-[var(--gold)]"}`}>{Math.round(progress)}%</span>
                     </div>
                   </div>
+
+                  {availableCoupons.length > 0 && (
+                    <section className="border-t border-[var(--line)] pt-5" aria-label="Kullanılabilir kuponlar">
+                      <div className="mb-3 flex items-end justify-between gap-3">
+                        <div>
+                          <p className="section-label">Size özel fırsatlar</p>
+                          <h3 className="mt-1 text-sm font-black text-[var(--ink)]">Bu sepette kullanabileceğiniz kuponlar</h3>
+                        </div>
+                        <span className="shrink-0 text-[10px] font-bold text-[var(--ink-muted)]">{availableCoupons.length} kampanya</span>
+                      </div>
+                      <div className="scrollbar-hide flex snap-x gap-3 overflow-x-auto pb-1">
+                        {availableCoupons.map((coupon) => (
+                          <CouponOfferCard
+                            key={coupon.id}
+                            coupon={coupon}
+                            compact
+                            applied={appliedCouponCode === coupon.code}
+                            applying={applyingCouponCode === coupon.code}
+                            onApply={applyCoupon}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  )}
 
                   <div className="space-y-2">
                     {items.map((item) => (

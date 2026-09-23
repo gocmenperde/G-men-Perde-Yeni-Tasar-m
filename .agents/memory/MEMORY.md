@@ -30,3 +30,4 @@
 - [Mobile form focus](mobile-form-focus.md) — never declare interactive field components inside a parent render; React remounts them on each keystroke and iOS can lose focus
 - [Curtain catalog boundary](curtain-catalog-boundary.md) — storefront and admin must share live curtain data; empty-state fallbacks must never recreate stationery content
 - [Product negative-cache recovery](product-negative-cache.md) — live feeds can expose newly imported products while stale null page caches still render “not found”; recheck the database on misses
+- [Admin schema resilience](admin-schema-resilience.md) — partial legacy production schemas must not crash admin pages or create false catalog-empty warnings

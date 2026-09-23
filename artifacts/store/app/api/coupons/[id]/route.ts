@@ -13,3 +13,17 @@ export async function DELETE(
   await db.coupon.delete({ where: { id } });
   return NextResponse.json({ message: "Silindi." });
 }
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  if (!await isAdminAuthorized(req)) return unauthorizedResponse();
+  const { id } = await params;
+  const body = await req.json();
+  const coupon = await db.coupon.update({
+    where: { id },
+    data: { isActive: Boolean(body.isActive) },
+  });
+  return NextResponse.json({ data: coupon });
+}

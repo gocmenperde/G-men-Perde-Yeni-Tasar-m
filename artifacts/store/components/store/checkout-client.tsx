@@ -75,6 +75,8 @@ export default function CheckoutClient() {
   const [couponInput, setCouponInput] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponApplied, setCouponApplied] = useState("");
+  const [couponFreeShipping, setCouponFreeShipping] = useState(false);
+  const [premiumInfo, setPremiumInfo] = useState<{ active: boolean; discountType: string; discountValue: number; freeShipping: boolean } | null>(null);
   const [loading, setLoading] = useState(false);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
   const [districts, setDistricts] = useState<string[]>([]);
@@ -131,6 +133,11 @@ export default function CheckoutClient() {
       .finally(() => setLoadingAddresses(false));
   }, [session]);
 
+  useEffect(() => {
+    if (!session) return;
+    fetch("/api/premium/status").then((r) => r.json()).then((json) => setPremiumInfo(json.data ?? null)).catch(() => {});
+  }, [session]);
+
   function fillForm(addr: SavedAddress) {
     setValue("fullName", addr.fullName);
     setValue("phone", addr.phone);
@@ -151,8 +158,11 @@ export default function CheckoutClient() {
   useEffect(() => { loadSettings(); }, [loadSettings]);
 
   const subtotal = total();
-  const shipping = subtotal >= freeShippingThreshold ? 0 : shippingFee;
-  const finalTotal = Math.max(0, subtotal - discount) + shipping;
+  const premiumDiscount = premiumInfo?.active
+    ? Math.min(subtotal, premiumInfo.discountType === "FIXED" ? premiumInfo.discountValue : subtotal * premiumInfo.discountValue / 100)
+    : 0;
+  const shipping = couponFreeShipping || (premiumInfo?.active && premiumInfo.freeShipping) || subtotal >= freeShippingThreshold ? 0 : shippingFee;
+  const finalTotal = Math.max(0, subtotal - discount - premiumDiscount) + shipping;
 
   const applyCoupon = async () => {
     if (!couponInput.trim()) return;
@@ -161,11 +171,19 @@ export default function CheckoutClient() {
       const res = await fetch("/api/coupons/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code: couponInput.trim(), amount: subtotal }),
+        body: JSON.stringify({
+          code: couponInput.trim(),
+          items: items.map((item) => ({
+            productId: item.productId ?? item.id,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error ?? "Geçersiz kupon");
       setDiscount(json.discount ?? 0);
+      setCouponFreeShipping(Boolean(json.freeShipping));
       setCouponApplied(couponInput.trim().toUpperCase());
       toast.success(`Kupon uygulandı! -₺${(json.discount ?? 0).toLocaleString("tr-TR")}`);
     } catch (err: any) {
@@ -648,6 +666,12 @@ export default function CheckoutClient() {
               <div className="flex justify-between text-sm text-green-600 font-medium">
                 <span>Kupon İndirimi</span>
                 <span>-₺{discount.toLocaleString("tr-TR")}</span>
+              </div>
+            )}
+            {premiumDiscount > 0 && (
+              <div className="flex justify-between text-sm text-amber-600 font-medium">
+                <span>Premium indirimi</span>
+                <span>-₺{premiumDiscount.toLocaleString("tr-TR")}</span>
               </div>
             )}
             <div className="flex justify-between text-sm text-zinc-500">

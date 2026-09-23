@@ -11,17 +11,26 @@ export async function POST(req: NextRequest) {
     if (!user)
       return NextResponse.json({ error: "Giriş yapınız." }, { status: 401 });
 
-    const { orderId } = await req.json();
-    if (!orderId)
-      return NextResponse.json({ error: "orderId zorunludur." }, { status: 400 });
+    const { orderId, membershipId } = await req.json();
+    if (!orderId && !membershipId)
+      return NextResponse.json({ error: "orderId veya membershipId zorunludur." }, { status: 400 });
 
-    const order = await db.order.findUnique({
-      where: { id: orderId },
-      include: { user: true, items: { include: { product: true } } },
-    });
+    const order = orderId
+      ? await db.order.findUnique({
+          where: { id: orderId },
+          include: { user: true, items: { include: { product: true } } },
+        })
+      : null;
+    const membership = membershipId
+      ? await db.premiumMembership.findUnique({ where: { id: membershipId }, include: { user: true } })
+      : null;
 
-    if (!order || order.userId !== user.id)
+    if (order && order.userId !== user.id)
       return NextResponse.json({ error: "Sipariş bulunamadı." }, { status: 404 });
+    if (membership && membership.userId !== user.id)
+      return NextResponse.json({ error: "Premium üyelik ödemesi bulunamadı." }, { status: 404 });
+    if (!order && !membership)
+      return NextResponse.json({ error: "Ödeme kaydı bulunamadı." }, { status: 404 });
 
     const merchant_id = process.env.PAYTR_MERCHANT_ID ?? "";
     const merchant_key = process.env.PAYTR_MERCHANT_KEY ?? "";
@@ -37,15 +46,15 @@ export async function POST(req: NextRequest) {
       req.headers.get("x-real-ip") ??
       "127.0.0.1";
 
-    const merchant_oid = order.id;
-    const email = order.user.email;
-    const payment_amount = Math.round(Number(order.total) * 100).toString();
+    const merchant_oid = order?.id ?? membership!.id;
+    const payer = order?.user ?? membership!.user;
+    const email = payer.email;
+    const amount = order ? Number(order.total) : Number(membership!.amount);
+    const payment_amount = Math.round(amount * 100).toString();
 
-    const basket = order.items.map((i) => [
-      i.product.name,
-      Number(i.price).toFixed(2),
-      i.quantity,
-    ]);
+    const basket = order
+      ? order.items.map((i) => [i.product.name, Number(i.price).toFixed(2), i.quantity])
+      : [["Göçmen Premium Üyelik", Number(membership!.amount).toFixed(2), 1]];
     const user_basket = Buffer.from(JSON.stringify(basket)).toString("base64");
 
     const no_installment = "0";
@@ -69,12 +78,14 @@ export async function POST(req: NextRequest) {
 
     const ok_url =
       process.env.PAYTR_OK_URL ??
-      `${siteUrl}/orders/success?orderId=${merchant_oid}`;
+      (order
+        ? `${siteUrl}/orders/success?orderId=${merchant_oid}`
+        : `${siteUrl}/account?premium=success`);
     const fail_url =
       process.env.PAYTR_FAIL_URL ??
       `${siteUrl}/orders/failed`;
 
-    const user_name = order.user.name ?? email.split("@")[0];
+    const user_name = payer.name ?? email.split("@")[0];
     const user_address = "Türkiye";
     const user_phone = "05000000000";
 

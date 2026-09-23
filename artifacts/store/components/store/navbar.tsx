@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import {
   ChevronDown,
+  Crown,
   BookOpen,
   Camera,
   FileText,
@@ -237,7 +238,7 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Perde", ca
                 </div>
               )}
             </div>
-            {[["Ürünler", "/products"], ["Hakkımızda", "/about"], ["İletişim", "/contact"]].map(([label, href]) => <Link key={href} href={href} className={`rounded-lg px-3 py-2.5 text-sm font-bold transition-colors ${navTone(href)}`}>{label}</Link>)}
+            {[["Ürünler", "/products"], ["Premium", "/premium"], ["Hakkımızda", "/about"], ["İletişim", "/contact"]].map(([label, href]) => <Link key={href} href={href} className={`rounded-lg px-3 py-2.5 text-sm font-bold transition-colors ${navTone(href)}`}>{label}</Link>)}
           </nav>
 
           <div className="ml-auto hidden min-w-0 max-w-[310px] flex-1 md:block">
@@ -327,6 +328,7 @@ export default function Navbar({ logoUrl = null, siteName = "Göçmen Perde", ca
             </div>
 
             <div className="book-mobile-menu__footer">
+              <Link href="/premium" onClick={() => setMenuOpen(false)}><NavIcon icon={Crown} hydrated={hydrated} size={14} /> Premium</Link>
               <Link href="/about" onClick={() => setMenuOpen(false)}><NavIcon icon={Info} hydrated={hydrated} size={14} /> Hakkımızda</Link>
               <Link href="/uygulama-ilham" onClick={() => setMenuOpen(false)}><NavIcon icon={Sparkles} hydrated={hydrated} size={14} /> Uygulama &amp; İlham</Link>
               <Link href="/hikayemiz" onClick={() => setMenuOpen(false)}><NavIcon icon={BookOpen} hydrated={hydrated} size={14} /> Hikâyemiz</Link>

@@ -7,7 +7,7 @@ import {
   Plus, Pencil, Trash2, Star, CheckCircle2, X, ChevronDown,
   Save, Phone, Home, Briefcase, Building2, Loader2, ArrowRight,
   Clock3, RefreshCw, Truck, ShieldCheck, XCircle, CreditCard,
-  type LucideIcon,
+  Crown, type LucideIcon,
 } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
@@ -172,6 +172,7 @@ export default function AccountClient({ user, orders }: { user: any; orders: any
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const [profileName, setProfileName] = useState(user?.name ?? "");
   const [savingProfile, setSavingProfile] = useState(false);
+  const premiumActive = Boolean(user?.premiumUntil && new Date(user.premiumUntil).getTime() > Date.now());
 
   useEffect(() => {
     if (tab === "addresses" && addresses.length === 0) {
@@ -254,6 +255,11 @@ export default function AccountClient({ user, orders }: { user: any; orders: any
           <p className="text-[10px] font-black uppercase tracking-[.16em] text-[#B8973E]">Göçmen Perde hesabın</p>
           <h1 className="mt-1 text-2xl font-black text-zinc-900">Hoş geldin, {(user?.name ?? "Kullanıcı").split(/\s+/)[0]}</h1>
           <p className="text-zinc-400 text-sm">{user?.email}</p>
+           {premiumActive && (
+             <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-100 px-3 py-1 text-xs font-black text-amber-700 shadow-sm">
+               <Crown className="h-3.5 w-3.5" /> Göçmen Premium Üyesi
+             </span>
+           )}
         </div>
         <button onClick={() => signOut({ callbackUrl: "/" })}
           className="ml-0 flex w-full items-center justify-center gap-2 rounded-xl border border-red-200 px-4 py-2.5 text-sm text-red-500 transition-colors hover:bg-red-50 hover:text-red-600 sm:ml-auto sm:w-auto">
@@ -513,6 +519,25 @@ export default function AccountClient({ user, orders }: { user: any; orders: any
                   {savingProfile ? "Kaydediliyor..." : "Değişiklikleri Kaydet"}
                 </button>
               </div>
+
+               <div className={`rounded-2xl border p-6 ${premiumActive ? "border-amber-200 bg-gradient-to-br from-amber-50 to-yellow-50" : "border-[#E8E0D5] bg-white"}`}>
+                 <div className="flex items-start gap-3">
+                   <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-zinc-900 text-amber-300">
+                     <Crown className="h-5 w-5" />
+                   </div>
+                   <div className="min-w-0">
+                     <h3 className="font-black text-zinc-900">{premiumActive ? "Göçmen Premium Üyeliğiniz aktif" : "Göçmen Premium'a katılın"}</h3>
+                     <p className="mt-1 text-sm leading-5 text-zinc-500">
+                       {premiumActive && user.premiumUntil
+                         ? `${new Date(user.premiumUntil).toLocaleDateString("tr-TR")} tarihine kadar özel indirim ve ücretsiz kargo avantajlarından yararlanın.`
+                         : "Özel indirim, ücretsiz kargo ve hesabınızda Premium rozeti için üyeliğinizi başlatın."}
+                     </p>
+                     <Link href="/premium" className="mt-4 inline-flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#B8973E]">
+                       {premiumActive ? "Bir ay daha yenile" : "Premium'u keşfet"} <ArrowRight className="h-4 w-4" />
+                     </Link>
+                   </div>
+                 </div>
+               </div>
 
               <div className="bg-red-50 rounded-2xl border border-red-100 p-6">
                 <h3 className="font-bold text-red-700 mb-2">Hesaptan Çıkış</h3>

@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { checkRateLimit, getRequestIp } from "@/lib/rate-limit";
+import { evaluateCoupon, isPremiumActive, type CouponCartItem } from "@/lib/coupon-rules";
+import { getUserFromToken } from "@/lib/get-user-token";
 
 export const dynamic = "force-dynamic";
 
@@ -11,7 +13,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Çok fazla istek. Lütfen bekleyin." }, { status: 429 });
 
   try {
-    const { code, amount } = await req.json();
+    const { code, items = [] } = await req.json();
     if (!code)
       return NextResponse.json(
         { error: "Kupon kodu gerekli." },
@@ -29,34 +31,43 @@ export async function POST(req: NextRequest) {
         { error: "Kupon bulunamadı veya geçersiz." },
         { status: 404 },
       );
-    if (coupon.maxUses && coupon.usedCount >= coupon.maxUses)
-      return NextResponse.json(
-        { error: "Kupon kullanım limitine ulaştı." },
-        { status: 400 },
-      );
-    if (
-      amount &&
-      Number(coupon.minOrderAmount) > 0 &&
-      amount < Number(coupon.minOrderAmount)
-    )
-      return NextResponse.json(
-        {
-          error: `Minimum sipariş tutarı ₺${Number(coupon.minOrderAmount).toLocaleString("tr-TR")}`,
-        },
-        { status: 400 },
-      );
-    const discount =
-      coupon.type === "PERCENTAGE"
-        ? (amount * Number(coupon.value)) / 100
-        : Number(coupon.value);
+    const user = await getUserFromToken(req);
+    const currentUser = user
+      ? await db.user.findUnique({ where: { id: user.id }, select: { premiumUntil: true } })
+      : null;
+    const cartItems: CouponCartItem[] = Array.isArray(items)
+      ? items
+          .map((item: any) => ({
+            productId: String(item.productId ?? ""),
+            quantity: Math.max(0, Number(item.quantity ?? 0)),
+            price: Math.max(0, Number(item.price ?? 0)),
+          }))
+          .filter((item) => item.productId && item.quantity > 0)
+      : [];
+    if (cartItems.length === 0) {
+      return NextResponse.json({ error: "Sepet ürünleri bulunamadı." }, { status: 400 });
+    }
+    const products = await db.product.findMany({
+      where: { id: { in: cartItems.map((item) => item.productId) }, isActive: true },
+      select: { id: true, price: true, categoryId: true, brandId: true },
+    });
+    const evaluation = evaluateCoupon(
+      coupon,
+      products.map((product) => ({ ...product, price: Number(product.price) })),
+      cartItems,
+      isPremiumActive(currentUser?.premiumUntil),
+    );
     return NextResponse.json({
       data: coupon,
-      discount: Math.min(discount, amount),
+      discount: evaluation.discount,
+      freeShipping: evaluation.freeShipping,
+      eligibleSubtotal: evaluation.eligibleSubtotal,
+      message: evaluation.message,
     });
-  } catch {
+  } catch (error: any) {
     return NextResponse.json(
-      { error: "Kupon doğrulanamadı." },
-      { status: 500 },
+      { error: error?.message ?? "Kupon doğrulanamadı." },
+      { status: error?.message ? 400 : 500 },
     );
   }
 }

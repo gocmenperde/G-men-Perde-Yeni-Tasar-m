@@ -27,5 +27,10 @@ export default async function AccountPage() {
 
   const orders = rawOrders.map((order) => serializeOrder(order));
 
-  return <AccountClient user={token} orders={orders} />;
+  const account = await db.user.findUnique({
+    where: { id: token.id },
+    select: { premiumUntil: true },
+  });
+
+  return <AccountClient user={{ ...token, premiumUntil: account?.premiumUntil?.toISOString() ?? null }} orders={orders} />;
 }

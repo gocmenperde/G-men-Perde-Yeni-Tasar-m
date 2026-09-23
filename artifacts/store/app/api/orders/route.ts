@@ -7,6 +7,12 @@ import {
   getCurtainMeasurementRequirements,
   getPileOptions,
 } from "@/lib/curtain-measurements";
+import {
+  calculatePremiumDiscount,
+  evaluateCoupon,
+  isPremiumActive,
+  type CouponCartItem,
+} from "@/lib/coupon-rules";
 
 export const dynamic = "force-dynamic";
 
@@ -69,7 +75,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Giriş yapınız." }, { status: 401 });
 
     const body = await req.json();
-    const { items, couponCode, shipping: shippingFee = 0, address, addressId } = body;
+    const { items, couponCode, address, addressId } = body;
 
     if (!items || items.length === 0)
       return NextResponse.json({ error: "Sepet boş." }, { status: 400 });
@@ -85,6 +91,12 @@ export async function POST(req: NextRequest) {
       where: { id: { in: productIds }, isActive: true },
       include: { category: { select: { slug: true, name: true } } },
     });
+    const account = await db.user.findUnique({
+      where: { id: user.id },
+      select: { premiumUntil: true },
+    });
+    const settings = await db.siteSettings.findUnique({ where: { id: "global" } });
+    const premiumActive = isPremiumActive(account?.premiumUntil);
 
     let subtotal = 0;
     const orderItems = items.map((item: {
@@ -148,8 +160,17 @@ export async function POST(req: NextRequest) {
       };
     });
 
-    let discount = 0;
+    let couponDiscount = 0;
+    let premiumDiscount = premiumActive
+      ? calculatePremiumDiscount(subtotal, {
+          premiumDiscountType: settings?.premiumDiscountType,
+          premiumDiscountValue: settings?.premiumDiscountValue == null
+            ? undefined
+            : Number(settings.premiumDiscountValue),
+        })
+      : 0;
     let couponId: string | undefined;
+    let couponFreeShipping = false;
     if (couponCode) {
       const coupon = await db.coupon.findFirst({
         where: {
@@ -158,18 +179,35 @@ export async function POST(req: NextRequest) {
           OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
         },
       });
-      if (coupon && (!coupon.maxUses || coupon.usedCount < coupon.maxUses)) {
-        discount =
-          coupon.type === "PERCENTAGE"
-            ? (subtotal * Number(coupon.value)) / 100
-            : Number(coupon.value);
-        discount = Math.min(discount, subtotal);
-        couponId = coupon.id;
-      }
+      if (!coupon) throw new Error("Kupon bulunamadı veya geçersiz.");
+      const couponItems: CouponCartItem[] = orderItems.map((item: { productId: string; quantity: number; price: number }) => ({
+        productId: item.productId,
+        quantity: item.quantity,
+        price: item.price,
+      }));
+      const evaluation = evaluateCoupon(
+        coupon,
+        products.map((product) => ({
+          id: product.id,
+          price: Number(orderItems.find((item: { productId: string; price: number }) => item.productId === product.id)?.price ?? product.price),
+          categoryId: product.categoryId,
+          brandId: product.brandId,
+        })),
+        couponItems,
+        premiumActive,
+      );
+      couponDiscount = evaluation.discount;
+      couponFreeShipping = evaluation.freeShipping;
+      couponId = coupon.id;
     }
 
-    const shipping = Number(shippingFee);
-    const total = Math.max(0, subtotal - discount) + shipping;
+    const totalDiscount = Math.min(subtotal, couponDiscount + premiumDiscount);
+    const shipping = (
+      premiumActive && settings?.premiumFreeShipping !== false
+    ) || couponFreeShipping || subtotal >= Number(settings?.freeShippingThreshold ?? 1500)
+      ? 0
+      : Number(settings?.shippingFee ?? 79.9);
+    const total = Math.max(0, subtotal - totalDiscount) + shipping;
 
     const order = await db.$transaction(async (tx) => {
       // Adres kaydı oluştur veya mevcut adresi kullan
@@ -211,7 +249,8 @@ export async function POST(req: NextRequest) {
           userId: user.id,
           status: "AWAITING_PAYMENT",
           subtotal,
-          discount,
+          discount: totalDiscount,
+          premiumDiscount,
           shipping,
           total,
           couponId,

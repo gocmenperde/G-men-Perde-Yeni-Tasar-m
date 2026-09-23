@@ -9,15 +9,15 @@ export const metadata: Metadata = {
 };
 
 interface Props {
-  searchParams: Promise<{ orderId?: string }>;
+  searchParams: Promise<{ orderId?: string; membershipId?: string }>;
 }
 
 export default async function PaytrPaymentPage({ searchParams }: Props) {
   const token = await getServerToken();
   if (!token) redirect("/login?callbackUrl=/payment/paytr");
 
-  const { orderId = "" } = await searchParams;
-  if (!orderId) redirect("/cart");
+  const { orderId = "", membershipId = "" } = await searchParams;
+  if (!orderId && !membershipId) redirect("/cart");
 
-  return <PaytrFrameClient orderId={orderId} />;
+  return <PaytrFrameClient orderId={orderId || undefined} membershipId={membershipId || undefined} />;
 }

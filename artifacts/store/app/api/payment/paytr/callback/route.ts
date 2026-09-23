@@ -52,22 +52,57 @@ export async function POST(req: NextRequest) {
       return FAILED();
     }
 
-    // ── Sipariş kontrolü ──────────────────────────────────────────────────────
+    // ── Sipariş / Premium ödeme kontrolü ─────────────────────────────────────
     const order = await db.order.findUnique({
       where: { id: merchant_oid },
       include: { items: true },
     });
 
-    if (!order) {
+    const membership = order
+      ? null
+      : await db.premiumMembership.findUnique({ where: { id: merchant_oid } });
+
+    if (!order && !membership) {
       console.error("[PAYTR_CALLBACK] Sipariş bulunamadı:", merchant_oid);
       return FAILED(); // Bilinmeyen sipariş → PayTR yeniden denesin
     }
 
     // İdempotent: zaten işlendiyse tekrar işleme
-    if (order.status === "PAID" || order.status === "PAYMENT_FAILED") {
-      console.log("[PAYTR_CALLBACK] Sipariş zaten işlenmiş, atlanıyor:", merchant_oid, order.status);
+    if (
+      (order && (order.status === "PAID" || order.status === "PAYMENT_FAILED")) ||
+      (membership && (membership.status === "ACTIVE" || membership.status === "PAYMENT_FAILED"))
+    ) {
+      console.log(
+        "[PAYTR_CALLBACK] Ödeme zaten işlenmiş, atlanıyor:",
+        merchant_oid,
+        order?.status ?? membership?.status,
+      );
       return OK();
     }
+
+    if (membership) {
+      if (status === "success") {
+        await db.$transaction(async (tx) => {
+          await tx.premiumMembership.update({
+            where: { id: membership.id },
+            data: { status: "ACTIVE", paymentRef: `PAYTR-${Date.now()}` },
+          });
+          await tx.user.update({
+            where: { id: membership.userId },
+            data: { premiumUntil: membership.expiresAt },
+          });
+        });
+        console.log("[PAYTR_CALLBACK] Premium üyelik aktif edildi:", merchant_oid);
+      } else {
+        await db.premiumMembership.update({
+          where: { id: membership.id },
+          data: { status: "PAYMENT_FAILED" },
+        });
+      }
+      return OK();
+    }
+
+    if (!order) return FAILED();
 
     // ── Ödeme başarılı ────────────────────────────────────────────────────────
     if (status === "success") {

@@ -4,6 +4,7 @@ import { useCartStore } from "@/lib/store/cart";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, Truck, Shield, RotateCcw, Tag, Check, X } from "lucide-react";
 import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
@@ -13,22 +14,31 @@ const CartCrossSell = dynamic(() => import("@/components/store/cart-cross-sell")
 
 export default function CartClient() {
   const { items, removeItem, updateQty, total, clearCart } = useCartStore();
+  const { data: session } = useSession();
   const [promoInput, setPromoInput] = useState("");
-  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discountAmount: number; label: string } | null>(null);
+  const [appliedPromo, setAppliedPromo] = useState<{ code: string; discountAmount: number; label: string; freeShipping: boolean } | null>(null);
   const [promoError, setPromoError] = useState("");
   const [applyingPromo, setApplyingPromo] = useState(false);
+  const [premium, setPremium] = useState<{ active: boolean; discountType: string; discountValue: number; freeShipping: boolean } | null>(null);
   const [mounted, setMounted] = useState(false);
   const { freeShippingThreshold: FREE_SHIPPING_THRESHOLD, shippingFee, load: loadSettings } = useSiteSettings();
 
   useEffect(() => { loadSettings(); }, [loadSettings]);
   useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    if (!session) return;
+    fetch("/api/premium/status").then((r) => r.json()).then((json) => setPremium(json.data ?? null)).catch(() => {});
+  }, [session]);
 
   const totalVal = total();
   const remaining = FREE_SHIPPING_THRESHOLD - totalVal;
   const progressPct = Math.min(100, (totalVal / FREE_SHIPPING_THRESHOLD) * 100);
   const discountAmount = appliedPromo?.discountAmount ?? 0;
-  const shippingCost = totalVal >= FREE_SHIPPING_THRESHOLD ? 0 : shippingFee;
-  const finalTotal = totalVal - discountAmount + shippingCost;
+  const premiumDiscount = premium?.active
+    ? Math.min(totalVal, premium.discountType === "FIXED" ? premium.discountValue : totalVal * premium.discountValue / 100)
+    : 0;
+  const shippingCost = appliedPromo?.freeShipping || (premium?.active && premium.freeShipping) || totalVal >= FREE_SHIPPING_THRESHOLD ? 0 : shippingFee;
+  const finalTotal = Math.max(0, totalVal - discountAmount - premiumDiscount) + shippingCost;
 
   const applyPromo = async () => {
     const code = promoInput.trim().toUpperCase();
@@ -39,7 +49,14 @@ export default function CartClient() {
       const res = await fetch("/api/coupons/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, amount: totalVal }),
+        body: JSON.stringify({
+          code,
+          items: items.map((item) => ({
+            productId: item.productId ?? item.id,
+            quantity: item.quantity,
+            price: item.price,
+          })),
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -51,7 +68,7 @@ export default function CartClient() {
       const calcDiscount = typeof discount === "number" ? discount : 0;
       const label = coupon?.type === "PERCENTAGE"
         ? `-%${Number(coupon.value)}` : `-₺${calcDiscount.toFixed(2)}`;
-      setAppliedPromo({ code, discountAmount: calcDiscount, label });
+       setAppliedPromo({ code, discountAmount: calcDiscount, label, freeShipping: Boolean(data.freeShipping) });
       setPromoInput("");
        toast.success(`Kupon uygulandı! ${label} indirim kazandınız.`);
     } catch {
@@ -258,6 +275,12 @@ export default function CartClient() {
                       <Tag className="w-3.5 h-3.5" /> {appliedPromo.code}
                     </span>
                     <span className="font-bold text-green-600">-₺{discountAmount.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</span>
+                  </div>
+                )}
+                {premiumDiscount > 0 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-amber-600 font-semibold">Premium indirimi</span>
+                    <span className="font-bold text-amber-600">-₺{premiumDiscount.toLocaleString("tr-TR", { minimumFractionDigits: 2 })}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm">

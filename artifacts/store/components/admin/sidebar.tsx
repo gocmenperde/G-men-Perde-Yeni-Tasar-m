@@ -32,6 +32,7 @@ const NAV_GROUPS = [
       { href: "/admin/orders",       label: "Siparişler",   icon: ShoppingCart },
       { href: "/admin/users",        label: "Kullanıcılar", icon: Users },
       { href: "/admin/coupons",      label: "Kuponlar",     icon: Ticket },
+      { href: "/admin/premium",      label: "Premium Üyelik", icon: Award },
       { href: "/admin/bulk-discount",label: "Toplu İndirim",icon: Percent },
         { href: "/admin/settings?tab=homepage", label: "Ana Sayfa Düzeni", icon: LayoutDashboard },
       { href: "/admin/settings",     label: "Site Ayarları",icon: Settings },

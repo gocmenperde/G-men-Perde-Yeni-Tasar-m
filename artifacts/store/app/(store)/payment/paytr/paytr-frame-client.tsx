@@ -30,7 +30,7 @@ function getPaytrCheckoutUrl() {
 
 const PAYTR_CHECKOUT_URL = getPaytrCheckoutUrl();
 
-export default function PaytrFrameClient({ orderId }: { orderId: string }) {
+export default function PaytrFrameClient({ orderId, membershipId }: { orderId?: string; membershipId?: string }) {
   const router = useRouter();
   const [token, setToken] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -43,7 +43,7 @@ export default function PaytrFrameClient({ orderId }: { orderId: string }) {
     fetch("/api/payment/paytr/create-token", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ orderId }),
+      body: JSON.stringify({ orderId, membershipId }),
     })
       .then((r) => r.json())
       .then((json) => {
@@ -58,14 +58,14 @@ export default function PaytrFrameClient({ orderId }: { orderId: string }) {
   };
 
   useEffect(() => {
-    if (!orderId) {
-      setError("Geçersiz sipariş numarası.");
+    if (!orderId && !membershipId) {
+      setError("Geçersiz ödeme numarası.");
       setLoading(false);
       return;
     }
     fetchToken();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderId]);
+  }, [orderId, membershipId]);
 
   /* ── Tam ekran wrapper ── */
   return (
@@ -86,7 +86,7 @@ export default function PaytrFrameClient({ orderId }: { orderId: string }) {
           </span>
         </div>
         <span className="text-xs text-zinc-400 font-mono">
-          #{orderId.slice(-8).toUpperCase()}
+           #{(orderId ?? membershipId ?? "").slice(-8).toUpperCase()}
         </span>
       </div>
 

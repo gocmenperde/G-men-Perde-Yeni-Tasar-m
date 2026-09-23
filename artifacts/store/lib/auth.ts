@@ -38,33 +38,32 @@ export const authOptions: NextAuthOptions = {
 
         const normalizedEmail = credentials.email.toLowerCase().trim();
 
-        // Vercel'de tanımlanan admin hesabı, veritabanında önceden seed
-        // edilmiş bir kullanıcı olmasa bile ilk başarılı girişte oluşturulur.
-        // Env admin adresi kullanılıyorsa eski veritabanı şifresine düşmeyiz;
-        // böylece deployment'taki gerçek ayar ile giriş davranışı aynı kalır.
+        const user = await db.user.findUnique({ where: { email: normalizedEmail } });
+
+        // Deployment'taki admin hesabı veritabanında henüz yoksa ilk başarılı
+        // girişte oluşturulur. Kullanıcı zaten varsa, deployment parolası
+        // değişmiş olsa bile mevcut bcrypt parolasına düşebilmek gerekir.
         const configuredAdmin = getConfiguredAdminCredentials();
         if (configuredAdmin && normalizedEmail === configuredAdmin.email) {
-          if (credentials.password !== configuredAdmin.password) return null;
+          if (credentials.password === configuredAdmin.password) {
+            const admin = await db.user.upsert({
+              where: { email: configuredAdmin.email },
+              update: {
+                role: "ADMIN",
+                password: await bcrypt.hash(configuredAdmin.password, 10),
+                isBlocked: false,
+              },
+              create: {
+                email: configuredAdmin.email,
+                name: "Admin",
+                role: "ADMIN",
+                password: await bcrypt.hash(configuredAdmin.password, 10),
+              },
+            });
 
-          const admin = await db.user.upsert({
-            where: { email: configuredAdmin.email },
-            update: {
-              role: "ADMIN",
-              password: await bcrypt.hash(configuredAdmin.password, 10),
-              isBlocked: false,
-            },
-            create: {
-              email: configuredAdmin.email,
-              name: "Admin",
-              role: "ADMIN",
-              password: await bcrypt.hash(configuredAdmin.password, 10),
-            },
-          });
-
-          return { id: admin.id, email: admin.email, name: admin.name, role: "ADMIN" };
+            return { id: admin.id, email: admin.email, name: admin.name, role: "ADMIN" };
+          }
         }
-
-        const user = await db.user.findUnique({ where: { email: normalizedEmail } });
 
         if (user?.password && !user.isBlocked) {
           const valid = await bcrypt.compare(credentials.password, user.password);

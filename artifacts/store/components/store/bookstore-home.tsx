@@ -21,6 +21,7 @@ import {
   Sun,
   RotateCcw,
   ArrowUpRight,
+  Crown,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import ProductImage from "@/components/store/product-image";
@@ -322,13 +323,13 @@ function BookBanner({
   const premiumSlide: BannerSlide = {
     id: "premium-membership",
     eyebrow: "GÖÇMEN PREMIUM",
-    title: "Avantajlardan",
-    accent: "yararlanın",
-    description: "Özel indirim, ücretsiz kargo ve Premium ayrıcalıkları için üyelik bilgilerini keşfedin.",
+    title: "Alışverişin",
+    accent: "daha güzel hali",
+    description: "Her siparişte daha fazla değer, daha az masraf ve size özel bir deneyim. Premium dünyasına katılın.",
     className: "book-banner--amber book-banner--premium-cta",
     ctaText: "Premium'u keşfedin",
     ctaHref: "/premium",
-    cta2Text: "Avantajları gör",
+    cta2Text: "Ayrıcalıkları gör",
     cta2Href: "/premium",
     imageUrl: null,
     gradient: "amber",
@@ -343,7 +344,7 @@ function BookBanner({
   ];
   useEffect(() => {
     if (isDragging || dragOffset !== 0) return;
-    const timer = window.setInterval(() => setIndex((current) => (current + 1) % slides.length), 4200);
+    const timer = window.setInterval(() => setIndex((current) => (current + 1) % slides.length), 7000);
     return () => window.clearInterval(timer);
   }, [dragOffset, isDragging, slides.length]);
 
@@ -354,6 +355,8 @@ function BookBanner({
   }, []);
 
   const getSlideProducts = (slide: BannerSlide) => {
+    if (slide.id === "premium-membership") return [];
+
     const source = slide.categorySlug
       ? slide.categoryProducts ?? []
       : slide.productIds?.length
@@ -450,16 +453,32 @@ function BookBanner({
               </div>
               <div className="book-banner__premium-stage">
                 <div className="book-banner__premium-halo" aria-hidden="true" />
+                {slide.id === "premium-membership" ? (
+                  <div className="book-banner__premium-poster" aria-label="Göçmen Premium ayrıcalıkları">
+                    <div className="book-banner__premium-poster-orbit book-banner__premium-poster-orbit--one" aria-hidden="true" />
+                    <div className="book-banner__premium-poster-orbit book-banner__premium-poster-orbit--two" aria-hidden="true" />
+                    <div className="book-banner__premium-poster-content">
+                      <div className="book-banner__premium-poster-mark"><Crown size={24} strokeWidth={1.7} /></div>
+                      <span className="book-banner__premium-poster-brand">GÖÇMEN PERDE</span>
+                      <strong>PREMIUM</strong>
+                      <small>Her alışverişte daha fazlası.</small>
+                      <div className="book-banner__premium-poster-perks">
+                        <span>Özel indirim</span>
+                        <span>Ücretsiz kargo</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
                   <div className="book-banner__premium-products">
                     {slide === activeSlide && activeProducts.map((product, coverIndex) => (
-                     <Link
-                       href={`/products/${product.slug}`}
-                       prefetch={false}
-                       className="book-banner__premium-product"
-                       key={`${product.id}-${coverIndex}`}
-                       aria-label={`${product.name} ürününü incele`}
-                       style={{ "--rotation": `${(coverIndex - 1.5) * 5}deg`, "--lift": `${Math.abs(coverIndex - 1.5) * 8}px` } as CSSProperties}
-                     >
+                      <Link
+                        href={`/products/${product.slug}`}
+                        prefetch={false}
+                        className="book-banner__premium-product"
+                        key={`${product.id}-${coverIndex}`}
+                        aria-label={`${product.name} ürününü incele`}
+                        style={{ "--rotation": `${(coverIndex - 1.5) * 5}deg`, "--lift": `${Math.abs(coverIndex - 1.5) * 8}px` } as CSSProperties}
+                      >
                         <ProductImage
                           src={product.images}
                           alt={product.name}
@@ -478,11 +497,12 @@ function BookBanner({
                             });
                           }}
                         />
-                       <span className="book-banner__premium-product-number">0{coverIndex + 1}</span>
+                        <span className="book-banner__premium-product-number">0{coverIndex + 1}</span>
                         <span className="book-banner__premium-product-label">{product.name}</span>
-                     </Link>
+                      </Link>
                     ))}
-                </div>
+                  </div>
+                )}
                  {slide === activeSlide && activeProducts.length > 0 && (
                    <div className="book-banner__premium-product-names" aria-label="Banner ürünleri">
                      {activeProducts.map((product, productIndex) => (

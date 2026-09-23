@@ -1138,6 +1138,122 @@ h1, h2, h3, h4, h5, h6 {
   padding: 18px;
 }
 
+.book-banner__premium-poster {
+  position: absolute;
+  top: 50%;
+  left: 52%;
+  width: min(30vw, 300px);
+  aspect-ratio: .76;
+  overflow: hidden;
+  border: 1px solid rgba(241, 211, 137, .65);
+  border-radius: 4px;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 236, 174, .22), transparent 18%),
+    linear-gradient(145deg, #3a2e20 0%, #1e1b19 56%, #111110 100%);
+  box-shadow: 0 28px 42px rgba(0,0,0,.38), 0 0 0 8px rgba(211,174,98,.05);
+  transform: translate(-50%, -50%) rotate(-4deg);
+}
+
+.book-banner__premium-poster::before,
+.book-banner__premium-poster::after {
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(211,174,98,.28);
+  content: "";
+  pointer-events: none;
+}
+
+.book-banner__premium-poster::after {
+  inset: 20px;
+  border-color: rgba(255,255,255,.1);
+}
+
+.book-banner__premium-poster-orbit {
+  position: absolute;
+  border: 1px solid rgba(211,174,98,.32);
+  border-radius: 50%;
+  transform: rotate(-25deg);
+}
+
+.book-banner__premium-poster-orbit--one {
+  top: 18%;
+  left: 11%;
+  width: 78%;
+  height: 30%;
+}
+
+.book-banner__premium-poster-orbit--two {
+  top: 10%;
+  left: 23%;
+  width: 54%;
+  height: 47%;
+  transform: rotate(46deg);
+}
+
+.book-banner__premium-poster-content {
+  position: absolute;
+  inset: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #f6e5b4;
+  text-align: center;
+}
+
+.book-banner__premium-poster-mark {
+  display: grid;
+  width: 54px;
+  height: 54px;
+  place-items: center;
+  margin-bottom: 16px;
+  border: 1px solid rgba(239,202,112,.72);
+  border-radius: 50%;
+  background: rgba(211,174,98,.12);
+  box-shadow: 0 0 0 8px rgba(211,174,98,.06);
+}
+
+.book-banner__premium-poster-brand {
+  color: rgba(246,229,180,.76);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .24em;
+}
+
+.book-banner__premium-poster-content strong {
+  margin-top: 10px;
+  color: #f2d282;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 500;
+  letter-spacing: .12em;
+}
+
+.book-banner__premium-poster-content small {
+  max-width: 130px;
+  margin-top: 7px;
+  color: rgba(248,243,234,.7);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.book-banner__premium-poster-perks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 24px;
+}
+
+.book-banner__premium-poster-perks span {
+  padding: 6px 8px;
+  border: 1px solid rgba(211,174,98,.42);
+  border-radius: 999px;
+  color: rgba(248,243,234,.8);
+  font-size: 8px;
+  letter-spacing: .04em;
+}
+
 .book-banner__premium-product {
   position: relative;
   width: clamp(76px, 10vw, 122px);
@@ -1467,6 +1583,16 @@ h1, h2, h3, h4, h5, h6 {
   .book-banner__premium-products {
     inset: 0 0 132px;
     gap: 7px;
+  }
+
+  .book-banner__premium-poster {
+    top: 45%;
+    left: 50%;
+    width: min(66vw, 270px);
+  }
+
+  .book-banner__premium-poster-content {
+    inset: 21px;
   }
 
   .book-banner__premium-product {

@@ -29,3 +29,4 @@
 - [Curtain catalog seeding](curtain-catalog-seeding.md) — the new Vercel catalog is seeded once from the in-repo curtain JSON, then deployments use the normal build
 - [Mobile form focus](mobile-form-focus.md) — never declare interactive field components inside a parent render; React remounts them on each keystroke and iOS can lose focus
 - [Curtain catalog boundary](curtain-catalog-boundary.md) — storefront and admin must share live curtain data; empty-state fallbacks must never recreate stationery content
+- [Product negative-cache recovery](product-negative-cache.md) — live feeds can expose newly imported products while stale null page caches still render “not found”; recheck the database on misses

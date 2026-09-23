@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { checkRateLimit, getRequestIp } from "@/lib/rate-limit";
-import { evaluateCoupon, isPremiumActive, type CouponCartItem } from "@/lib/coupon-rules";
+import { evaluateCoupon, getCouponPayQuantity, isPremiumActive, type CouponCartItem } from "@/lib/coupon-rules";
 import { getUserFromToken } from "@/lib/get-user-token";
 
 export const dynamic = "force-dynamic";
@@ -58,7 +58,10 @@ export async function POST(req: NextRequest) {
       isPremiumActive(currentUser?.premiumUntil),
     );
     return NextResponse.json({
-      data: coupon,
+      data: {
+        ...coupon,
+        payQuantity: getCouponPayQuantity(coupon),
+      },
       discount: evaluation.discount,
       freeShipping: evaluation.freeShipping,
       eligibleSubtotal: evaluation.eligibleSubtotal,

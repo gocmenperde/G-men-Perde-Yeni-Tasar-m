@@ -29,7 +29,9 @@ export function couponOfferLabel(coupon: CouponOffer) {
     return `₺${Number(coupon.buyAmount ?? 0).toLocaleString("tr-TR")} al, ₺${Number(coupon.payAmount ?? 0).toLocaleString("tr-TR")} öde`;
   }
   if (coupon.type === "BUY_X_GET_Y") {
-    return `${coupon.buyQuantity ?? 0} adet al, ${coupon.payQuantity ?? 0} adet öde`;
+    const payableQuantity = coupon.payQuantity
+      ?? (coupon.buyQuantity == null ? null : Math.max(1, coupon.buyQuantity - 1));
+    return `${coupon.buyQuantity ?? 0} adet al, ${payableQuantity ?? 0} adet öde`;
   }
   return "Özel alışveriş fırsatı";
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUserFromToken } from "@/lib/get-user-token";
-import { isPremiumActive } from "@/lib/coupon-rules";
+import { getCouponPayQuantity, isPremiumActive } from "@/lib/coupon-rules";
 
 export const dynamic = "force-dynamic";
 
@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
         buyRule: true,
         buyQuantity: true,
         payQuantity: true,
+        getQuantity: true,
         buyAmount: true,
         payAmount: true,
         freeProductQuantity: true,
@@ -53,6 +54,7 @@ export async function GET(req: NextRequest) {
         value: Number(coupon.value),
         minOrderAmount: Number(coupon.minOrderAmount),
         maxOrderAmount: coupon.maxOrderAmount == null ? null : Number(coupon.maxOrderAmount),
+        payQuantity: getCouponPayQuantity(coupon),
         buyAmount: coupon.buyAmount == null ? null : Number(coupon.buyAmount),
         payAmount: coupon.payAmount == null ? null : Number(coupon.payAmount),
         expiresAt: coupon.expiresAt?.toISOString() ?? null,

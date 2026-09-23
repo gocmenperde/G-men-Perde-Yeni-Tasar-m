@@ -22,6 +22,14 @@ export type CouponEvaluation = {
 
 export type CouponAudience = "ALL" | "PREMIUM_ONLY" | "NORMAL_ONLY";
 
+export function getCouponPayQuantity(
+  coupon: Pick<Coupon, "buyQuantity" | "payQuantity" | "getQuantity">,
+) {
+  if (coupon.payQuantity != null) return Math.max(1, coupon.payQuantity);
+  if (coupon.buyQuantity == null) return null;
+  return Math.max(1, coupon.buyQuantity - (coupon.getQuantity ?? 1));
+}
+
 function matchesScope(
   coupon: Pick<Coupon, "scope" | "targetId">,
   product: CouponProduct,
@@ -138,17 +146,21 @@ export function evaluateCoupon(
     }
 
     const totalQuantity = Math.max(1, coupon.buyQuantity ?? 1);
-    const payableQuantity = Math.max(
-      1,
-      coupon.payQuantity ?? Math.max(1, totalQuantity - (coupon.getQuantity ?? 1)),
-    );
+    const payableQuantity = getCouponPayQuantity(coupon) ?? Math.max(1, totalQuantity - 1);
     if (payableQuantity >= totalQuantity) {
       throw new Error("Ödenecek adet, kampanya toplam adetinden küçük olmalıdır.");
     }
-    const discount = eligibleItems.reduce((sum, item) => {
-      const freeUnits = Math.floor(item.quantity / totalQuantity) * (totalQuantity - payableQuantity);
-      return sum + freeUnits * item.price;
-    }, 0);
+    const eligibleQuantity = eligibleItems.reduce((sum, item) => sum + item.quantity, 0);
+    const freeUnitCount = Math.floor(eligibleQuantity / totalQuantity) * (totalQuantity - payableQuantity);
+    let remainingFreeUnits = freeUnitCount;
+    const discount = [...eligibleItems]
+      .sort((left, right) => left.price - right.price)
+      .reduce((sum, item) => {
+        if (remainingFreeUnits <= 0) return sum;
+        const freeUnits = Math.min(remainingFreeUnits, item.quantity);
+        remainingFreeUnits -= freeUnits;
+        return sum + freeUnits * item.price;
+      }, 0);
     if (discount <= 0) {
       throw new Error(`Bu kupon için en az ${totalQuantity} adet uygun ürün gereklidir.`);
     }

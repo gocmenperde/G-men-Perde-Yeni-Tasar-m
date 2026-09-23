@@ -81,7 +81,7 @@ export default function CartClient() {
           : coupon?.type === "BUY_X_GET_Y" && coupon?.buyRule === "AMOUNT"
             ? `₺${Number(coupon.buyAmount).toLocaleString("tr-TR")} al ₺${Number(coupon.payAmount).toLocaleString("tr-TR")} öde`
             : coupon?.type === "BUY_X_GET_Y"
-              ? `${coupon.buyQuantity} al ${coupon.payQuantity} öde`
+              ? `${coupon.buyQuantity} al ${coupon.payQuantity ?? Math.max(1, Number(coupon.buyQuantity) - 1)} öde`
               : coupon?.type === "FREE_PRODUCT"
                 ? "Ücretsiz ürün"
                 : `-₺${calcDiscount.toFixed(2)}`;

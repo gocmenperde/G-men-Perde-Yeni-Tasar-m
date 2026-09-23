@@ -144,7 +144,7 @@ export default async function AdminDashboardPage() {
       brandCount={brandCount}
       lowStockProducts={lowStockProducts}
       dataWarning={
-        failedSections.size > 0
+        ["ürün toplamı", "kategori toplamı", "marka toplamı"].some((label) => failedSections.has(label))
           ? "Bazı dashboard verileri yüklenemedi. Admin paneli açık; bağlantı düzeldiğinde tekrar yenileyin."
           : null
       }

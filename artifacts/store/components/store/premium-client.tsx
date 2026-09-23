@@ -29,6 +29,7 @@ type PremiumStatus = {
   discountType: string;
   discountValue: number;
   freeShipping: boolean;
+  logoText: string;
   active: boolean;
   premiumUntil: string | null;
 };
@@ -39,6 +40,7 @@ const FALLBACK_STATUS: PremiumStatus = {
   discountType: "PERCENTAGE",
   discountValue: 10,
   freeShipping: true,
+  logoText: "Göçmen Premium Üyesi",
   active: false,
   premiumUntil: null,
 };
@@ -128,7 +130,7 @@ export default function PremiumClient() {
         <div className="mx-auto grid max-w-7xl gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.05fr_.95fr] lg:items-center lg:px-12">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1.5 text-xs font-black uppercase tracking-[.16em] text-amber-200">
-              <Crown className="h-4 w-4" /> Göçmen Premium
+              <Crown className="h-4 w-4" /> {status.logoText}
             </span>
             <h1 className="mt-6 max-w-2xl font-serif text-5xl font-medium leading-[.98] tracking-[-.055em] sm:text-7xl">
               Alışverişin <span className="text-amber-300">daha güzel hali.</span>
@@ -162,7 +164,7 @@ export default function PremiumClient() {
               </div>
               <div className="my-14 text-center">
                 <p className="font-serif text-5xl tracking-[.12em] text-amber-200">PREMIUM</p>
-                <p className="mt-3 text-sm text-stone-300">Her alışverişte daha fazlası.</p>
+               <p className="mt-3 text-sm text-stone-300">{status.logoText} ile her alışverişte daha fazlası.</p>
               </div>
               <div className="grid grid-cols-2 gap-2 border-t border-white/10 pt-4 text-[11px] font-bold text-stone-300">
                 <span className="flex items-center gap-2"><BadgePercent className="h-4 w-4 text-amber-300" /> Özel indirim</span>

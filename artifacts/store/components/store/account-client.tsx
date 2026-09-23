@@ -172,7 +172,19 @@ export default function AccountClient({ user, orders }: { user: any; orders: any
   const [loadingWishlist, setLoadingWishlist] = useState(false);
   const [profileName, setProfileName] = useState(user?.name ?? "");
   const [savingProfile, setSavingProfile] = useState(false);
+  const [premiumLogoText, setPremiumLogoText] = useState("Göçmen Premium Üyesi");
   const premiumActive = Boolean(user?.premiumUntil && new Date(user.premiumUntil).getTime() > Date.now());
+
+  useEffect(() => {
+    fetch("/api/premium/status", { cache: "no-store" })
+      .then((response) => response.json())
+      .then((json) => {
+        if (typeof json?.data?.logoText === "string" && json.data.logoText.trim()) {
+          setPremiumLogoText(json.data.logoText.trim());
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (tab === "addresses" && addresses.length === 0) {
@@ -257,7 +269,7 @@ export default function AccountClient({ user, orders }: { user: any; orders: any
           <p className="text-zinc-400 text-sm">{user?.email}</p>
            {premiumActive && (
              <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-100 px-3 py-1 text-xs font-black text-amber-700 shadow-sm">
-               <Crown className="h-3.5 w-3.5" /> Göçmen Premium Üyesi
+                <Crown className="h-3.5 w-3.5" /> {premiumLogoText}
              </span>
            )}
         </div>
@@ -526,7 +538,7 @@ export default function AccountClient({ user, orders }: { user: any; orders: any
                      <Crown className="h-5 w-5" />
                    </div>
                    <div className="min-w-0">
-                     <h3 className="font-black text-zinc-900">{premiumActive ? "Göçmen Premium Üyeliğiniz aktif" : "Göçmen Premium'a katılın"}</h3>
+                     <h3 className="font-black text-zinc-900">{premiumActive ? `${premiumLogoText} aktif` : "Göçmen Premium'a katılın"}</h3>
                      <p className="mt-1 text-sm leading-5 text-zinc-500">
                        {premiumActive && user.premiumUntil
                          ? `${new Date(user.premiumUntil).toLocaleDateString("tr-TR")} tarihine kadar özel indirim ve ücretsiz kargo avantajlarından yararlanın.`

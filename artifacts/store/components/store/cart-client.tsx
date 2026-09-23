@@ -73,8 +73,17 @@ export default function CartClient() {
       const { coupon: _coupon, discount } = data;
       const coupon = data.data;
       const calcDiscount = typeof discount === "number" ? discount : 0;
-      const label = coupon?.type === "PERCENTAGE"
-        ? `-%${Number(coupon.value)}` : `-₺${calcDiscount.toFixed(2)}`;
+      const label = coupon?.type === "FREE_SHIPPING"
+        ? "Ücretsiz kargo"
+        : coupon?.type === "PERCENTAGE"
+          ? `-%${Number(coupon.value)}`
+          : coupon?.type === "BUY_X_GET_Y" && coupon?.buyRule === "AMOUNT"
+            ? `₺${Number(coupon.buyAmount).toLocaleString("tr-TR")} al ₺${Number(coupon.payAmount).toLocaleString("tr-TR")} öde`
+            : coupon?.type === "BUY_X_GET_Y"
+              ? `${coupon.buyQuantity} al ${coupon.payQuantity} öde`
+              : coupon?.type === "FREE_PRODUCT"
+                ? "Ücretsiz ürün"
+                : `-₺${calcDiscount.toFixed(2)}`;
       setAppliedPromo({ code, discountAmount: calcDiscount, label, freeShipping: Boolean(data.freeShipping) });
       setAppliedCouponCode(code);
       setPromoInput("");

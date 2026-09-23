@@ -229,9 +229,11 @@ ${items.join("\n")}
       status: 200,
       headers: {
         "Content-Type": "application/xml; charset=utf-8",
-        "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
-        "CDN-Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
-        "Vercel-CDN-Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+        // Merchant Center price, stock and shipping data must not remain
+        // behind a long CDN cache when the source is manually refreshed.
+        "Cache-Control": "no-store, max-age=0, must-revalidate",
+        "CDN-Cache-Control": "no-store",
+        "Vercel-CDN-Cache-Control": "no-store",
       },
     });
   } catch (err) {

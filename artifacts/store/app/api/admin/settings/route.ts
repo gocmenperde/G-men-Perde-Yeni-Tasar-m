@@ -61,7 +61,13 @@ function isMissingSiteSettingsColumnError(dbErr: any): boolean {
       message.includes("shippingFee") ||
       message.includes("homepageVideoUrl") ||
       message.includes("homepageVideoSource") ||
-      message.includes("indexNowKey"))
+      message.includes("indexNowKey") ||
+      message.includes("premiumEnabled") ||
+      message.includes("premiumPrice") ||
+      message.includes("premiumDiscountType") ||
+      message.includes("premiumDiscountValue") ||
+      message.includes("premiumFreeShipping") ||
+      message.includes("premiumLogoText"))
   );
 }
 
@@ -75,7 +81,13 @@ async function repairSiteSettingsSchema() {
       ADD COLUMN IF NOT EXISTS "homepageVideoSource" TEXT,
       ADD COLUMN IF NOT EXISTS "freeShippingThreshold" DOUBLE PRECISION,
       ADD COLUMN IF NOT EXISTS "shippingFee" DOUBLE PRECISION,
-      ADD COLUMN IF NOT EXISTS "indexNowKey" TEXT
+      ADD COLUMN IF NOT EXISTS "indexNowKey" TEXT,
+      ADD COLUMN IF NOT EXISTS "premiumEnabled" BOOLEAN NOT NULL DEFAULT true,
+      ADD COLUMN IF NOT EXISTS "premiumPrice" DECIMAL(10,2) NOT NULL DEFAULT 79,
+      ADD COLUMN IF NOT EXISTS "premiumDiscountType" TEXT NOT NULL DEFAULT 'PERCENTAGE',
+      ADD COLUMN IF NOT EXISTS "premiumDiscountValue" DECIMAL(10,2) NOT NULL DEFAULT 10,
+      ADD COLUMN IF NOT EXISTS "premiumFreeShipping" BOOLEAN NOT NULL DEFAULT true,
+      ADD COLUMN IF NOT EXISTS "premiumLogoText" TEXT NOT NULL DEFAULT 'Göçmen Premium Üyesi'
   `);
   await db.$executeRawUnsafe(`
     UPDATE "SiteSettings"

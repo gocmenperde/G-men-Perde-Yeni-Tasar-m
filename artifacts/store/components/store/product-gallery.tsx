@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { ImageOff, ZoomIn, X } from "lucide-react";
 import ProductImage from "@/components/store/product-image";
@@ -40,12 +41,65 @@ export default function ProductGallery({ images, name }: { images?: unknown; nam
   const hasImages = list.length > 0;
   const [selected, setSelected] = useState(0);
   const [lightbox, setLightbox] = useState(false);
+  const [portalReady, setPortalReady] = useState(false);
   const selectedIndex = hasImages ? Math.min(selected, list.length - 1) : 0;
 
   useEffect(() => {
     setSelected(0);
     setLightbox(false);
   }, [images]);
+
+  useEffect(() => {
+    setPortalReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (!lightbox) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setLightbox(false);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [lightbox]);
+
+  const lightboxContent = lightbox && hasImages && portalReady ? (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={() => setLightbox(false)}
+      className="fixed inset-0 z-[10000] flex cursor-zoom-out items-center justify-center bg-black/90 p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${name} görseli`}
+    >
+      <motion.div
+        initial={{ scale: 0.85 }}
+        animate={{ scale: 1 }}
+        exit={{ scale: 0.85 }}
+        onClick={(event) => event.stopPropagation()}
+        className="relative aspect-square w-[min(86vw,86vh)] max-h-[86vh] max-w-[88vw]"
+      >
+        <button
+          type="button"
+          onClick={() => setLightbox(false)}
+          className="touch-target absolute -right-2 -top-2 z-10 flex items-center justify-center rounded-full bg-[var(--surface)] text-[var(--ink)] shadow-lg"
+          aria-label="Görseli kapat"
+        >
+          <X className="h-5 w-5" aria-hidden="true" />
+        </button>
+        <ProductGalleryImage src={list[selectedIndex]} alt={name} className="object-contain" priority />
+      </motion.div>
+    </motion.div>
+  ) : null;
 
   return (
     <>
@@ -105,38 +159,7 @@ export default function ProductGallery({ images, name }: { images?: unknown; nam
         )}
       </div>
 
-      <AnimatePresence>
-        {lightbox && hasImages && (
-             <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setLightbox(false)}
-            className="fixed inset-0 z-50 flex cursor-zoom-out items-center justify-center bg-black/90 p-4"
-            role="dialog"
-            aria-modal="true"
-            aria-label={name}
-          >
-            <motion.div
-              initial={{ scale: 0.85 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.85 }}
-              onClick={(event) => event.stopPropagation()}
-              className="relative aspect-square w-full max-h-[90vh] max-w-3xl"
-            >
-              <button
-                type="button"
-                onClick={() => setLightbox(false)}
-                className="touch-target absolute -right-2 -top-2 z-10 flex items-center justify-center rounded-full bg-[var(--surface)] text-[var(--ink)] shadow-lg"
-                aria-label="Görseli kapat"
-              >
-                <X className="h-5 w-5" aria-hidden="true" />
-              </button>
-              <ProductGalleryImage src={list[selectedIndex]} alt={name} className="object-contain" priority />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {portalReady && createPortal(<AnimatePresence>{lightboxContent}</AnimatePresence>, document.body)}
     </>
   );
 }

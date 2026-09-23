@@ -36,15 +36,15 @@ const nextConfig = {
       {
         source: "/:path*",
         has: [{ type: "header", key: "x-forwarded-proto", value: "http" }],
-        destination: "https://www.gocmenkirtasiye.com.tr/:path*",
+        destination: "https://www.gocmenperde.com.tr/:path*",
         permanent: true,
       },
       // Tek bir host kullan: non-www URL'ler ürün/kategori sayfalarıyla
       // ayrı canonical kümeleri oluşturmasın.
       {
         source: "/:path*",
-        has: [{ type: "host", value: "gocmenkirtasiye.com.tr" }],
-        destination: "https://www.gocmenkirtasiye.com.tr/:path*",
+        has: [{ type: "host", value: "gocmenperde.com.tr" }],
+        destination: "https://www.gocmenperde.com.tr/:path*",
         permanent: true,
       },
       // Silinmiş ürün sayfaları artık next.config 301 yerine

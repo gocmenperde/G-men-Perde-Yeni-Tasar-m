@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ??
   process.env.NEXTAUTH_URL ??
-  "https://www.gocmenkirtasiye.com.tr"
+  "https://www.gocmenperde.com.tr"
 ).replace(/\/$/, "").replace(/^http:/, "https:");
 
 export async function POST(req: NextRequest) {

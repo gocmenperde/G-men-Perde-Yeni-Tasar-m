@@ -3,7 +3,7 @@
   "installCommand": "cd ../.. && pnpm install --no-frozen-lockfile --filter @workspace/store... --reporter=append-only",
   "framework": "nextjs",
   "env": {
-    "NEXTAUTH_URL": "https://www.gocmenkirtasiye.com.tr",
-    "NEXT_PUBLIC_SITE_URL": "https://www.gocmenkirtasiye.com.tr"
+    "NEXTAUTH_URL": "https://www.gocmenperde.com.tr",
+    "NEXT_PUBLIC_SITE_URL": "https://www.gocmenperde.com.tr"
   }
 }

@@ -14,7 +14,7 @@ export const useSiteSettings = create<SiteSettingsState>((set, get) => ({
   load: async () => {
     if (get().loaded) return;
     try {
-      const res = await fetch("/api/settings", { cache: "force-cache" });
+      const res = await fetch("/api/settings", { cache: "no-store" });
       const json = await res.json();
       set({
         freeShippingThreshold: json.data?.freeShippingThreshold ?? 1500,

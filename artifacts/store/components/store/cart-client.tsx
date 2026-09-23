@@ -13,12 +13,13 @@ import { useSiteSettings } from "@/lib/store/site-settings";
 const CartCrossSell = dynamic(() => import("@/components/store/cart-cross-sell"), { ssr: false });
 
 export default function CartClient() {
-  const { items, removeItem, updateQty, total, clearCart } = useCartStore();
+  const { items, removeItem, updateQty, total, clearCart, appliedCouponCode, setAppliedCouponCode, clearAppliedCouponCode } = useCartStore();
   const { data: session } = useSession();
   const [promoInput, setPromoInput] = useState("");
   const [appliedPromo, setAppliedPromo] = useState<{ code: string; discountAmount: number; label: string; freeShipping: boolean } | null>(null);
   const [promoError, setPromoError] = useState("");
   const [applyingPromo, setApplyingPromo] = useState(false);
+  const [availableCoupons, setAvailableCoupons] = useState<any[]>([]);
   const [premium, setPremium] = useState<{ active: boolean; discountType: string; discountValue: number; freeShipping: boolean } | null>(null);
   const [mounted, setMounted] = useState(false);
   const { freeShippingThreshold: FREE_SHIPPING_THRESHOLD, shippingFee, load: loadSettings } = useSiteSettings();
@@ -28,6 +29,12 @@ export default function CartClient() {
   useEffect(() => {
     if (!session) return;
     fetch("/api/premium/status").then((r) => r.json()).then((json) => setPremium(json.data ?? null)).catch(() => {});
+  }, [session]);
+  useEffect(() => {
+    fetch("/api/coupons/available", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((json) => setAvailableCoupons(Array.isArray(json.data) ? json.data : []))
+      .catch(() => setAvailableCoupons([]));
   }, [session]);
 
   const totalVal = total();
@@ -40,8 +47,8 @@ export default function CartClient() {
   const shippingCost = appliedPromo?.freeShipping || (premium?.active && premium.freeShipping) || totalVal >= FREE_SHIPPING_THRESHOLD ? 0 : shippingFee;
   const finalTotal = Math.max(0, totalVal - discountAmount - premiumDiscount) + shippingCost;
 
-  const applyPromo = async () => {
-    const code = promoInput.trim().toUpperCase();
+  const applyPromo = async (requestedCode = promoInput) => {
+    const code = requestedCode.trim().toUpperCase();
     if (!code) return;
     setApplyingPromo(true);
     setPromoError("");
@@ -68,9 +75,10 @@ export default function CartClient() {
       const calcDiscount = typeof discount === "number" ? discount : 0;
       const label = coupon?.type === "PERCENTAGE"
         ? `-%${Number(coupon.value)}` : `-₺${calcDiscount.toFixed(2)}`;
-       setAppliedPromo({ code, discountAmount: calcDiscount, label, freeShipping: Boolean(data.freeShipping) });
+      setAppliedPromo({ code, discountAmount: calcDiscount, label, freeShipping: Boolean(data.freeShipping) });
+      setAppliedCouponCode(code);
       setPromoInput("");
-       toast.success(`Kupon uygulandı! ${label} indirim kazandınız.`);
+      toast.success(`Kupon uygulandı! ${label} indirim kazandınız.`);
     } catch {
       setPromoError("Kupon doğrulanamadı. Tekrar deneyin.");
     } finally {
@@ -80,8 +88,13 @@ export default function CartClient() {
 
   const removePromo = () => {
     setAppliedPromo(null);
+    clearAppliedCouponCode();
     setPromoError("");
   };
+
+  useEffect(() => {
+    if (!appliedCouponCode) setAppliedPromo(null);
+  }, [appliedCouponCode]);
 
   if (!mounted) {
     return (
@@ -252,7 +265,7 @@ export default function CartClient() {
                       className="flex-1 px-3 py-2 text-sm rounded-xl border border-zinc-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#D4AF5A] focus:border-transparent transition-all uppercase font-semibold placeholder:normal-case placeholder:font-normal"
                     />
                     <button
-                      onClick={applyPromo}
+                      onClick={() => void applyPromo()}
                       className="px-3 py-2 bg-zinc-900 hover:bg-[#B8973E] text-white text-sm font-bold rounded-xl transition-colors"
                     >
                       Uygula
@@ -261,6 +274,23 @@ export default function CartClient() {
                 )}
                 {promoError && (
                   <p className="text-xs text-red-500 mt-1.5 font-semibold">{promoError}</p>
+                )}
+                {!appliedPromo && availableCoupons.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    <p className="text-[11px] font-bold uppercase tracking-wide text-zinc-400">Size uygun kampanyalar</p>
+                    {availableCoupons.map((coupon) => (
+                      <div key={coupon.id} className="flex items-center gap-2 rounded-xl border border-amber-100 bg-amber-50/60 p-2">
+                        {coupon.imageUrl ? <img src={coupon.imageUrl} alt="" className="h-11 w-14 shrink-0 rounded-lg object-cover" /> : <div className="flex h-11 w-14 shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-700"><Tag className="h-4 w-4" /></div>}
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate font-mono text-xs font-black text-zinc-800">{coupon.code}</p>
+                          <p className="truncate text-[11px] text-zinc-600">
+                            {coupon.type === "PERCENTAGE" ? `%${coupon.value} indirim` : coupon.type === "FIXED" ? `₺${Number(coupon.value).toLocaleString("tr-TR")} indirim` : coupon.type === "FREE_SHIPPING" ? "Ücretsiz kargo" : coupon.type === "BUY_X_GET_Y" && coupon.buyRule === "AMOUNT" ? `₺${coupon.buyAmount} al ₺${coupon.payAmount} öde` : coupon.type === "BUY_X_GET_Y" ? `${coupon.buyQuantity} adet al ${coupon.payQuantity} adet öde` : "Ücretsiz ürün"}
+                          </p>
+                        </div>
+                        <button type="button" onClick={() => applyPromo(coupon.code)} disabled={applyingPromo} className="shrink-0 rounded-lg bg-zinc-900 px-2.5 py-2 text-[11px] font-bold text-white transition hover:bg-[#B8973E] disabled:opacity-50">Sepete uygula</button>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
 

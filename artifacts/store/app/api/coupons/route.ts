@@ -31,15 +31,23 @@ export async function POST(req: NextRequest) {
       scope = "ALL",
       targetId,
       ruleType = "DISCOUNT",
+      buyRule = "QUANTITY",
       buyQuantity,
+      payQuantity,
       getQuantity,
+      buyAmount,
+      payAmount,
       freeProductId,
       freeProductQuantity = 1,
       premiumOnly = false,
+      audience = premiumOnly ? "PREMIUM_ONLY" : "ALL",
+      imageUrl,
     } = body;
     const allowedTypes = ["PERCENTAGE", "FIXED", "FREE_SHIPPING", "FREE_PRODUCT", "BUY_X_GET_Y"];
     const allowedScopes = ["ALL", "PRODUCT", "CATEGORY", "BRAND"];
-    if (!code || !allowedTypes.includes(type) || !allowedScopes.includes(scope))
+    const allowedBuyRules = ["QUANTITY", "AMOUNT"];
+    const allowedAudiences = ["ALL", "PREMIUM_ONLY", "NORMAL_ONLY"];
+    if (!code || !allowedTypes.includes(type) || !allowedScopes.includes(scope) || !allowedBuyRules.includes(buyRule) || !allowedAudiences.includes(audience))
       return NextResponse.json(
         { error: "Zorunlu alanlar eksik." },
         { status: 400 },
@@ -53,8 +61,21 @@ export async function POST(req: NextRequest) {
     if (type === "FREE_PRODUCT" && !freeProductId) {
       return NextResponse.json({ error: "Ücretsiz ürün seçin." }, { status: 400 });
     }
-    if (type === "BUY_X_GET_Y" && (!Number(buyQuantity) || !Number(getQuantity))) {
-      return NextResponse.json({ error: "Al ve bedava adetlerini girin." }, { status: 400 });
+    if (type === "BUY_X_GET_Y" && buyRule === "QUANTITY" && (
+      !Number.isInteger(Number(buyQuantity)) ||
+      !Number.isInteger(Number(payQuantity)) ||
+      Number(buyQuantity) < 2 ||
+      Number(payQuantity) < 1 ||
+      Number(payQuantity) >= Number(buyQuantity)
+    )) {
+      return NextResponse.json({ error: "Kampanya toplam adedini ve ödenecek adedi doğru girin." }, { status: 400 });
+    }
+    if (type === "BUY_X_GET_Y" && buyRule === "AMOUNT" && (
+      Number(buyAmount) <= 0 ||
+      Number(payAmount) < 0 ||
+      Number(payAmount) >= Number(buyAmount)
+    )) {
+      return NextResponse.json({ error: "Alış tutarı, ödeme tutarından büyük olmalıdır." }, { status: 400 });
     }
     const existing = await db.coupon.findFirst({
       where: { code: code.toUpperCase() },
@@ -74,11 +95,19 @@ export async function POST(req: NextRequest) {
         scope,
         targetId: targetId || null,
         ruleType,
-        buyQuantity: buyQuantity ? Number(buyQuantity) : null,
-        getQuantity: getQuantity ? Number(getQuantity) : null,
+         buyRule,
+         buyQuantity: type === "BUY_X_GET_Y" && buyRule === "QUANTITY" ? Number(buyQuantity) : null,
+         payQuantity: type === "BUY_X_GET_Y" && buyRule === "QUANTITY" ? Number(payQuantity) : null,
+         getQuantity: type === "BUY_X_GET_Y" && buyRule === "QUANTITY"
+           ? Math.max(1, Number(buyQuantity) - Number(payQuantity))
+           : null,
+         buyAmount: type === "BUY_X_GET_Y" && buyRule === "AMOUNT" ? Number(buyAmount) : null,
+         payAmount: type === "BUY_X_GET_Y" && buyRule === "AMOUNT" ? Number(payAmount) : null,
         freeProductId: freeProductId || null,
         freeProductQuantity: Math.max(1, Number(freeProductQuantity) || 1),
-        premiumOnly: Boolean(premiumOnly),
+         premiumOnly: audience === "PREMIUM_ONLY",
+         audience,
+         imageUrl: typeof imageUrl === "string" && imageUrl.trim() ? imageUrl.trim() : null,
         maxUses: maxUses ? Number(maxUses) : null,
         expiresAt: expiresAt ? new Date(expiresAt) : null,
         isActive: true,

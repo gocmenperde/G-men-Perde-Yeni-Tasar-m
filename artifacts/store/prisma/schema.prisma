@@ -189,11 +189,17 @@ model Coupon {
   scope          String    @default("ALL")
   targetId       String?
   ruleType       String    @default("DISCOUNT")
+  buyRule        String    @default("QUANTITY")
   buyQuantity    Int?
+  payQuantity    Int?
   getQuantity    Int?
+  buyAmount      Decimal?  @db.Decimal(10, 2)
+  payAmount      Decimal?  @db.Decimal(10, 2)
   freeProductId  String?
   freeProductQuantity Int   @default(1)
   premiumOnly    Boolean   @default(false)
+  audience       String    @default("ALL")
+  imageUrl       String?
   maxUses        Int?
   usedCount      Int       @default(0)
   isActive       Boolean   @default(true)

@@ -69,7 +69,7 @@ function parseAddressFields(fullAddress: string) {
 }
 
 export default function CheckoutClient() {
-  const { items, total, clearCart } = useCartStore();
+  const { items, total, clearCart, appliedCouponCode, setAppliedCouponCode, clearAppliedCouponCode } = useCartStore();
   const { data: session } = useSession();
   const router = useRouter();
   const [couponInput, setCouponInput] = useState("");
@@ -164,15 +164,15 @@ export default function CheckoutClient() {
   const shipping = couponFreeShipping || (premiumInfo?.active && premiumInfo.freeShipping) || subtotal >= freeShippingThreshold ? 0 : shippingFee;
   const finalTotal = Math.max(0, subtotal - discount - premiumDiscount) + shipping;
 
-  const applyCoupon = async () => {
-    if (!couponInput.trim()) return;
+  const applyCoupon = async (requestedCode = couponInput) => {
+    if (!requestedCode.trim()) return;
     setValidatingCoupon(true);
     try {
       const res = await fetch("/api/coupons/validate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          code: couponInput.trim(),
+          code: requestedCode.trim(),
           items: items.map((item) => ({
             productId: item.productId ?? item.id,
             quantity: item.quantity,
@@ -184,7 +184,9 @@ export default function CheckoutClient() {
       if (!res.ok) throw new Error(json.error ?? "Geçersiz kupon");
       setDiscount(json.discount ?? 0);
       setCouponFreeShipping(Boolean(json.freeShipping));
-      setCouponApplied(couponInput.trim().toUpperCase());
+      const normalizedCode = requestedCode.trim().toUpperCase();
+      setCouponApplied(normalizedCode);
+      setAppliedCouponCode(normalizedCode);
       toast.success(`Kupon uygulandı! -₺${(json.discount ?? 0).toLocaleString("tr-TR")}`);
     } catch (err: any) {
       toast.error(err.message ?? "Kupon geçersiz.");
@@ -192,6 +194,13 @@ export default function CheckoutClient() {
       setValidatingCoupon(false);
     }
   };
+
+  useEffect(() => {
+    if (appliedCouponCode && !couponApplied && items.length > 0) {
+      setCouponInput(appliedCouponCode);
+      void applyCoupon(appliedCouponCode);
+    }
+  }, [appliedCouponCode, items.length]);
 
   const onSubmit = async (data: CheckoutForm) => {
     if (!session) { router.push("/login?callbackUrl=/checkout"); return; }
@@ -254,7 +263,7 @@ export default function CheckoutClient() {
             quantity: i.quantity,
             dimensions: i.dimensions ?? null,
           })),
-          couponCode: couponApplied || undefined,
+          couponCode: couponApplied || appliedCouponCode || undefined,
           shipping,
           ...addressPayload,
         }),
@@ -599,7 +608,7 @@ export default function CheckoutClient() {
               />
               <button
                 type="button"
-                onClick={applyCoupon}
+                onClick={() => void applyCoupon()}
                 disabled={validatingCoupon || !!couponApplied}
                 className="px-5 py-2.5 bg-zinc-900 hover:bg-[#B8973E] text-white font-semibold rounded-xl disabled:opacity-50 transition-colors text-sm whitespace-nowrap"
               >

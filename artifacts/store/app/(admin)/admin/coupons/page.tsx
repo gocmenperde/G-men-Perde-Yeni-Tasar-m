@@ -16,6 +16,8 @@ export default async function AdminCouponsPage() {
     minOrderAmount: c.minOrderAmount ? Number(c.minOrderAmount) : null,
     maxOrderAmount: c.maxOrderAmount ? Number(c.maxOrderAmount) : null,
     value: Number(c.value),
+    buyAmount: c.buyAmount == null ? null : Number(c.buyAmount),
+    payAmount: c.payAmount == null ? null : Number(c.payAmount),
     createdAt: c.createdAt.toISOString(),
     updatedAt: c.updatedAt.toISOString(),
     expiresAt: c.expiresAt?.toISOString() ?? null,

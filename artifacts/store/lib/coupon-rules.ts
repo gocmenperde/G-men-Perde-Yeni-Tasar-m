@@ -20,6 +20,8 @@ export type CouponEvaluation = {
   message: string;
 };
 
+export type CouponAudience = "ALL" | "PREMIUM_ONLY" | "NORMAL_ONLY";
+
 function matchesScope(
   coupon: Pick<Coupon, "scope" | "targetId">,
   product: CouponProduct,
@@ -63,8 +65,12 @@ export function evaluateCoupon(
   if (coupon.maxUses && coupon.usedCount >= coupon.maxUses) {
     throw new Error("Kupon kullanım limitine ulaştı.");
   }
-  if (coupon.premiumOnly && !premiumActive) {
+  const audience = (coupon.audience ?? (coupon.premiumOnly ? "PREMIUM_ONLY" : "ALL")) as CouponAudience;
+  if (audience === "PREMIUM_ONLY" && !premiumActive) {
     throw new Error("Bu kupon yalnızca Premium üyeler içindir.");
+  }
+  if (audience === "NORMAL_ONLY" && premiumActive) {
+    throw new Error("Bu kupon yalnızca normal üyeler içindir.");
   }
 
   const productMap = new Map(products.map((product) => [product.id, product]));
@@ -113,20 +119,44 @@ export function evaluateCoupon(
   }
 
   if (coupon.type === "BUY_X_GET_Y") {
-    const buy = Math.max(1, coupon.buyQuantity ?? 1);
-    const get = Math.max(1, coupon.getQuantity ?? 1);
+    if (coupon.buyRule === "AMOUNT") {
+      const buyAmount = Number(coupon.buyAmount ?? 0);
+      const payAmount = Number(coupon.payAmount ?? 0);
+      if (buyAmount <= 0 || payAmount < 0 || payAmount >= buyAmount) {
+        throw new Error("TL kampanyasının alış ve ödeme tutarları eksik.");
+      }
+      if (eligibleSubtotal < buyAmount) {
+        throw new Error(`Bu kupon için en az ₺${buyAmount.toLocaleString("tr-TR")} uygun ürün gereklidir.`);
+      }
+      const discount = Math.min(eligibleSubtotal, buyAmount - payAmount);
+      return {
+        discount: Number(discount.toFixed(2)),
+        freeShipping: false,
+        eligibleSubtotal,
+        message: `₺${buyAmount.toLocaleString("tr-TR")} al ₺${payAmount.toLocaleString("tr-TR")} öde kampanyası uygulandı.`,
+      };
+    }
+
+    const totalQuantity = Math.max(1, coupon.buyQuantity ?? 1);
+    const payableQuantity = Math.max(
+      1,
+      coupon.payQuantity ?? Math.max(1, totalQuantity - (coupon.getQuantity ?? 1)),
+    );
+    if (payableQuantity >= totalQuantity) {
+      throw new Error("Ödenecek adet, kampanya toplam adetinden küçük olmalıdır.");
+    }
     const discount = eligibleItems.reduce((sum, item) => {
-      const freeGroups = Math.floor(item.quantity / (buy + get));
-      return sum + freeGroups * get * item.price;
+      const freeUnits = Math.floor(item.quantity / totalQuantity) * (totalQuantity - payableQuantity);
+      return sum + freeUnits * item.price;
     }, 0);
     if (discount <= 0) {
-      throw new Error(`Bu kupon için en az ${buy + get} adet uygun ürün gereklidir.`);
+      throw new Error(`Bu kupon için en az ${totalQuantity} adet uygun ürün gereklidir.`);
     }
     return {
       discount: Number(Math.min(discount, eligibleSubtotal).toFixed(2)),
       freeShipping: false,
       eligibleSubtotal,
-      message: `${buy} al ${get} öde kampanyası uygulandı.`,
+      message: `${totalQuantity} adet al ${payableQuantity} adet öde kampanyası uygulandı.`,
     };
   }
 

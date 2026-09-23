@@ -26,9 +26,9 @@ export async function GET() {
       },
       {
         headers: {
-          "Cache-Control": "public, max-age=300, s-maxage=900, stale-while-revalidate=3600",
-          "CDN-Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
-          "Vercel-CDN-Cache-Control": "public, s-maxage=900, stale-while-revalidate=3600",
+          "Cache-Control": "private, no-store, max-age=0",
+          "CDN-Cache-Control": "private, no-store",
+          "Vercel-CDN-Cache-Control": "private, no-store",
         },
       },
     );

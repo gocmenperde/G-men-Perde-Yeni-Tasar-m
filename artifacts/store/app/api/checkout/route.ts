@@ -6,6 +6,7 @@ import {
   getCurtainMeasurementRequirements,
   getPileOptions,
 } from "@/lib/curtain-measurements";
+import { calculatePremiumDiscount, evaluateCoupon, isPremiumActive, type CouponCartItem } from "@/lib/coupon-rules";
 
 export async function POST(request: NextRequest) {
   const token = await getToken({
@@ -42,6 +43,8 @@ export async function POST(request: NextRequest) {
         isSquareMeter: true,
         requiresWidth: true,
         requiresHeight: true,
+        categoryId: true,
+        brandId: true,
         category: { select: { slug: true, name: true } },
       },
     });
@@ -75,42 +78,68 @@ export async function POST(request: NextRequest) {
       return sum + calculateCurtainPrice(product, item.dimensions ?? {}) * item.quantity;
     }, 0);
 
-    // Kargo ayarlarını DB'den oku
+    const account = await db.user.findUnique({
+      where: { id: token.sub },
+      select: { premiumUntil: true },
+    });
+    const premiumInfo = await db.siteSettings.findUnique({ where: { id: "global" } });
+    const premiumActive = isPremiumActive(account?.premiumUntil);
+
+    // Kargo ve Premium ayarlarını DB'den oku
     let FREE_SHIPPING_THRESHOLD = 1500;
     let SHIPPING_FEE = 79.9;
-    try {
-      const siteSettings = await db.siteSettings.findUnique({ where: { id: "global" } });
-      if (siteSettings) {
-        FREE_SHIPPING_THRESHOLD = siteSettings.freeShippingThreshold ?? 1500;
-        SHIPPING_FEE = siteSettings.shippingFee ?? 79.9;
-      }
-    } catch {}
-    const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+    if (premiumInfo) {
+      FREE_SHIPPING_THRESHOLD = premiumInfo.freeShippingThreshold ?? 1500;
+      SHIPPING_FEE = premiumInfo.shippingFee ?? 79.9;
+    }
 
     let discountAmount = 0;
+    let premiumDiscount = premiumActive
+      ? calculatePremiumDiscount(subtotal, {
+          premiumDiscountType: premiumInfo?.premiumDiscountType,
+          premiumDiscountValue: premiumInfo?.premiumDiscountValue == null ? undefined : Number(premiumInfo.premiumDiscountValue),
+        })
+      : 0;
+    let couponFreeShipping = false;
     let couponId: string | undefined;
 
     if (couponCode) {
       const coupon = await db.coupon.findFirst({
-        where: { code: couponCode.toUpperCase(), isActive: true },
+        where: {
+          code: couponCode.toUpperCase(),
+          isActive: true,
+          OR: [{ expiresAt: null }, { expiresAt: { gt: new Date() } }],
+        },
       });
-      if (coupon) {
-        if (!coupon.expiresAt || coupon.expiresAt > new Date()) {
-          if (!coupon.maxUses || coupon.usedCount < coupon.maxUses) {
-            if (subtotal >= Number(coupon.minOrderAmount)) {
-              if (coupon.type === "PERCENTAGE") {
-                discountAmount = subtotal * (Number(coupon.value) / 100);
-              } else {
-                discountAmount = Math.min(Number(coupon.value), subtotal);
-              }
-              couponId = coupon.id;
-            }
-          }
-        }
-      }
+      if (!coupon) throw new Error("Kupon bulunamadı veya geçersiz.");
+      const couponItems: CouponCartItem[] = items.map((item: any) => ({
+        productId: item.productId,
+        quantity: Math.max(0, Number(item.quantity)),
+        price: calculateCurtainPrice(productMap.get(item.productId)!, item.dimensions ?? {}),
+      }));
+      const evaluation = evaluateCoupon(
+        coupon,
+        products.map((product) => ({
+          id: product.id,
+          price: Number(product.price),
+          categoryId: product.categoryId,
+          brandId: product.brandId,
+        })),
+        couponItems,
+        premiumActive,
+      );
+      discountAmount = evaluation.discount;
+      couponFreeShipping = evaluation.freeShipping;
+      couponId = coupon.id;
     }
 
-    const total = Math.max(0, subtotal - discountAmount + shipping);
+    const shipping = (
+      (premiumActive && premiumInfo?.premiumFreeShipping !== false) ||
+      couponFreeShipping ||
+      subtotal >= FREE_SHIPPING_THRESHOLD
+    ) ? 0 : SHIPPING_FEE;
+    const totalDiscount = Math.min(subtotal, discountAmount + premiumDiscount);
+    const total = Math.max(0, subtotal - totalDiscount) + shipping;
 
     // Transaction: create address + order + items + reduce stock + update coupon
     const order = await db.$transaction(async (tx) => {
@@ -132,7 +161,8 @@ export async function POST(request: NextRequest) {
           userId: token.sub!,
           status: "PENDING",
           subtotal,
-          discount: discountAmount,
+          discount: totalDiscount,
+          premiumDiscount,
           shipping,
           total,
           addressId: addr.id,

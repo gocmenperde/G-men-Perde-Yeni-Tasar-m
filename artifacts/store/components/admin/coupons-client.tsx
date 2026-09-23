@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Plus, Trash2, Ticket, Power, Info } from "lucide-react";
 import toast from "react-hot-toast";
+import { uploadAdminImage } from "@/components/admin/media-upload";
 
 type Option = { id: string; name: string };
 type ProductOption = Option & { price: number };
@@ -21,7 +22,12 @@ type CouponForm = {
   freeProductId: string;
   freeProductQuantity: number;
   buyQuantity: number;
+  payQuantity: number;
   getQuantity: number;
+  buyRule: string;
+  buyAmount: number;
+  payAmount: number;
+  audience: string;
   premiumOnly: boolean;
 };
 
@@ -41,32 +47,41 @@ export default function AdminCouponsClient({
 }) {
   const [coupons, setCoupons] = useState(initial);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState("");
   const { register, handleSubmit, reset, watch } = useForm<CouponForm>({
     defaultValues: {
       type: "PERCENTAGE",
       scope: "ALL",
       freeProductQuantity: 1,
       buyQuantity: 1,
+      payQuantity: 1,
       getQuantity: 1,
+      buyRule: "QUANTITY",
+      audience: "ALL",
       premiumOnly: false,
     },
   });
   const type = watch("type");
   const scope = watch("scope");
+  const buyRule = watch("buyRule");
 
   const onSubmit = async (data: CouponForm) => {
     setIsSubmitting(true);
     try {
+      const imageUrl = imageFile ? await uploadAdminImage(imageFile) : "";
       const res = await fetch("/api/coupons", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, ruleType: "DISCOUNT" }),
+        body: JSON.stringify({ ...data, imageUrl, ruleType: "DISCOUNT" }),
       });
       const result = await res.json();
       if (!res.ok) throw new Error(result.error);
       setCoupons((prev) => [result.data, ...prev]);
       toast.success("Kupon oluşturuldu.");
-      reset({ type: "PERCENTAGE", scope: "ALL", freeProductQuantity: 1, buyQuantity: 1, getQuantity: 1, premiumOnly: false });
+      reset({ type: "PERCENTAGE", scope: "ALL", freeProductQuantity: 1, buyQuantity: 1, payQuantity: 1, getQuantity: 1, buyRule: "QUANTITY", audience: "ALL", premiumOnly: false });
+      setImageFile(null);
+      setImagePreview("");
     } catch (err: any) {
       toast.error(err.message ?? "Kupon oluşturulamadı.");
     } finally {
@@ -126,12 +141,15 @@ export default function AdminCouponsClient({
           {scope !== "ALL" && <div><label className={labelClass}>Hedef seçimi *</label><select {...register("targetId")} className={inputClass}><option value="">Seçiniz</option>{targetOptions.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></div>}
           {(type === "FREE_PRODUCT") && <div><label className={labelClass}>Ücretsiz ürün *</label><select {...register("freeProductId")} className={inputClass}><option value="">Ürün seçiniz</option>{products.map((item) => <option key={item.id} value={item.id}>{item.name} · ₺{item.price.toLocaleString("tr-TR")}</option>)}</select></div>}
           {(type === "FREE_PRODUCT") && <div><label className={labelClass}>Ücretsiz adet</label><input {...register("freeProductQuantity", { valueAsNumber: true })} type="number" min="1" className={inputClass} /></div>}
-          {(type === "BUY_X_GET_Y") && <><div><label className={labelClass}>Alınacak adet</label><input {...register("buyQuantity", { valueAsNumber: true })} type="number" min="1" className={inputClass} /></div><div><label className={labelClass}>Bedava adet</label><input {...register("getQuantity", { valueAsNumber: true })} type="number" min="1" className={inputClass} /></div></>}
+          {type === "BUY_X_GET_Y" && <div><label className={labelClass}>Kampanya ölçüsü</label><select {...register("buyRule")} className={inputClass}><option value="QUANTITY">Adet: X adet al, Y adet öde</option><option value="AMOUNT">TL: X TL al, Y TL öde</option></select></div>}
+          {type === "BUY_X_GET_Y" && buyRule === "QUANTITY" && <><div><label className={labelClass}>Toplam kampanya adedi</label><input {...register("buyQuantity", { valueAsNumber: true })} type="number" min="2" className={inputClass} placeholder="9" /></div><div><label className={labelClass}>Ödenecek adet</label><input {...register("payQuantity", { valueAsNumber: true })} type="number" min="1" className={inputClass} placeholder="8" /></div></>}
+          {type === "BUY_X_GET_Y" && buyRule === "AMOUNT" && <><div><label className={labelClass}>Alış tutarı (₺)</label><input {...register("buyAmount", { valueAsNumber: true })} type="number" min="0.01" step="0.01" placeholder="2000" className={inputClass} /></div><div><label className={labelClass}>Ödenecek tutar (₺)</label><input {...register("payAmount", { valueAsNumber: true })} type="number" min="0" step="0.01" placeholder="1500" className={inputClass} /></div></>}
           <div><label className={labelClass}>Minimum sipariş (₺)</label><input {...register("minOrderAmount", { valueAsNumber: true })} type="number" min="0" step="0.01" placeholder="Sınırsız" className={inputClass} /></div>
           <div><label className={labelClass}>Maksimum sipariş (₺)</label><input {...register("maxOrderAmount", { valueAsNumber: true })} type="number" min="0" step="0.01" placeholder="Sınırsız" className={inputClass} /></div>
           <div><label className={labelClass}>Toplam kullanım limiti</label><input {...register("maxUses", { valueAsNumber: true })} type="number" min="1" placeholder="Sınırsız" className={inputClass} /></div>
           <div><label className={labelClass}>Son kullanım tarihi</label><input {...register("expiresAt")} type="date" className={inputClass} /></div>
-          <label className="flex min-h-11 items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-800 px-3 text-sm text-zinc-300"><input {...register("premiumOnly")} type="checkbox" className="h-4 w-4 accent-amber-500" /> Yalnızca Premium üyeler</label>
+          <div><label className={labelClass}>Hedef kitle</label><select {...register("audience")} className={inputClass}><option value="ALL">Bütün üyeler</option><option value="PREMIUM_ONLY">Yalnızca Premium üyeler</option><option value="NORMAL_ONLY">Yalnızca normal üyeler</option></select></div>
+          <div><label className={labelClass}>Kupon görseli</label><input type="file" accept="image/jpeg,image/png,image/webp,image/gif" className={`${inputClass} file:mr-2 file:rounded-lg file:border-0 file:bg-amber-500 file:px-2 file:py-1 file:text-xs file:font-bold file:text-zinc-900`} onChange={(event) => { const file = event.target.files?.[0] ?? null; setImageFile(file); setImagePreview(file ? URL.createObjectURL(file) : ""); }} />{imagePreview && <img src={imagePreview} alt="Kupon önizleme" className="mt-2 h-14 w-24 rounded-lg object-cover" />}</div>
           <div className="flex items-center gap-2 lg:col-span-4">
             <button type="submit" disabled={isSubmitting} className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-2.5 text-sm font-bold text-zinc-900 transition hover:bg-amber-400 disabled:opacity-50"><Plus className="h-4 w-4" /> {isSubmitting ? "Oluşturuluyor..." : "Kupon oluştur"}</button>
             <span className="inline-flex items-center gap-1 text-xs text-zinc-500"><Info className="h-3.5 w-3.5" /> İndirimler sipariş anında sunucuda tekrar hesaplanır.</span>
@@ -145,8 +163,8 @@ export default function AdminCouponsClient({
             <thead><tr className="border-b border-zinc-800">{["Kod", "Kural", "Hedef", "Limit", "Durum", "İşlem"].map((heading) => <th key={heading} className="whitespace-nowrap px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-zinc-400">{heading}</th>)}</tr></thead>
             <tbody className="divide-y divide-zinc-800">{coupons.map((coupon) => (
               <tr key={coupon.id} className="transition-colors hover:bg-zinc-800/50">
-                <td className="px-5 py-4"><span className="rounded-lg bg-amber-900/20 px-2.5 py-1 font-mono text-sm font-bold text-amber-400">{coupon.code}</span>{coupon.premiumOnly && <span className="ml-2 rounded-full bg-yellow-500/10 px-2 py-1 text-[10px] font-bold text-yellow-400">PREMİUM</span>}</td>
-                <td className="px-5 py-4 text-zinc-200">{coupon.type === "PERCENTAGE" ? `%${coupon.value}` : coupon.type === "FIXED" ? `₺${Number(coupon.value).toLocaleString("tr-TR")}` : coupon.type === "FREE_SHIPPING" ? "Ücretsiz kargo" : coupon.type === "FREE_PRODUCT" ? "Ücretsiz ürün" : `${coupon.buyQuantity} al ${coupon.getQuantity} bedava`}</td>
+                 <td className="px-5 py-4">{coupon.imageUrl && <img src={coupon.imageUrl} alt="" className="mb-2 h-10 w-16 rounded-md object-cover" />}<span className="rounded-lg bg-amber-900/20 px-2.5 py-1 font-mono text-sm font-bold text-amber-400">{coupon.code}</span>{(coupon.audience === "PREMIUM_ONLY" || coupon.premiumOnly) && <span className="ml-2 rounded-full bg-yellow-500/10 px-2 py-1 text-[10px] font-bold text-yellow-400">PREMİUM</span>}{coupon.audience === "NORMAL_ONLY" && <span className="ml-2 rounded-full bg-blue-500/10 px-2 py-1 text-[10px] font-bold text-blue-400">NORMAL</span>}</td>
+                 <td className="px-5 py-4 text-zinc-200">{coupon.type === "PERCENTAGE" ? `%${coupon.value}` : coupon.type === "FIXED" ? `₺${Number(coupon.value).toLocaleString("tr-TR")}` : coupon.type === "FREE_SHIPPING" ? "Ücretsiz kargo" : coupon.type === "FREE_PRODUCT" ? "Ücretsiz ürün" : coupon.buyRule === "AMOUNT" ? `₺${Number(coupon.buyAmount).toLocaleString("tr-TR")} al ₺${Number(coupon.payAmount).toLocaleString("tr-TR")} öde` : `${coupon.buyQuantity} adet al ${coupon.payQuantity ?? Number(coupon.buyQuantity) - Number(coupon.getQuantity ?? 1)} adet öde`}</td>
                 <td className="px-5 py-4 text-xs text-zinc-400">{coupon.scope === "ALL" ? "Tüm sepet" : coupon.scope === "PRODUCT" ? "Ürün" : coupon.scope === "CATEGORY" ? "Kategori" : "Marka"}{coupon.targetId ? <span className="block text-zinc-600">{coupon.targetId.slice(-8)}</span> : null}</td>
                 <td className="px-5 py-4 text-xs text-zinc-400">{coupon.minOrderAmount ? `₺${Number(coupon.minOrderAmount).toLocaleString("tr-TR")} altı` : "Alt limit yok"}<span className="block">{coupon.usedCount} / {coupon.maxUses ?? "∞"} kullanım</span></td>
                 <td className="px-5 py-4"><button onClick={() => toggleCoupon(coupon)} className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold ${coupon.isActive ? "bg-green-900/30 text-green-400" : "bg-zinc-800 text-zinc-500"}`}><Power className="h-3 w-3" />{coupon.isActive ? "Aktif" : "Pasif"}</button></td>

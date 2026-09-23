@@ -41,7 +41,11 @@ export default function AdminDashboardClient({
   const [syncResult, setSyncResult]   = useState<{ priceUpdated: number; stockUpdated: number; total: number; duration: string } | null>(null);
   const [liveSyncStats, setLiveSyncStats] = useState(syncStats);
 
-  const isEmpty     = (categoryCount ?? 0) < 5 || (brandCount ?? 0) < 5;
+  // Göçmen Perde kataloğunda az sayıda marka olması normaldir. Beşten az
+  // marka/kategori için "yüklenmemiş" demek, canlı katalogda yanlış alarm
+  // üretiyordu. DB sorgularından biri başarısızsa da seed butonunu gösterme;
+  // dataWarning zaten asıl sorunu bildiriyor.
+  const isEmpty     = !dataWarning && ((categoryCount ?? 0) === 0 || (brandCount ?? 0) === 0);
   const fewProducts = (stats.totalProducts ?? 0) < 10;
 
   const handleSync = async () => {

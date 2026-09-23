@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Gift, PanelTop, Sparkles, Tag, Truck } from "lucide-react";
+import { Gift, Sparkles, Tag, Truck } from "lucide-react";
 
 export interface CouponOffer {
   id: string;
@@ -48,46 +48,64 @@ function couponOfferTitle(coupon: CouponOffer) {
 function CouponArtwork({ coupon }: { coupon: CouponOffer }) {
   if (coupon.imageUrl) {
     return (
-      <div className="relative h-full min-h-[116px] overflow-hidden bg-[#3a2f24]">
+      <div className="relative min-h-[150px] overflow-hidden bg-[#2b2118]">
         <img src={coupon.imageUrl} alt="" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#241b14]/90 via-[#241b14]/35 to-transparent" />
-        <div className="relative flex h-full flex-col justify-between p-4 text-white">
-          <span className="text-[9px] font-black uppercase tracking-[0.22em] text-[#f5d88d]">Göçmen Perde</span>
-          <span className="max-w-[12rem] text-sm font-black leading-tight">{couponOfferTitle(coupon)}</span>
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1c140e]/90 via-[#241b14]/20 to-[#241b14]/15" />
+        <div className="relative flex min-h-[150px] flex-col justify-between p-4 text-white">
+          <div className="flex items-center justify-between">
+            <span className="text-[9px] font-black uppercase tracking-[0.24em] text-[#f5d88d]">Göçmen Perde</span>
+            <span className="rounded-full border border-[#f5d88d]/50 bg-[#1d150e]/55 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-[#fff1ba]">Özel teklif</span>
+          </div>
+          <span className="max-w-[15rem] text-lg font-black leading-tight drop-shadow-sm">{couponOfferTitle(coupon)}</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="relative h-full min-h-[116px] overflow-hidden bg-gradient-to-br from-[#5b4527] via-[#312820] to-[#191613] text-white">
-      <svg viewBox="0 0 260 150" className="absolute inset-0 h-full w-full opacity-80" aria-hidden="true">
+    <div className="relative min-h-[150px] overflow-hidden bg-[#211914] text-white">
+      <svg viewBox="0 0 640 300" className="absolute inset-0 h-full w-full" aria-hidden="true">
         <defs>
-          <linearGradient id={`coupon-curtain-${coupon.id}`} x1="0" x2="1">
-            <stop offset="0" stopColor="#c59b46" stopOpacity=".85" />
-            <stop offset=".45" stopColor="#f2d589" stopOpacity=".25" />
-            <stop offset="1" stopColor="#8c682c" stopOpacity=".75" />
+          <linearGradient id={`coupon-wall-${coupon.id}`} x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stopColor="#392a1d" />
+            <stop offset="1" stopColor="#120f0c" />
           </linearGradient>
-          <radialGradient id={`coupon-glow-${coupon.id}`}>
-            <stop offset="0" stopColor="#f6dc8c" stopOpacity=".5" />
-            <stop offset="1" stopColor="#f6dc8c" stopOpacity="0" />
-          </radialGradient>
+          <linearGradient id={`coupon-window-${coupon.id}`} x1="0" x2="1">
+            <stop offset="0" stopColor="#d4b76d" stopOpacity=".3" />
+            <stop offset=".48" stopColor="#fff2bd" stopOpacity=".75" />
+            <stop offset="1" stopColor="#9e7834" stopOpacity=".25" />
+          </linearGradient>
+          <linearGradient id={`coupon-curtain-${coupon.id}`} x1="0" x2="1">
+            <stop offset="0" stopColor="#704e2b" />
+            <stop offset=".3" stopColor="#c59b52" />
+            <stop offset=".52" stopColor="#7e572d" />
+            <stop offset=".78" stopColor="#d5b56a" />
+            <stop offset="1" stopColor="#4a301d" />
+          </linearGradient>
+          <filter id={`coupon-glow-${coupon.id}`} x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="18" />
+          </filter>
         </defs>
-        <circle cx="215" cy="42" r="70" fill={`url(#coupon-glow-${coupon.id})`} />
-        <path d="M18 0h224v10c-24 3-28 20-29 46l-4 94h-49l8-101c2-19-1-34-11-39H18Z" fill={`url(#coupon-curtain-${coupon.id})`} opacity=".78" />
-        <path d="M18 0h43c12 13 14 32 10 55l-8 95H18Z" fill="#d8b15d" opacity=".46" />
-        <path d="M242 0h-32c-14 14-15 35-12 58l5 92h39Z" fill="#a57b35" opacity=".5" />
-        <path d="M18 11c35 8 73 8 111 0s77-8 113 0" fill="none" stroke="#f6df9a" strokeOpacity=".75" strokeWidth="2" />
-        <path d="M26 19c32 7 69 7 103 0m15 0c28 7 60 7 91 0" fill="none" stroke="#f6df9a" strokeOpacity=".3" strokeWidth="1" />
+        <rect width="640" height="300" fill={`url(#coupon-wall-${coupon.id})`} />
+        <ellipse cx="320" cy="88" rx="190" ry="110" fill="#f8d987" opacity=".16" filter={`url(#coupon-glow-${coupon.id})`} />
+        <rect x="155" y="43" width="330" height="212" rx="6" fill="#17120e" stroke="#c9a65b" strokeOpacity=".7" strokeWidth="5" />
+        <rect x="174" y="60" width="292" height="178" fill={`url(#coupon-window-${coupon.id})`} />
+        <path d="M320 60v178M174 149h292" stroke="#75552c" strokeOpacity=".55" strokeWidth="4" />
+        <path d="M320 60v178M174 149h292" stroke="#fff1bc" strokeOpacity=".18" strokeWidth="1" />
+        <path d="M26 24c57 6 91 25 111 69 17 37 7 122-5 207H22Z" fill={`url(#coupon-curtain-${coupon.id})`} />
+        <path d="M614 24c-57 6-91 25-111 69-17 37-7 122 5 207h110Z" fill={`url(#coupon-curtain-${coupon.id})`} transform="translate(0 0) scale(-1 1) translate(-640 0)" />
+        <path d="M50 25c37 50 45 121 28 275M86 33c35 43 43 113 24 267M590 25c-37 50-45 121-28 275M554 33c-35 43-43 113-24 267" fill="none" stroke="#f7dda0" strokeOpacity=".32" strokeWidth="7" />
+        <path d="M22 25h596" stroke="#d9b86b" strokeOpacity=".85" strokeWidth="8" />
+        <path d="M24 34h592" stroke="#fff0b4" strokeOpacity=".22" strokeWidth="2" />
       </svg>
-      <div className="relative flex h-full flex-col justify-between p-4">
+      <div className="relative flex min-h-[150px] flex-col justify-between p-4">
         <div className="flex items-center justify-between">
           <span className="text-[9px] font-black uppercase tracking-[0.22em] text-[#f5d88d]">Göçmen Perde</span>
-          <PanelTop className="h-5 w-5 text-[#f5d88d]" aria-hidden="true" />
+          <span className="rounded-full border border-[#f5d88d]/50 bg-[#1d150e]/55 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-[#fff1ba]">Özel teklif</span>
         </div>
         <div>
-          <p className="text-sm font-black leading-tight">{couponOfferTitle(coupon)}</p>
-          <p className="mt-1 text-[10px] text-white/70">Pencerenize yakışan avantaj</p>
+          <p className="text-lg font-black leading-tight drop-shadow-sm">{couponOfferTitle(coupon)}</p>
+          <p className="mt-1 text-[10px] text-white/75">Pencerenize yakışan avantaj</p>
         </div>
       </div>
     </div>
@@ -112,31 +130,34 @@ export default function CouponOfferCard({
 
   return (
     <article
-      className={`overflow-hidden rounded-2xl border border-[#d9c38b] bg-[#fffdf7] shadow-[0_8px_24px_rgba(92,68,25,.08)] ${
-        compact ? "min-w-[248px] snap-start" : ""
+      className={`overflow-hidden rounded-[1.35rem] border border-[#d8bc78] bg-[#fffdf7] shadow-[0_14px_34px_rgba(92,68,25,.14)] transition-transform duration-300 hover:-translate-y-0.5 ${
+        compact ? "min-w-[286px] snap-start" : ""
       }`}
       data-testid={`coupon-offer-${coupon.code}`}
     >
-      <div className="grid grid-cols-[42%_58%]">
+      <div>
         <CouponArtwork coupon={coupon} />
-        <div className="flex min-w-0 flex-col justify-between p-3">
+        <div className="flex min-w-0 flex-col p-4">
           <div className="min-w-0">
-            <div className="flex items-center gap-1.5">
-              {coupon.type === "FREE_SHIPPING" ? (
-                <Truck className="h-3.5 w-3.5 shrink-0 text-[#b8973e]" aria-hidden="true" />
-              ) : coupon.type === "FREE_PRODUCT" ? (
-                <Gift className="h-3.5 w-3.5 shrink-0 text-[#b8973e]" aria-hidden="true" />
-              ) : coupon.type === "BUY_X_GET_Y" ? (
-                <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#b8973e]" aria-hidden="true" />
-              ) : (
-                <Tag className="h-3.5 w-3.5 shrink-0 text-[#b8973e]" aria-hidden="true" />
-              )}
-              <span className="truncate text-[10px] font-black uppercase tracking-[0.12em] text-[#8b6a2e]">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex min-w-0 items-center gap-1.5">
+                {coupon.type === "FREE_SHIPPING" ? (
+                  <Truck className="h-3.5 w-3.5 shrink-0 text-[#b8973e]" aria-hidden="true" />
+                ) : coupon.type === "FREE_PRODUCT" ? (
+                  <Gift className="h-3.5 w-3.5 shrink-0 text-[#b8973e]" aria-hidden="true" />
+                ) : coupon.type === "BUY_X_GET_Y" ? (
+                  <Sparkles className="h-3.5 w-3.5 shrink-0 text-[#b8973e]" aria-hidden="true" />
+                ) : (
+                  <Tag className="h-3.5 w-3.5 shrink-0 text-[#b8973e]" aria-hidden="true" />
+                )}
+                <span className="truncate text-[10px] font-black uppercase tracking-[0.12em] text-[#8b6a2e]">
                 {couponOfferTitle(coupon)}
-              </span>
+                </span>
+              </div>
+              <span className="shrink-0 rounded-full bg-[#f6ebc9] px-2 py-1 text-[9px] font-black uppercase tracking-[0.08em] text-[#8b6a2e]">Sepette</span>
             </div>
-            <p className="mt-2 truncate font-mono text-sm font-black text-[#2d2923]">{coupon.code}</p>
-            <p className="mt-1 text-xs font-bold leading-snug text-[#665d50]">{couponOfferLabel(coupon)}</p>
+            <p className="mt-3 truncate font-mono text-sm font-black tracking-wide text-[#2d2923]">{coupon.code}</p>
+            <p className="mt-1 text-base font-black leading-snug text-[#4c3a20]">{couponOfferLabel(coupon)}</p>
             {premiumLocked && (
               <span className="mt-2 inline-flex rounded-full bg-[#f5e7bd] px-2 py-1 text-[9px] font-black uppercase tracking-[0.1em] text-[#866725]">
                 Premium müşterilere özel
@@ -154,10 +175,10 @@ export default function CouponOfferCard({
                 onApply(coupon.code);
               }}
               disabled={applying || applied}
-              className={`mt-3 inline-flex min-h-9 items-center justify-center rounded-xl px-2.5 text-[11px] font-black transition-colors disabled:cursor-default ${
+              className={`mt-4 inline-flex min-h-10 w-full items-center justify-center rounded-xl px-3 text-xs font-black transition-all disabled:cursor-default ${
                 premiumLocked
                   ? "border border-[#caa653] bg-[#f7e9bf] text-[#725519] hover:bg-[#efd99a]"
-                  : "bg-[#2b2721] text-white hover:bg-[#b8973e] disabled:bg-[#e8dfca] disabled:text-[#806f4c]"
+                  : "bg-[#2b2721] text-white shadow-[0_5px_12px_rgba(45,38,28,.14)] hover:bg-[#b8973e] hover:shadow-[0_8px_18px_rgba(184,151,62,.24)] disabled:bg-[#e8dfca] disabled:text-[#806f4c]"
               }`}
             >
               {premiumLocked ? "Premium'a özel" : applied ? "Uygulandı" : applying ? "Kontrol ediliyor..." : "Sepete uygula"}

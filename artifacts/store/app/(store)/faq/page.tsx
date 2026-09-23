@@ -32,7 +32,7 @@ const FAQS = [
     items: [
       {
         q: "Kargo ücreti ne kadar?",
-        a: "500₺ ve üzeri siparişlerde kargo tamamen ücretsizdir. 500₺ altı siparişlerde 49,90₺ kargo ücreti uygulanır.",
+        a: "Kargo ücreti ve ücretsiz kargo koşulu güncel sipariş tutarınıza göre ödeme adımında açıkça gösterilir. Böylece ödeme öncesinde uygulanacak toplam kargo tutarını görebilirsiniz.",
       },
       {
         q: "Siparişim kaç günde gelir?",

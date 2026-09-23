@@ -39,6 +39,18 @@ function buildOgImageUrl(params: {
   return url.toString();
 }
 
+function isValidGtin(value: string | null): value is string {
+  if (!value) return false;
+  const digits = value.replace(/\s/g, "");
+  if (!/^\d{8,14}$/.test(digits)) return false;
+
+  let checksum = 0;
+  for (let index = digits.length - 2, position = 0; index >= 0; index -= 1, position += 1) {
+    checksum += Number(digits[index]) * (position % 2 === 0 ? 3 : 1);
+  }
+  return (10 - (checksum % 10)) % 10 === Number(digits.at(-1));
+}
+
 export async function generateMetadata({
   params: paramsPromise,
 }: {
@@ -146,10 +158,11 @@ export default async function ProductDetailPage({
         product.reviews.length
       : null;
 
-  const barcodeField = rawProduct.barcode ?? rawProduct.sku ?? null;
+  const barcodeField = rawProduct.barcode ?? null;
+  const serialNumber = rawProduct.serialNumber?.trim() || null;
 
   // Schema.org JSON-LD'de gtin8/12/13/14 tümü geçerli (RSS feed'den farklı).
-  const isGtin = barcodeField ? /^\d{8,14}$/.test(barcodeField) : false;
+  const isGtin = isValidGtin(barcodeField);
   const gtinKey =
     barcodeField?.length === 8  ? "gtin8"  :
     barcodeField?.length === 12 ? "gtin12" :
@@ -199,18 +212,29 @@ export default async function ProductDetailPage({
     url: `${BASE_URL}/products/${product.slug}`,
     sku: skuValue,
     ...(isGtin ? { [gtinKey]: barcodeField } : {}),
-    ...(barcodeField
+    ...(isGtin
       ? {
           identifier: [
             {
               "@type": "PropertyValue",
-              propertyID: isGtin ? "GTIN" : "Product barcode",
+              propertyID: "GTIN",
               value: barcodeField,
             },
           ],
         }
       : {}),
-    ...(product.sku ? { mpn: product.sku } : {}),
+    ...(!isGtin && serialNumber
+      ? {
+          identifier: [
+            {
+              "@type": "PropertyValue",
+              propertyID: "MPN",
+              value: serialNumber,
+            },
+          ],
+          mpn: serialNumber,
+        }
+      : {}),
     ...(product.brand ? { brand: { "@type": "Brand", name: product.brand.name } } : {}),
     ...(product.category ? { category: product.category.name } : {}),
     offers: {

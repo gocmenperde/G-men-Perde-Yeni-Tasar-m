@@ -39,7 +39,7 @@ export default function DeliveryPage() {
           <section className="bg-white rounded-2xl border border-[#E8E0D5] p-6">
             <h2 className="font-black text-zinc-900 mb-3 flex items-center gap-2"><ShieldCheck className="w-4 h-4" /> Kargo ve Teslimat Şartları</h2>
             <ul className="list-disc pl-5 space-y-2">
-              <li>500₺ ve üzeri siparişlerde kargo ücretsizdir.</li>
+              <li>Ücretsiz kargo koşulu ve uygulanacak kargo ücreti, güncel sipariş tutarınıza göre ödeme adımında gösterilir.</li>
               <li>Adres bilgilerinin doğruluğu müşterinin sorumluluğundadır.</li>
               <li>Teslimat anında paketinizi kontrol ederek hasar durumunda tutanak tutturunuz.</li>
             </ul>

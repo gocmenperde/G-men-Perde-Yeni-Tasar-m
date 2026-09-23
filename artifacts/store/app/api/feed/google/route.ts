@@ -14,9 +14,23 @@ const BASE_URL = (
 // Merchant Center'ın tanıdığı GTIN alanı g:gtin (tek alan, uzunluktan bağımsız).
 // gtin8/gtin12/gtin13/gtin14 sadece Content API'de kullanılır — XML feed'de geçersiz.
 // original_price alanı da tanınmıyor; indirim için g:price (orijinal) + g:sale_price kullanılmalı.
-// Katalog perde ürünlerinden oluşur. Yanlış kategori, Merchant Center'da
-// ürünlerin yanlış aramalarda görünmesine ve ürün uygunluğu sorunlarına yol açar.
-const GOOGLE_CATEGORY = "Home & Garden > Decor > Window Treatments";
+// Ürünün gerçek kategori slug'ına göre Merchant Center sınıfı seçilir.
+// Koltuk örtüsü ve çarşaf gibi ürünler Window Treatments altında gönderilmez.
+const GOOGLE_CATEGORY_BY_SLUG: Record<string, string> = {
+  "tul-perde": "Home & Garden > Decor > Window Treatments > Curtains & Drapes",
+  "fonperdeler": "Home & Garden > Decor > Window Treatments > Curtains & Drapes",
+  "ormetulperde": "Home & Garden > Decor > Window Treatments > Curtains & Drapes",
+  "stor-perde": "Home & Garden > Decor > Window Treatments > Shades",
+  "zebra-perde": "Home & Garden > Decor > Window Treatments > Shades",
+  "plise-perde": "Home & Garden > Decor > Window Treatments > Shades",
+  "guneslik": "Home & Garden > Decor > Window Treatments > Shades",
+  "koltuk": "Home & Garden > Decor > Furniture Covers",
+  "carsaf": "Home & Garden > Linens & Bedding > Bedding",
+};
+
+const FEED_CATEGORY_SLUGS = Object.keys(GOOGLE_CATEGORY_BY_SLUG);
+const FALLBACK_FREE_SHIPPING_THRESHOLD = 1500;
+const FALLBACK_SHIPPING_FEE = 79.9;
 
 function escapeXml(str: string): string {
   return str
@@ -27,10 +41,58 @@ function escapeXml(str: string): string {
     .replace(/'/g, "&apos;");
 }
 
+function isValidGtin(value: string | null): value is string {
+  if (!value) return false;
+  const digits = value.replace(/\s/g, "");
+  if (!/^\d{8,14}$/.test(digits)) return false;
+
+  let checksum = 0;
+  for (let index = digits.length - 2, position = 0; index >= 0; index -= 1, position += 1) {
+    checksum += Number(digits[index]) * (position % 2 === 0 ? 3 : 1);
+  }
+  return (10 - (checksum % 10)) % 10 === Number(digits.at(-1));
+}
+
+function toFiniteNumber(value: unknown, fallback: number) {
+  const number = Number(value);
+  return Number.isFinite(number) ? number : fallback;
+}
+
+function getSpecSummary(value: unknown): string[] {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return [];
+  return Object.entries(value as Record<string, unknown>)
+    .filter(([, item]) => typeof item === "string" || typeof item === "number")
+    .slice(0, 5)
+    .map(([key, item]) => `${key}: ${item}`);
+}
+
+function buildMerchantDescription(product: {
+  name: string;
+  description: string | null;
+  category: { name: string } | null;
+  brand: { name: string } | null;
+  tags: string[];
+  features: string | null;
+  specs: unknown;
+}) {
+  const parts = [
+    product.description?.trim(),
+    `${product.name}${product.brand?.name ? ` — ${product.brand.name}` : ""}${product.category?.name ? ` — ${product.category.name}` : ""}.`,
+    product.features ? `Öne çıkan özellikler: ${product.features}.` : null,
+    ...getSpecSummary(product.specs),
+    product.tags.length > 0 ? `İlgili ürün bilgileri: ${product.tags.slice(0, 6).join(", ")}.` : null,
+    "Göçmen Perde'de ürün, ölçü, stok ve teslimat bilgilerini inceleyerek satın alabilirsiniz.",
+  ];
+  return parts.filter(Boolean).join(" ").slice(0, 5000);
+}
+
 export async function GET() {
   try {
     const products = await catalogDb.product.findMany({
-      where: { isActive: true },
+      where: {
+        isActive: true,
+        category: { slug: { in: FEED_CATEGORY_SLUGS } },
+      },
       select: {
         id: true,
         name: true,
@@ -41,12 +103,39 @@ export async function GET() {
         stock: true,
         images: true,
         barcode: true,
-        sku: true,
-        category: { select: { name: true } },
+        serialNumber: true,
+        tags: true,
+        features: true,
+        specs: true,
+        isMeter: true,
+        isSquareMeter: true,
+        category: { select: { name: true, slug: true } },
         brand:    { select: { name: true } },
       },
       orderBy: { updatedAt: "desc" },
     });
+
+    let shippingSettings = {
+      freeShippingThreshold: FALLBACK_FREE_SHIPPING_THRESHOLD,
+      shippingFee: FALLBACK_SHIPPING_FEE,
+    };
+    try {
+      const settings = await catalogDb.siteSettings.findUnique({
+        where: { id: "global" },
+        select: { freeShippingThreshold: true, shippingFee: true },
+      });
+      if (settings) {
+        shippingSettings = {
+          freeShippingThreshold: toFiniteNumber(
+            settings.freeShippingThreshold,
+            FALLBACK_FREE_SHIPPING_THRESHOLD,
+          ),
+          shippingFee: toFiniteNumber(settings.shippingFee, FALLBACK_SHIPPING_FEE),
+        };
+      }
+    } catch {
+      // Feed generation can still use the same defaults as checkout.
+    }
 
     const now = new Date().toUTCString();
 
@@ -57,10 +146,21 @@ export async function GET() {
       const images        = sanitizeImageList(p.images, 10);
       const mainImage     = images[0] ?? "";
       const extraImages   = images.slice(1, 10);
-      const barcode       = p.barcode ?? null;
-      const sku           = p.sku ?? null;
-      const description   = p.description
-        ?? `${p.name}${p.brand?.name ? ` — ${p.brand.name}` : ""}${p.category?.name ? ` — ${p.category.name}` : ""}. Göçmen Perde'de uygun fiyatla satın alın.`;
+      const barcode       = p.barcode?.replace(/\s/g, "") ?? null;
+      const serialNumber  = p.serialNumber?.trim() || null;
+      const categorySlug  = p.category?.slug ?? "";
+      const googleCategory = GOOGLE_CATEGORY_BY_SLUG[categorySlug];
+      const description   = buildMerchantDescription(p);
+      const productTypePrefix = categorySlug === "koltuk" || categorySlug === "carsaf"
+        ? "Ev Tekstili"
+        : "Perde";
+      const productType = p.category?.name
+        ? `${productTypePrefix} > ${p.category.name}`
+        : null;
+      const title         = p.category?.name
+        && !p.name.toLocaleLowerCase("tr-TR").includes(p.category.name.toLocaleLowerCase("tr-TR"))
+        ? `${p.name} | ${p.category.name}`
+        : p.name;
 
       // Doğru fiyat mantığı:
       // İndirim yoksa: g:price = satış fiyatı, g:sale_price yok
@@ -68,16 +168,27 @@ export async function GET() {
       const hasDiscount   = comparePrice !== null && comparePrice > currentPrice;
       const listedPrice   = hasDiscount ? comparePrice!.toFixed(2) : currentPrice.toFixed(2);
       const salePrice     = hasDiscount ? currentPrice.toFixed(2) : null;
+      const shippingPrice = currentPrice >= shippingSettings.freeShippingThreshold
+        ? 0
+        : shippingSettings.shippingFee;
 
-      // GTIN: RSS feed'de g:gtin tek alan — gtin8/12/13/14 Content API'ye özgüdür
-      const isValidGtin   = barcode ? /^\d{8,14}$/.test(barcode) : false;
-      const hasIdentifier = isValidGtin || !!sku;
+      // Geçersiz barkodu GTIN olarak göndermeyin. SKU merchant içi kod olduğu
+      // için otomatik olarak üretici MPN'i sayılmaz.
+      const hasValidGtin = isValidGtin(barcode);
+      const hasIdentifier = hasValidGtin || !!serialNumber;
+      const unitPricing = p.isMeter
+        ? `<g:unit_pricing_measure>1 m</g:unit_pricing_measure>
+       <g:unit_pricing_base_measure>1 m</g:unit_pricing_base_measure>`
+        : p.isSquareMeter
+          ? `<g:unit_pricing_measure>1 m2</g:unit_pricing_measure>
+       <g:unit_pricing_base_measure>1 m2</g:unit_pricing_base_measure>`
+          : "";
 
       return `
     <item>
       <g:id>${escapeXml(p.id)}</g:id>
-      <g:title>${escapeXml(p.name)}</g:title>
-      <g:description>${escapeXml(description.slice(0, 5000))}</g:description>
+      <g:title>${escapeXml(title.slice(0, 150))}</g:title>
+      <g:description>${escapeXml(description)}</g:description>
       <g:link>${BASE_URL}/products/${escapeXml(p.slug)}</g:link>
       ${mainImage ? `<g:image_link>${escapeXml(mainImage)}</g:image_link>` : ""}
       ${extraImages.map((img) => `<g:additional_image_link>${escapeXml(img)}</g:additional_image_link>`).join("\n      ")}
@@ -86,15 +197,19 @@ export async function GET() {
       ${salePrice ? `<g:sale_price>${salePrice} TRY</g:sale_price>` : ""}
       <g:brand>${escapeXml(p.brand?.name ?? "Göçmen Perde")}</g:brand>
       <g:condition>new</g:condition>
-      <g:google_product_category>${escapeXml(GOOGLE_CATEGORY)}</g:google_product_category>
-      ${p.category?.name ? `<g:product_type>${escapeXml(p.category.name)}</g:product_type>` : ""}
-      ${sku ? `<g:mpn>${escapeXml(sku)}</g:mpn>` : ""}
-      ${isValidGtin ? `<g:gtin>${escapeXml(barcode!)}</g:gtin>` : ""}
+      <g:google_product_category>${escapeXml(googleCategory)}</g:google_product_category>
+      ${productType ? `<g:product_type>${escapeXml(productType)}</g:product_type>` : ""}
+      ${serialNumber ? `<g:mpn>${escapeXml(serialNumber)}</g:mpn>` : ""}
+      ${hasValidGtin ? `<g:gtin>${escapeXml(barcode!)}</g:gtin>` : ""}
       <g:identifier_exists>${hasIdentifier ? "yes" : "no"}</g:identifier_exists>
+      ${unitPricing}
+      <g:custom_label_0>${escapeXml(categorySlug || "perde")}</g:custom_label_0>
+      <g:custom_label_1>${hasDiscount ? "indirimli" : "standart"}</g:custom_label_1>
+      <g:custom_label_2>${inStock ? "stokta" : "stok-yok"}</g:custom_label_2>
       <g:shipping>
         <g:country>TR</g:country>
         <g:service>Standart Kargo</g:service>
-        <g:price>0 TRY</g:price>
+        <g:price>${shippingPrice.toFixed(2)} TRY</g:price>
       </g:shipping>
     </item>`;
     });

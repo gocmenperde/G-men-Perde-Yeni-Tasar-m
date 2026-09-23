@@ -15,6 +15,14 @@ Use `getToken({ req, secret })` from `next-auth/jwt` instead of `getServerSessio
 - Dev environment always returns `true` for admin (no auth in dev)
 - tsconfig target must be `ES2018` or higher for regex `/s` flag in trendyol route
 
+## Legacy production schemas
+
+Configured deployment admins must not depend on a `User` row being created or updated during login. Return an admin JWT identity directly after validating `ADMIN_EMAIL`/`ADMIN_PASSWORD`; older production databases may not have every current `User` column.
+
+**Why:** A correct admin password previously still triggered a Prisma `upsert`, so legacy `User` schemas could reject the login callback before the session cookie was issued.
+
+**How to apply:** Keep database writes out of the configured-admin login branch. Admin routes authorize from the JWT role; use explicit setup/migration flows separately when a database admin row is actually needed.
+
 ## Secret fallback
 
 The deployment may expose the shared auth secret as `SESSION_SECRET` rather than

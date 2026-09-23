@@ -31,20 +31,25 @@ export const authOptions: NextAuthOptions = {
       name: "credentials",
       credentials: {
         email: { label: "E-posta", type: "email" },
+        username: { label: "Kullanıcı adı", type: "text" },
         password: { label: "Şifre", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        const rawLogin = credentials?.email ?? credentials?.username;
+        if (!rawLogin || !credentials?.password) return null;
 
-        const normalizedEmail = credentials.email.toLowerCase().trim();
+        const normalizedLogin = rawLogin.toLowerCase().trim();
+        const normalizedEmail = normalizedLogin;
 
-        const user = await db.user.findUnique({ where: { email: normalizedEmail } });
+        const user = normalizedEmail.includes("@")
+          ? await db.user.findUnique({ where: { email: normalizedEmail } })
+          : null;
 
         // Deployment'taki admin hesabı veritabanında henüz yoksa ilk başarılı
         // girişte oluşturulur. Kullanıcı zaten varsa, deployment parolası
         // değişmiş olsa bile mevcut bcrypt parolasına düşebilmek gerekir.
         const configuredAdmin = getConfiguredAdminCredentials();
-        if (configuredAdmin && normalizedEmail === configuredAdmin.email) {
+        if (configuredAdmin && configuredAdmin.identifiers.includes(normalizedLogin)) {
           if (credentials.password === configuredAdmin.password) {
             const admin = await db.user.upsert({
               where: { email: configuredAdmin.email },

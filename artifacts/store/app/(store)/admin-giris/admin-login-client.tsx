@@ -55,18 +55,18 @@ export default function AdminLoginClient() {
         <div className="bg-white rounded-3xl border border-zinc-200 p-8 shadow-xl shadow-zinc-100/80">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-zinc-700 mb-1.5">E-posta</label>
+              <label className="block text-sm font-semibold text-zinc-700 mb-1.5">E-posta veya kullanıcı adı</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
                 <input
-                  {...register("email", { required: true, pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ })}
-                  type="email"
+                  {...register("email", { required: true })}
+                  type="text"
                   autoComplete="username"
-                  placeholder="admin@email.com"
+                  placeholder="admin@email.com veya kullanıcı adı"
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 text-zinc-900 focus:outline-none focus:ring-2 focus:ring-amber-400 transition text-sm"
                 />
               </div>
-              {errors.email && <p className="text-red-500 text-xs mt-1">Geçerli e-posta girin.</p>}
+              {errors.email && <p className="text-red-500 text-xs mt-1">E-posta veya kullanıcı adı girin.</p>}
             </div>
 
             <div>

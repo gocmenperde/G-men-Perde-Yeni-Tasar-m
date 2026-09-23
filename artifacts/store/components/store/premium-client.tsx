@@ -17,6 +17,16 @@ type PremiumStatus = {
   premiumUntil: string | null;
 };
 
+const FALLBACK_STATUS: PremiumStatus = {
+  enabled: true,
+  price: 79,
+  discountType: "PERCENTAGE",
+  discountValue: 10,
+  freeShipping: true,
+  active: false,
+  premiumUntil: null,
+};
+
 export default function PremiumClient() {
   const { data: session } = useSession();
   const router = useRouter();
@@ -24,7 +34,22 @@ export default function PremiumClient() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    fetch("/api/premium/status").then((r) => r.json()).then((json) => setStatus(json.data));
+    const controller = new AbortController();
+    const loadStatus = async () => {
+      try {
+        const response = await fetch("/api/premium/status", {
+          cache: "no-store",
+          signal: controller.signal,
+        });
+        const json = await response.json();
+        if (!response.ok || !json?.data) throw new Error("Premium bilgileri alınamadı.");
+        setStatus(json.data);
+      } catch {
+        if (!controller.signal.aborted) setStatus(FALLBACK_STATUS);
+      }
+    };
+    loadStatus();
+    return () => controller.abort();
   }, []);
 
   const startPayment = async () => {

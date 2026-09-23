@@ -28,7 +28,12 @@ export default function LoginClient() {
       toast.success(firstName ? `Hoş geldiniz, ${firstName}!` : "Hoş geldiniz!");
       // Tam navigasyon, mobil Safari'de eski SessionProvider ağacının
       // "Giriş Yap" durumunu korumasını engeller.
-      window.location.replace("/");
+      const callbackUrl = new URLSearchParams(window.location.search).get("callbackUrl");
+      const safeCallbackUrl =
+        callbackUrl && callbackUrl.startsWith("/") && !callbackUrl.startsWith("//")
+          ? callbackUrl
+          : "/";
+      window.location.replace(safeCallbackUrl);
     } catch (err: any) {
       toast.error(err.message ?? "Giriş yapılamadı.");
     } finally {

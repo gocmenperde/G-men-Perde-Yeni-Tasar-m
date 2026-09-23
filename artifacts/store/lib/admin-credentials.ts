@@ -5,10 +5,24 @@
  * kullanılmadığı için tarayıcı bundle'ına girmez.
  */
 export function getConfiguredAdminCredentials() {
-  const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const configuredEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const configuredUsername =
+    process.env.ADMIN_USERNAME?.trim() ??
+    process.env.ADMIN_USER?.trim() ??
+    process.env.ADMIN_LOGIN?.trim();
+  const login = (configuredUsername || configuredEmail)?.toLowerCase();
   const password = process.env.ADMIN_PASSWORD;
 
-  if (!email || !password) return null;
+  if (!login || !password) return null;
 
-  return { email, password };
+  const email =
+    configuredEmail ||
+    (login.includes("@")
+      ? login
+      : `${login.replace(/[^a-z0-9._-]+/g, "-")}@admin.local`);
+  const identifiers = Array.from(
+    new Set([login, configuredEmail, configuredUsername?.toLowerCase(), email].filter(Boolean)),
+  ) as string[];
+
+  return { email, login, identifiers, password };
 }

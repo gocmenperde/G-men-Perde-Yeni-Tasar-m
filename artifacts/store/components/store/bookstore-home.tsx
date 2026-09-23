@@ -319,9 +319,28 @@ function BookBanner({
     className: `book-banner--${banner.gradient || "amber"}`,
     productIds: banner.productIds ?? [],
   }));
-  const slides: BannerSlide[] = categorySlides.length
-    ? [...categorySlides, ...adminSlides]
-    : fallbackSlides.map((slide) => ({ ...slide, productIds: [] }));
+  const premiumSlide: BannerSlide = {
+    id: "premium-membership",
+    eyebrow: "GÖÇMEN PREMIUM",
+    title: "Avantajlardan",
+    accent: "yararlanın",
+    description: "Özel indirim, ücretsiz kargo ve Premium ayrıcalıkları için üyelik bilgilerini keşfedin.",
+    className: "book-banner--amber book-banner--premium-cta",
+    ctaText: "Premium'u keşfedin",
+    ctaHref: "/premium",
+    cta2Text: "Avantajları gör",
+    cta2Href: "/premium",
+    imageUrl: null,
+    gradient: "amber",
+    darkText: false,
+    productIds: [],
+  };
+  const slides: BannerSlide[] = [
+    premiumSlide,
+    ...(categorySlides.length
+      ? [...categorySlides, ...adminSlides]
+      : fallbackSlides.map((slide) => ({ ...slide, productIds: [] }))),
+  ];
   useEffect(() => {
     if (isDragging || dragOffset !== 0) return;
     const timer = window.setInterval(() => setIndex((current) => (current + 1) % slides.length), 4200);

@@ -41,10 +41,6 @@ export const authOptions: NextAuthOptions = {
         const normalizedLogin = rawLogin.toLowerCase().trim();
         const normalizedEmail = normalizedLogin;
 
-        const user = normalizedEmail.includes("@")
-          ? await db.user.findUnique({ where: { email: normalizedEmail } })
-          : null;
-
         // Deployment'taki admin hesabı veritabanında henüz yoksa ilk başarılı
         // girişte oluşturulur. Kullanıcı zaten varsa, deployment parolası
         // değişmiş olsa bile mevcut bcrypt parolasına düşebilmek gerekir.
@@ -64,11 +60,26 @@ export const authOptions: NextAuthOptions = {
                 role: "ADMIN",
                 password: await bcrypt.hash(configuredAdmin.password, 10),
               },
+              select: { id: true, email: true, name: true, role: true },
             });
 
             return { id: admin.id, email: admin.email, name: admin.name, role: "ADMIN" };
           }
         }
+
+        const user = normalizedEmail.includes("@")
+          ? await db.user.findUnique({
+              where: { email: normalizedEmail },
+              select: {
+                id: true,
+                email: true,
+                name: true,
+                role: true,
+                password: true,
+                isBlocked: true,
+              },
+            })
+          : null;
 
         if (user?.password && !user.isBlocked) {
           const valid = await bcrypt.compare(credentials.password, user.password);

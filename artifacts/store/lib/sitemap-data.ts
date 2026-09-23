@@ -12,13 +12,14 @@ const SITEMAP_CACHE_TAG = "storefront-sitemap";
 
 export const getSitemapProductCount = unstable_cache(
   async () => catalogDb.product.count({ where: { isActive: true } }),
-  ["storefront-sitemap-count-v2"],
+  ["storefront-sitemap-count-v3"],
   { revalidate: false, tags: [SITEMAP_CACHE_TAG] },
 );
 
 export const getSitemapChunkCount = async () => {
   const total = await getSitemapProductCount();
-  return Math.max(1, Math.ceil(total / PRODUCTS_PER_SITEMAP)) + 1;
+  // Chunk 0 contains static, category and brand URLs. Product chunks follow it.
+  return 1 + Math.ceil(total / PRODUCTS_PER_SITEMAP);
 };
 
 const getSitemapTaxonomy = unstable_cache(
@@ -66,10 +67,10 @@ export async function getSitemapEntries(sitemapId: number): Promise<MetadataRout
     const staticPages: MetadataRoute.Sitemap = [
       { url: BASE_URL, changeFrequency: "daily", priority: 1.0 },
       { url: `${BASE_URL}/products`, changeFrequency: "daily", priority: 0.9 },
+      { url: `${BASE_URL}/measure-guide`, changeFrequency: "monthly", priority: 0.8 },
       { url: `${BASE_URL}/about`, changeFrequency: "monthly", priority: 0.6 },
       { url: `${BASE_URL}/contact`, changeFrequency: "monthly", priority: 0.6 },
       { url: `${BASE_URL}/faq`, changeFrequency: "monthly", priority: 0.5 },
-      { url: `${BASE_URL}/measure-guide`, changeFrequency: "monthly", priority: 0.8 },
       { url: `${BASE_URL}/hikayemiz`, changeFrequency: "monthly", priority: 0.6 },
       { url: `${BASE_URL}/uygulama-ilham`, changeFrequency: "weekly", priority: 0.7 },
       { url: `${BASE_URL}/sizden-gelenler`, changeFrequency: "weekly", priority: 0.7 },

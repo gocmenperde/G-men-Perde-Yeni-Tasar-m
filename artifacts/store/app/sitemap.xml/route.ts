@@ -9,6 +9,15 @@ const BASE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.gocmenperde.com.tr"
 ).replace(/\/$/, "");
 
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 export async function GET() {
   let chunkCount = 1;
   try {
@@ -18,7 +27,7 @@ export async function GET() {
   }
 
   const entries = Array.from({ length: chunkCount }, (_, id) =>
-    `<sitemap><loc>${BASE_URL}/sitemap/${id}.xml</loc></sitemap>`,
+    `<sitemap><loc>${escapeXml(BASE_URL)}/sitemap/${id}.xml</loc></sitemap>`,
   ).join("");
 
   return new NextResponse(

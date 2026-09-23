@@ -29,6 +29,15 @@ const CATEGORY_SEARCH_TERMS: Record<string, string[]> = {
   "özel ölçü perde": ["perde ölçü alma", "perde dikimi", "perde montajı", "bursa özel ölçü perde"],
 };
 
+const CATEGORY_VARIANTS: Record<string, string[]> = {
+  "tül perde": ["tül perde", "tül perdeler", "salon tül perdesi", "yatak odası tül perdesi"],
+  "fon perde": ["fon perde", "fon perdeler", "salon fon perdesi", "yatak odası fon perdesi"],
+  "stor perde": ["stor perde", "stor perdeler", "stor perde sistemi", "ışık geçirmeyen stor perde"],
+  "zebra perde": ["zebra perde", "zebra perdeler", "zebra perde sistemi", "modern zebra perde"],
+  "plise perde": ["plise perde", "plise perdeler", "plise perde sistemi", "modern plise perde"],
+  "özel ölçü perde": ["özel ölçü perde", "ölçüye göre perde", "perde dikimi", "perde montajı"],
+};
+
 function getCategorySearchTerms(categoryName?: string) {
   if (!categoryName) return [];
   const normalized = categoryName.toLocaleLowerCase("tr-TR").trim();
@@ -41,6 +50,99 @@ function getCategorySearchTerms(categoryName?: string) {
     `${categoryName} fiyatları`,
     `özel ölçü ${categoryName}`,
   ];
+}
+
+function normalizeKeyword(value: string) {
+  return value
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLocaleLowerCase("tr-TR");
+}
+
+/**
+ * Product metadata should cover the real long-tail around one product, not
+ * thousands of unrelated phrases. Search engines ignore meta-keyword spam;
+ * product-derived terms are kept bounded and deduplicated instead.
+ */
+export function generateProductSearchTerms(options: {
+  productName?: string;
+  categoryName?: string;
+  brandName?: string;
+  city?: string;
+  barcode?: string | null;
+  sku?: string | null;
+}): string[] {
+  const terms = new Set<string>();
+  const add = (value?: string | null) => {
+    if (!value) return;
+    const normalized = normalizeKeyword(value);
+    if (normalized.length >= 2) terms.add(normalized);
+  };
+  const addPhrase = (...parts: Array<string | null | undefined>) => {
+    const phrase = parts.filter(Boolean).join(" ");
+    add(phrase);
+  };
+
+  const productName = options.productName?.trim();
+  const categoryName = options.categoryName?.trim();
+  const brandName = options.brandName?.trim();
+  const city = options.city?.trim() || "Bursa";
+  const categoryKey = categoryName
+    ? Object.keys(CATEGORY_VARIANTS).find((term) => {
+        const normalized = normalizeKeyword(categoryName);
+        return normalized === term || normalized.includes(term);
+      })
+    : undefined;
+  const categoryTerms = categoryKey
+    ? CATEGORY_VARIANTS[categoryKey]
+    : categoryName
+      ? [categoryName]
+      : [];
+
+  add(productName);
+  add(categoryName);
+  add(brandName);
+  add(city);
+
+  for (const term of categoryTerms) {
+    add(term);
+    add(`${term} modelleri`);
+    add(`${term} fiyatları`);
+    add(`özel ölçü ${term}`);
+    add(`${city} ${term}`);
+  }
+
+  if (productName) {
+    add(`${productName} fiyatı`);
+    add(`${productName} modelleri`);
+    add(`${productName} satın al`);
+    add(`${productName} online`);
+    add(`${productName} özel ölçü`);
+    add(`${productName} ölçü`);
+  }
+
+  if (brandName) {
+    addPhrase(brandName, "perde");
+    addPhrase(brandName, categoryName);
+    addPhrase(brandName, "fiyatları");
+  }
+
+  add(`${city} perdeci`);
+  add(`${city} perde`);
+  add("perde ölçü rehberi");
+  add("perde dikimi");
+  add("perde montajı");
+
+  if (options.barcode) {
+    add(`barkod ${options.barcode}`);
+    add(options.barcode);
+  }
+  if (options.sku) {
+    add(`sku ${options.sku}`);
+    add(options.sku);
+  }
+
+  return Array.from(terms).slice(0, 80);
 }
 
 export function generateKeywords(options?: {
@@ -66,14 +168,9 @@ export function generateKeywords(options?: {
     "perde dikimi",
     "perde montajı",
     ...(options?.categoryName ? getCategorySearchTerms(options.categoryName) : URUN_KATEGORILERI),
-    ...(options?.productName ? [options.productName, `${options.productName} fiyatı`] : []),
-    ...(options?.categoryName ? [options.categoryName, `${options.categoryName} modelleri`] : []),
-    ...(options?.brandName ? [options.brandName, `${options.brandName} perde`] : []),
-    ...(options?.city ? [`${options.city} perdeci`, `${options.city} perde`] : []),
-    ...(options?.barcode ? [`barkod ${options.barcode}`, options.barcode] : []),
-    ...(options?.sku ? [`sku ${options.sku}`] : []),
+    ...(options?.productName ? generateProductSearchTerms(options) : []),
   ];
-  return Array.from(new Set(values.filter(Boolean)));
+  return Array.from(new Set(values.filter(Boolean).map(normalizeKeyword)));
 }
 
 export const LOCAL_BUSINESS_JSONLD = {

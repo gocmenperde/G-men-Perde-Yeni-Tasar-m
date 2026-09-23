@@ -59,7 +59,19 @@ export async function GET(
 
   // Geçersiz yüksek id'ler için Prisma'nın büyük OFFSET sorgusu çalışmasın.
   // Sitemap index'inde olmayan parçalar doğrudan 404 dönmelidir.
-  const chunkCount = await getSitemapChunkCount();
+  let chunkCount = 1;
+  try {
+    chunkCount = await getSitemapChunkCount();
+  } catch {
+    // The static sitemap section must remain crawlable during a catalog DB
+    // outage. Product chunks cannot be validated without the live count.
+    if (sitemapId !== 0) {
+      return new NextResponse("Sitemap bulunamadı", {
+        status: 404,
+        headers: NOT_FOUND_HEADERS,
+      });
+    }
+  }
   if (sitemapId >= chunkCount) {
     return new NextResponse("Sitemap bulunamadı", {
       status: 404,

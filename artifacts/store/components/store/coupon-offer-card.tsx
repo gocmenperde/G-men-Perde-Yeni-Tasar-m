@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useState } from "react";
 import { Gift, PanelTop, Sparkles, Tag, Truck } from "lucide-react";
 
 export interface CouponOffer {
@@ -13,7 +15,9 @@ export interface CouponOffer {
   buyAmount?: number | string | null;
   payAmount?: number | string | null;
   imageUrl?: string | null;
+  audience?: string | null;
   premiumOnly?: boolean;
+  locked?: boolean;
 }
 
 export function couponOfferLabel(coupon: CouponOffer) {
@@ -101,6 +105,9 @@ export default function CouponOfferCard({
   onApply?: (code: string) => void;
   compact?: boolean;
 }) {
+  const [showPremiumNotice, setShowPremiumNotice] = useState(false);
+  const premiumLocked = coupon.locked === true;
+
   return (
     <article
       className={`overflow-hidden rounded-2xl border border-[#d9c38b] bg-[#fffdf7] shadow-[0_8px_24px_rgba(92,68,25,.08)] ${
@@ -128,19 +135,50 @@ export default function CouponOfferCard({
             </div>
             <p className="mt-2 truncate font-mono text-sm font-black text-[#2d2923]">{coupon.code}</p>
             <p className="mt-1 text-xs font-bold leading-snug text-[#665d50]">{couponOfferLabel(coupon)}</p>
+            {premiumLocked && (
+              <span className="mt-2 inline-flex rounded-full bg-[#f5e7bd] px-2 py-1 text-[9px] font-black uppercase tracking-[0.1em] text-[#866725]">
+                Premium müşterilere özel
+              </span>
+            )}
           </div>
           {onApply && (
             <button
               type="button"
-              onClick={() => onApply(coupon.code)}
+              onClick={() => {
+                if (premiumLocked) {
+                  setShowPremiumNotice(true);
+                  return;
+                }
+                onApply(coupon.code);
+              }}
               disabled={applying || applied}
-              className="mt-3 inline-flex min-h-9 items-center justify-center rounded-xl bg-[#2b2721] px-2.5 text-[11px] font-black text-white transition-colors hover:bg-[#b8973e] disabled:cursor-default disabled:bg-[#e8dfca] disabled:text-[#806f4c]"
+              className={`mt-3 inline-flex min-h-9 items-center justify-center rounded-xl px-2.5 text-[11px] font-black transition-colors disabled:cursor-default ${
+                premiumLocked
+                  ? "border border-[#caa653] bg-[#f7e9bf] text-[#725519] hover:bg-[#efd99a]"
+                  : "bg-[#2b2721] text-white hover:bg-[#b8973e] disabled:bg-[#e8dfca] disabled:text-[#806f4c]"
+              }`}
             >
-              {applied ? "Uygulandı" : applying ? "Kontrol ediliyor..." : "Sepete uygula"}
+              {premiumLocked ? "Premium'a özel" : applied ? "Uygulandı" : applying ? "Kontrol ediliyor..." : "Sepete uygula"}
             </button>
           )}
         </div>
       </div>
+      {premiumLocked && showPremiumNotice && (
+        <div className="border-t border-[#ead9ae] bg-[#fff8e8] px-3 py-3" role="alert">
+          <p className="text-xs font-black leading-snug text-[#5f4a1f]">
+            Bu kupon yalnızca Premium müşterilere özeldir.
+          </p>
+          <p className="mt-1 text-[11px] leading-snug text-[#78653d]">
+            Hemen Premium ol ve bu avantajdan yararlan.
+          </p>
+          <Link
+            href="/premium"
+            className="mt-2 inline-flex min-h-8 items-center justify-center rounded-lg bg-[#b8973e] px-3 text-[11px] font-black text-white hover:bg-[#9d7d2e]"
+          >
+            Premium ol
+          </Link>
+        </div>
+      )}
     </article>
   );
 }

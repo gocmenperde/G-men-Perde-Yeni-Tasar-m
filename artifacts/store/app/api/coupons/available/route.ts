@@ -40,11 +40,16 @@ export async function GET(req: NextRequest) {
     const visible = coupons
       .filter((coupon) => {
         const audience = coupon.audience ?? (coupon.premiumOnly ? "PREMIUM_ONLY" : "ALL");
-        return audience === "ALL" || (audience === "PREMIUM_ONLY" && premiumActive) ||
-          (audience === "NORMAL_ONLY" && !premiumActive);
+        // Premium campaigns remain discoverable to everyone so guests can
+        // understand the benefit and upgrade from the cart. Normal-only
+        // campaigns are still hidden from active Premium members.
+        return audience !== "NORMAL_ONLY" || !premiumActive;
       })
       .map((coupon) => ({
         ...coupon,
+        locked:
+          (coupon.audience === "PREMIUM_ONLY" || coupon.premiumOnly) &&
+          !premiumActive,
         value: Number(coupon.value),
         minOrderAmount: Number(coupon.minOrderAmount),
         maxOrderAmount: coupon.maxOrderAmount == null ? null : Number(coupon.maxOrderAmount),

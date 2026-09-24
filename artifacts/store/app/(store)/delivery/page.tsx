@@ -41,7 +41,6 @@ export default function DeliveryPage() {
             <ul className="list-disc pl-5 space-y-2">
               <li>Ücretsiz kargo koşulu ve uygulanacak kargo ücreti, güncel sipariş tutarınıza göre ödeme adımında gösterilir.</li>
               <li>Adres bilgilerinin doğruluğu müşterinin sorumluluğundadır.</li>
-              <li>Teslimat anında paketinizi kontrol ederek hasar durumunda tutanak tutturunuz.</li>
             </ul>
           </section>
         </div>

@@ -90,7 +90,7 @@ export default function TermsPage() {
           </h2>
           <p className="text-sm leading-relaxed text-zinc-600">
             Siparişinize özel ölçü ve tercihlerle hazırlanan ürünlerdeki iade
-            koşullarını ve hatalı ya da hasarlı ürünlerde izlenecek yolu{" "}
+            koşullarını{" "}
             <Link
               href="/iade-politikasi"
               className="font-bold text-[#8D6E2F] underline underline-offset-2"

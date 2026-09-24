@@ -559,8 +559,7 @@ export default function ProductInfo({ product }: { product: any }) {
           <Shield className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#A78337]" aria-hidden="true" />
           <p className="text-xs leading-5 text-zinc-600">
             Bu ürün siparişinize özel hazırlanır. Kişisel tercih değişikliğine
-            dayalı iade kabul edilmez; hatalı veya siparişe aykırı ürünlerde
-            yasal haklarınız saklıdır.{" "}
+            dayalı iade kabul edilmez.{" "}
             <Link
               href="/iade-politikasi"
               className="font-bold text-[#8D6E2F] underline underline-offset-2"

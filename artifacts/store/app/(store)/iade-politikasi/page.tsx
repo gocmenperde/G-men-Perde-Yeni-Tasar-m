@@ -1,21 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  AlertCircle,
   Check,
   ChevronRight,
   Clock3,
   MessageCircle,
   Ruler,
   Scissors,
-  ShieldCheck,
   Sparkles,
 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "İade Politikası | Göçmen Perde",
   description:
-    "Kişiye özel ölçü ve dikimle hazırlanan Göçmen Perde ürünlerinde iade koşulları, sipariş değişikliği ve hasarlı veya hatalı ürün desteği.",
+    "Kişiye özel ölçü ve dikimle hazırlanan Göçmen Perde ürünlerinde iade koşulları ve sipariş değişikliği.",
   alternates: {
     canonical: "https://www.gocmenperde.com.tr/iade-politikasi",
   },
@@ -92,16 +90,6 @@ export default function ReturnPolicyPage() {
               fikir değişikliği gibi kişisel tercihlere dayanan iade taleplerini
               kabul edemiyoruz.
             </p>
-            <div className="mx-auto mt-7 inline-flex max-w-2xl items-start gap-3 rounded-2xl border border-[#E5B96F]/25 bg-black/15 px-4 py-3 text-left text-sm leading-6 text-[#F5F0E8]">
-              <ShieldCheck
-                className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#E5B96F]"
-                aria-hidden="true"
-              />
-              <span>
-                Ürünün hatalı, hasarlı veya siparişinizde onaylanan özelliklerden
-                farklı olması hâlinde yasal tüketici haklarınız saklıdır.
-              </span>
-            </div>
           </div>
         </header>
 
@@ -140,8 +128,7 @@ export default function ReturnPolicyPage() {
               ürün özelliklerine göre hazırlanır. Kumaş kesildikten ve dikim
               süreci başladıktan sonra ürün, başka bir ev veya sipariş için
               standart bir ürün gibi yeniden değerlendirilemez. Bu nedenle
-              siparişe özel hazırlanmış ürünlerde, ürün kusursuz ve sipariş
-              detaylarına uygun olduğu hâlde kişisel tercihin değişmesi
+              siparişe özel hazırlanmış ürünlerde kişisel tercihin değişmesi
               sebebiyle iade ya da değişim yapamıyoruz.
             </p>
             <div className="mt-6 rounded-2xl bg-[#FAF7F2] p-5">
@@ -191,60 +178,6 @@ export default function ReturnPolicyPage() {
             </Link>
           </section>
         </div>
-
-        <section className="mt-5 rounded-3xl border border-[#E8E0D5] bg-white p-6 sm:p-8">
-          <div className="grid gap-7 md:grid-cols-2">
-            <div>
-              <div className="mb-3 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-                  <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-                </div>
-                <h2 className="text-xl font-black text-zinc-900">
-                  Hatalı veya hasarlı ürün mü ulaştı?
-                </h2>
-              </div>
-              <p className="text-sm leading-7 text-zinc-600">
-                Ürününüz üretim hatası taşıyorsa, siparişinizde onaylanan
-                özelliklerle uyuşmuyorsa veya kargo sırasında hasar gördüyse
-                lütfen bize ulaşın. Sipariş numaranızı ve mümkünse ürünün
-                fotoğraflarını paylaşmanız incelemeyi hızlandırır. Bu gibi
-                durumlarda, tüketici mevzuatından doğan haklarınız kişiye özel
-                üretim gerekçesiyle ortadan kalkmaz.
-              </p>
-              <p className="mt-3 text-xs leading-5 text-zinc-500">
-                Kargo paketinde gözle görülür bir hasar varsa teslim sırasında
-                tutanak düzenlenmesini istemeniz yararlı olur. Tutanak
-                bulunmaması, yasal haklarınızdan vazgeçtiğiniz anlamına gelmez.
-              </p>
-            </div>
-
-            <div className="rounded-2xl border border-[#E8E0D5] bg-[#FAF7F2] p-5 sm:p-6">
-              <div className="mb-3 flex items-center gap-2 text-[#8D6E2F]">
-                <AlertCircle className="h-5 w-5" aria-hidden="true" />
-                <h2 className="font-extrabold text-zinc-900">
-                  Yasal bilgilendirme
-                </h2>
-              </div>
-              <p className="text-sm leading-7 text-zinc-600">
-                Mesafeli Sözleşmeler Yönetmeliği&apos;nin 15. maddesinin 1.
-                fıkrasının (b) bendi, tüketicinin istekleri veya kişisel
-                ihtiyaçları doğrultusunda hazırlanan malları cayma hakkı
-                istisnaları arasında sayar. Siparişinize özel ölçü ve
-                tercihlerle hazırlanan ürünler bu kapsamda değerlendirilir.
-                Ayıplı veya siparişe aykırı ürünlerde yasal haklarınız saklıdır.
-              </p>
-              <a
-                href="https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=20237&MevzuatTertip=5&MevzuatTur=7"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-[#8D6E2F] underline decoration-[#D8C28F] underline-offset-4 transition-colors hover:text-zinc-900"
-              >
-                Yönetmeliğin güncel metnini inceleyin
-                <ChevronRight className="h-4 w-4" aria-hidden="true" />
-              </a>
-            </div>
-          </div>
-        </section>
 
         <section className="mt-5 flex flex-col items-start justify-between gap-5 rounded-3xl bg-[#17282C] p-6 text-white sm:flex-row sm:items-center sm:p-8">
           <div className="flex items-start gap-3">

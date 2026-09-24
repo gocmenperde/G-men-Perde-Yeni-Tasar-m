@@ -23,7 +23,7 @@ const FAQS = [
       },
       {
         q: "Kişiye özel perde siparişlerinde iade veya değişim yapabilir miyim?",
-        a: "Ürünlerimiz belirttiğiniz ölçü ve tercihlere göre hazırlandığından, ürün siparişinize uygunsa kişisel tercih değişikliği nedeniyle iade veya değişim kabul edemiyoruz. Ürün hatalı, hasarlı ya da siparişinizden farklıysa yasal haklarınız saklıdır.",
+        a: "Ürünlerimiz belirttiğiniz ölçü ve tercihlere göre hazırlandığından, kişisel tercih değişikliği nedeniyle iade veya değişim kabul edemiyoruz.",
       },
       {
         q: "Taksit imkânı var mı?",

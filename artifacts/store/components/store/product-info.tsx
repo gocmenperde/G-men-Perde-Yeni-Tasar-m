@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import {
   ShoppingCart, Heart, Minus, Plus, Package, PackageSearch, Headphones, Truck, Shield, Star, Check, AlertTriangle, Ruler,
   CreditCard, ChevronDown, Copy, CheckCheck, Flame,
@@ -551,6 +552,24 @@ export default function ProductInfo({ product }: { product: any }) {
           </svg>
           WhatsApp ile Sipariş Ver
         </a>
+      )}
+
+      {product.stock > 0 && (
+        <div className="flex items-start gap-2.5 rounded-xl border border-[#E8E0D5] bg-[#FAF7F2] px-3.5 py-3">
+          <Shield className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#A78337]" aria-hidden="true" />
+          <p className="text-xs leading-5 text-zinc-600">
+            Bu ürün siparişinize özel hazırlanır. Kişisel tercih değişikliğine
+            dayalı iade kabul edilmez; hatalı veya siparişe aykırı ürünlerde
+            yasal haklarınız saklıdır.{" "}
+            <Link
+              href="/iade-politikasi"
+              className="font-bold text-[#8D6E2F] underline underline-offset-2"
+            >
+              İade koşullarını inceleyin
+            </Link>
+            .
+          </p>
+        </div>
       )}
 
       {/* Out-of-stock notify */}

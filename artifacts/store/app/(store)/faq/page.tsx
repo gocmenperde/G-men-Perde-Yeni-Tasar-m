@@ -19,7 +19,11 @@ const FAQS = [
       },
       {
         q: "Siparişimi iptal edebilir miyim?",
-        a: "Sipariş kargoya verilmeden önce iptal talebinizi WhatsApp veya e-posta ile iletebilirsiniz. Siparişin hazırlık durumuna göre ekibimiz size bilgi verecektir.",
+        a: "Ürünlerimiz siparişinize özel hazırlandığı için bir değişiklik veya iptal ihtiyacını mümkün olan en kısa sürede bize iletin. Üretim aşamasına göre talebinizi değerlendirebiliriz; kişiye özel ürünlerde fikir değişikliğine dayalı cayma hakkı istisnası uygulanabilir.",
+      },
+      {
+        q: "Kişiye özel perde siparişlerinde iade veya değişim yapabilir miyim?",
+        a: "Ürünlerimiz belirttiğiniz ölçü ve tercihlere göre hazırlandığından, ürün siparişinize uygunsa kişisel tercih değişikliği nedeniyle iade veya değişim kabul edemiyoruz. Ürün hatalı, hasarlı ya da siparişinizden farklıysa yasal haklarınız saklıdır.",
       },
       {
         q: "Taksit imkânı var mı?",
@@ -101,7 +105,22 @@ const FAQS = [
   },
 ];
 
-function FAQItem({ q, a }: { q: string; a: string }) {
+const FAQ_LINKS_BY_QUESTION: Record<string, { href: string; label: string }> = {
+  "Kişiye özel perde siparişlerinde iade veya değişim yapabilir miyim?": {
+    href: "/iade-politikasi",
+    label: "İade Politikası sayfamızda",
+  },
+};
+
+function FAQItem({
+  q,
+  a,
+  link,
+}: {
+  q: string;
+  a: string;
+  link?: { href: string; label: string };
+}) {
   const [open, setOpen] = useState(false);
   return (
     <div className="border-b border-[#F0EAE0] last:border-0">
@@ -121,7 +140,22 @@ function FAQItem({ q, a }: { q: string; a: string }) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <p className="text-zinc-500 text-sm leading-relaxed pb-4">{a}</p>
+            <p className="text-zinc-500 text-sm leading-relaxed pb-4">
+              {a}
+              {link && (
+                <>
+                  {" "}
+                  Ayrıntılı koşulları{" "}
+                  <Link
+                    href={link.href}
+                    className="font-semibold text-[#8D6E2F] underline underline-offset-2"
+                  >
+                    {link.label}
+                  </Link>{" "}
+                  bulabilirsiniz.
+                </>
+              )}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -199,7 +233,12 @@ export default function FAQPage() {
               <div key={category} className="bg-white rounded-2xl border border-[#E8E0D5] p-6">
                 <h2 className="font-black text-zinc-900 mb-4">{category}</h2>
                 {items.map(({ q, a }) => (
-                  <FAQItem key={q} q={q} a={a} />
+                  <FAQItem
+                    key={q}
+                    q={q}
+                    a={a}
+                    link={FAQ_LINKS_BY_QUESTION[q]}
+                  />
                 ))}
               </div>
             ))}

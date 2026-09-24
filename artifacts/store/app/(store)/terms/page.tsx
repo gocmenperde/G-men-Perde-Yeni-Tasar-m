@@ -84,6 +84,23 @@ export default function TermsPage() {
           ))}
         </div>
 
+        <section className="mt-5 rounded-2xl border border-[#E8E0D5] bg-white p-6">
+          <h2 className="mb-2 text-lg font-black text-zinc-900">
+            Kişiye özel ürünler ve iade koşulları
+          </h2>
+          <p className="text-sm leading-relaxed text-zinc-600">
+            Siparişinize özel ölçü ve tercihlerle hazırlanan ürünlerdeki iade
+            koşullarını ve hatalı ya da hasarlı ürünlerde izlenecek yolu{" "}
+            <Link
+              href="/iade-politikasi"
+              className="font-bold text-[#8D6E2F] underline underline-offset-2"
+            >
+              İade Politikası sayfamızda
+            </Link>{" "}
+            ayrıntılı olarak inceleyebilirsiniz.
+          </p>
+        </section>
+
         <div className="mt-8 p-5 bg-zinc-50 border border-zinc-200 rounded-2xl text-center">
           <p className="text-zinc-600 text-sm">
             Sorularınız için{" "}

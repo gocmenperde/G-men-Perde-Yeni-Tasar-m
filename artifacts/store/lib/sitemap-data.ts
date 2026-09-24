@@ -75,7 +75,7 @@ export async function getSitemapEntries(sitemapId: number): Promise<MetadataRout
       { url: `${BASE_URL}/uygulama-ilham`, changeFrequency: "weekly", priority: 0.7 },
       { url: `${BASE_URL}/sizden-gelenler`, changeFrequency: "weekly", priority: 0.7 },
       { url: `${BASE_URL}/delivery`, changeFrequency: "monthly", priority: 0.5 },
-      { url: `${BASE_URL}/returns`, changeFrequency: "monthly", priority: 0.5 },
+      { url: `${BASE_URL}/iade-politikasi`, changeFrequency: "monthly", priority: 0.5 },
       { url: `${BASE_URL}/privacy`, changeFrequency: "yearly", priority: 0.3 },
       { url: `${BASE_URL}/terms`, changeFrequency: "yearly", priority: 0.3 },
       { url: `${BASE_URL}/sales-policy`, changeFrequency: "yearly", priority: 0.3 },

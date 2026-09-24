@@ -39,6 +39,13 @@ const nextConfig = {
         destination: "https://www.gocmenperde.com.tr/:path*",
         permanent: true,
       },
+      // Merchant Center may still crawl product URLs from the former /urun/
+      // route. Preserve those links and send each product to its current URL.
+      {
+        source: "/urun/:slug",
+        destination: "https://www.gocmenperde.com.tr/products/:slug",
+        permanent: true,
+      },
       // Tek bir host kullan: non-www URL'ler ürün/kategori sayfalarıyla
       // ayrı canonical kümeleri oluşturmasın.
       {

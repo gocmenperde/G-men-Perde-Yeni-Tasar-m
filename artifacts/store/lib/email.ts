@@ -206,7 +206,7 @@ export async function sendOrderStatusEmail(order: {
        <h2 style="font-size:22px;font-weight:900;color:#1c1c1e;margin:4px 0 16px;">Sipariş İptal Edildi</h2>
        ${statusBadge("İPTAL EDİLDİ", "#dc2626", "#fef2f2")}
        <p style="color:#555;font-size:14px;line-height:1.7;margin:18px 0 16px;">
-         Siparişiniz iptal edildi. Herhangi bir ödeme yapıldıysa 3-5 iş günü içinde iade edilecektir. Sorularınız için bizimle iletişime geçebilirsiniz.
+         Siparişiniz iptal edildi. Sipariş durumunuzla ilgili sorularınız için bizimle iletişime geçebilirsiniz.
        </p>
        ${orderInfoBox(order.id, order.items, order.total)}`,
       `Siparişiniz #${order.id.slice(-8).toUpperCase()} iptal edildi.`

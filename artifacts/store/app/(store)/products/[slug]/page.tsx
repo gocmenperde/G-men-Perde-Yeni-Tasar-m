@@ -282,16 +282,6 @@ export default async function ProductDetailPage({
           },
         },
       },
-      // hasMerchantReturnPolicy: Google Merchant için zorunlu — 14 gün iade hakkı
-      hasMerchantReturnPolicy: {
-        "@type": "MerchantReturnPolicy",
-        applicableCountry: "TR",
-        returnPolicyCategory:
-          "https://schema.org/MerchantReturnFiniteReturnWindow",
-        merchantReturnDays: 14,
-        returnMethod: "https://schema.org/ReturnByMail",
-        returnFees: "https://schema.org/FreeReturn",
-      },
     },
   } : null;
 

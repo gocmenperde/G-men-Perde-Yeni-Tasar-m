@@ -24,7 +24,7 @@ interface Recommendation {
 const TRUST_ITEMS = [
   { icon: ShieldCheck, title: "256-bit SSL", text: "Güvenli ödeme" },
   { icon: Truck, title: "Aynı gün kargo", text: "Hızlı hazırlık" },
-  { icon: Check, title: "14 gün iade", text: "Kolay iade garantisi" },
+  { icon: Sparkles, title: "Özenle seçilen", text: "Kalite odaklı koleksiyon" },
 ];
 
 function price(value: number | string) {

@@ -19,7 +19,7 @@ const sections = [
   },
   {
     title: "3. Sipariş ve Satın Alma",
-    content: `• Sepete eklenen ürünler, ödeme tamamlanana kadar rezerve edilmez.\n• Sipariş onayı e-posta ile gönderilir; bu, satış sözleşmesinin kurulduğunu gösterir.\n• Stok tükendiğinde siparişiniz iptal edilebilir; ücret alınmışsa iade edilir.\n• Fiyatlar KDV dahildir ve önceden haber vermeksizin değişebilir.\n• Açıkça hatalı fiyat içeren siparişleri iptal etme hakkımız saklıdır.`,
+    content: `• Sepete eklenen ürünler, ödeme tamamlanana kadar rezerve edilmez.\n• Sipariş onayı e-posta ile gönderilir; bu, satış sözleşmesinin kurulduğunu gösterir.\n• Stok ve sipariş durumuna ilişkin bilgilendirmeler e-posta ile paylaşılır.\n• Fiyatlar KDV dahildir ve önceden haber vermeksizin değişebilir.\n• Açıkça hatalı fiyat içeren siparişleri iptal etme hakkımız saklıdır.`,
   },
   {
     title: "4. Ödeme",
@@ -30,8 +30,8 @@ const sections = [
     content: `• Teslimat süresi 1–5 iş günüdür (stok ve bölgeye göre değişir).\n• 500₺ ve üzeri siparişlerde kargo ücretsizdir.\n• Teslimat adresi bilgileri müşteri sorumluluğundadır; hatalı adres nedeniyle oluşan gecikmeler tarafımıza yüklenemez.\n• Ürün kargoya verildikten sonra takip numarası e-posta ile bildirilir.`,
   },
   {
-    title: "6. İade ve Değişim",
-    content: `Ayrıntılı bilgi için İade Politikası sayfamızı inceleyiniz.\n\n• Teslimattan itibaren 14 gün içinde iade talep edebilirsiniz.\n• Ürün kullanılmamış, ambalajı açılmamış veya hasarsız olmalıdır.\n• İade kargo ücreti alıcıya aittir (hatalı ürün gönderimi hariç).\n• Onaylanan iadeler 5–10 iş günü içinde kartınıza yansır.`,
+    title: "6. Kalite ve Özen",
+    content: `Göçmen Perde koleksiyonunu kumaş dokusu, kullanım alanı ve ürün özelliklerini gözeterek oluşturur. Ürün sayfalarında ölçü ve ürün detaylarını inceleyebilir, seçim sürecinde ekibimizden destek alabilirsiniz.`,
   },
   {
     title: "7. Fikri Mülkiyet",

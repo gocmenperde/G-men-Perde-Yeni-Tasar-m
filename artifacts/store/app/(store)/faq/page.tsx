@@ -19,7 +19,7 @@ const FAQS = [
       },
       {
         q: "Siparişimi iptal edebilir miyim?",
-        a: "Sipariş kargoya verilmeden önce iptal işlemi yapılabilir. Bunun için lütfen WhatsApp veya e-posta ile iletişime geçin. Kargoya verildikten sonra iade prosedürü uygulanır.",
+        a: "Sipariş kargoya verilmeden önce iptal talebinizi WhatsApp veya e-posta ile iletebilirsiniz. Siparişin hazırlık durumuna göre ekibimiz size bilgi verecektir.",
       },
       {
         q: "Taksit imkânı var mı?",
@@ -49,19 +49,19 @@ const FAQS = [
     ],
   },
   {
-    category: "İade & Değişim",
+    category: "Ürün Kalitesi",
     items: [
       {
-        q: "İade süresi ne kadar?",
-        a: "Ürünü teslim aldığınız tarihten itibaren 14 gün içinde iade talebinde bulunabilirsiniz. Ürünün kullanılmamış ve orijinal ambalajında olması gerekmektedir.",
+        q: "Ürün koleksiyonunu nasıl seçiyorsunuz?",
+        a: "Koleksiyonumuzu kumaş dokusu, kullanım alanı ve ürün özelliklerini gözeterek oluşturuyor; ürün detaylarını sayfalarında açıkça paylaşıyoruz.",
       },
       {
-        q: "İade kargo ücreti kime ait?",
-        a: "Normal iade durumlarında kargo ücreti müşteriye aittir. Ancak hatalı ürün gönderimi veya üründe kusur varsa kargo ücreti tarafımızca karşılanır.",
+        q: "Perde seçerken hangi özellikleri karşılaştırmalıyım?",
+        a: "Kumaş dokusu, ışık geçirgenliği, ölçü ve kullanım alanını dikkate alabilirsiniz. Ürün detaylarını inceleyebilir, emin olmadığınız noktada ekibimize ulaşabilirsiniz.",
       },
       {
-        q: "Paramı ne zaman geri alırım?",
-        a: "İade ürünü teslim alıp kontrolden geçirdikten sonra 5–10 iş günü içinde ödemeniz iade edilir. Banka işlem süresi hesaba eklenmelidir.",
+        q: "Ölçü ve ürün seçimi için destek alabilir miyim?",
+        a: "Evet. Ölçü rehberimizi inceleyebilir veya ihtiyacınıza uygun ürün ve ölçü seçimi için ekibimizle iletişime geçebilirsiniz.",
       },
     ],
   },

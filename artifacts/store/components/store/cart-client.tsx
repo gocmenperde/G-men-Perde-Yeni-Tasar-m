@@ -5,7 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, Truck, Shield, RotateCcw, Tag, Check, X } from "lucide-react";
+import { Trash2, Minus, Plus, ShoppingBag, ArrowRight, Truck, Shield, Package, Tag, Check, X } from "lucide-react";
 import toast from "react-hot-toast";
 import dynamic from "next/dynamic";
 import ProductImage from "@/components/store/product-image";
@@ -352,7 +352,7 @@ export default function CartClient() {
               <div className="border-t border-zinc-100 pt-4 grid grid-cols-3 gap-2 text-center">
                 {[
                   { icon: Shield, text: "256-bit SSL", sub: "Güvenli ödeme" },
-                  { icon: RotateCcw, text: "14 gün iade", sub: "İade garantisi" },
+                  { icon: Package, text: "Özenli Seçki", sub: "Kalite ve doku" },
                   { icon: Truck, text: "Aynı gün kargo", sub: "Hızlı hazırlık" },
                 ].map(({ icon: Icon, text, sub }) => (
                   <div key={text} className="flex flex-col items-center gap-1">

@@ -696,7 +696,7 @@ export default function ProductInfo({ product }: { product: any }) {
         {[
            { icon: Truck, text: "Aynı gün kargo", sub: "Hızlı hazırlık" },
            { icon: Shield, text: "256-bit SSL", sub: "Güvenli ödeme" },
-           { icon: Package, text: "14 gün iade", sub: "İade garantisi" },
+           { icon: Package, text: "Özenli Seçki", sub: "Kalite ve doku" },
         ].map(({ icon: Icon, text, sub }) => (
           <div key={text} className="flex flex-col items-center gap-1.5 bg-[#FAF7F2] border border-[#E8E0D5] rounded-xl p-3 text-center">
             <div className="w-8 h-8 rounded-full bg-[#B8973E]/10 flex items-center justify-center">

@@ -34,6 +34,7 @@ const LINKS_INFO = [
   { href: "/hikayemiz",    label: "Hikâyemiz" },
   { href: "/uygulama-ilham", label: "Uygulama & İlham" },
   { href: "/sizden-gelenler", label: "Sizden Gelenler" },
+  { href: "/kalite",       label: "Kalite ve Özen" },
   { href: "/contact",      label: "İletişim" },
   { href: "/faq",          label: "Sık Sorulan Sorular" },
   { href: "/measure-guide", label: "Ölçü Rehberi" },

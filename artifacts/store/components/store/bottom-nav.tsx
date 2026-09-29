@@ -30,6 +30,47 @@ export default function BottomNav() {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const root = document.documentElement;
+    const previousBodyStyles = {
+      position: body.style.position,
+      top: body.style.top,
+      left: body.style.left,
+      right: body.style.right,
+      width: body.style.width,
+      overflow: body.style.overflow,
+    };
+    const previousRootStyles = {
+      overflow: root.style.overflow,
+      overscrollBehavior: root.style.overscrollBehavior,
+    };
+
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+    root.style.overflow = "hidden";
+    root.style.overscrollBehavior = "none";
+
+    return () => {
+      body.style.position = previousBodyStyles.position;
+      body.style.top = previousBodyStyles.top;
+      body.style.left = previousBodyStyles.left;
+      body.style.right = previousBodyStyles.right;
+      body.style.width = previousBodyStyles.width;
+      body.style.overflow = previousBodyStyles.overflow;
+      root.style.overflow = previousRootStyles.overflow;
+      root.style.overscrollBehavior = previousRootStyles.overscrollBehavior;
+      window.scrollTo(0, scrollY);
+    };
+  }, [menuOpen]);
+
   if (!mounted) return null;
 
   const giveFeedback = (target: string) => {
@@ -55,7 +96,7 @@ export default function BottomNav() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/40 z-40 md:hidden"
+              className="fixed inset-0 z-[10000] bg-black/40 md:hidden"
               onClick={() => setMenuOpen(false)}
             />
             <motion.div
@@ -63,17 +104,31 @@ export default function BottomNav() {
               animate={{ y: 0 }}
               exit={{ y: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed safe-bottom-offset left-0 right-0 z-50 bg-[var(--surface)] dark:bg-[var(--surface)] border border-[var(--line)] rounded-t-3xl shadow-2xl p-4 md:hidden max-h-[calc(100vh-12rem)] overflow-y-auto overscroll-contain"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Menü"
+              className="fixed inset-0 z-[10001] flex h-[100dvh] flex-col overflow-hidden bg-[var(--surface)] p-4 md:hidden"
+              style={{
+                paddingTop: "calc(env(safe-area-inset-top, 0px) + 1rem)",
+                paddingBottom: 0,
+              }}
             >
-               <div className="flex items-center justify-between mb-4">
-                 <div>
-                    <p className="text-[10px] font-black tracking-[0.14em] text-[var(--gold)]">Göçmen Perde</p>
-                   <p className="text-lg font-black text-[var(--ink)]">Menü</p>
-                 </div>
-                 <button onClick={() => setMenuOpen(false)} className="touch-target flex items-center justify-center rounded-full bg-[var(--surface-muted)] text-[var(--ink-muted)]" aria-label="Menüyü kapat">
-                   <X className="w-5 h-5" aria-hidden="true" />
-                 </button>
-               </div>
+              <div className="mb-4 flex shrink-0 items-center justify-between">
+                <div>
+                  <p className="text-[10px] font-black tracking-[0.14em] text-[var(--gold)]">Göçmen Perde</p>
+                  <p className="text-lg font-black text-[var(--ink)]">Menü</p>
+                </div>
+                <button onClick={() => setMenuOpen(false)} className="touch-target flex items-center justify-center rounded-full bg-[var(--surface-muted)] text-[var(--ink-muted)]" aria-label="Menüyü kapat">
+                  <X className="w-5 h-5" aria-hidden="true" />
+                </button>
+              </div>
+              <div
+                className="min-h-0 flex-1 overflow-y-auto overscroll-contain"
+                style={{
+                  paddingBottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)",
+                  WebkitOverflowScrolling: "touch",
+                }}
+              >
                {session && firstName && (
                   <div className="mb-3 rounded-2xl border border-amber-200 bg-amber-50 px-3.5 py-2.5">
                    <p className="text-[10px] font-black uppercase tracking-[.14em] text-amber-700">Hesabım</p>
@@ -128,6 +183,7 @@ export default function BottomNav() {
                   </Link>
                 )}
               </div>
+              </div>
             </motion.div>
           </>
         )}
@@ -162,6 +218,8 @@ export default function BottomNav() {
           <button
              onClick={() => { giveFeedback("menu"); setMenuOpen(!menuOpen); }}
                className={`touch-target flex-1 flex flex-col items-center justify-center gap-0.5 py-2 transition-colors ${menuOpen ? "text-[var(--gold)]" : "text-[var(--ink-muted)]"}`}
+               aria-label={menuOpen ? "Menüyü kapat" : "Menüyü aç"}
+               aria-expanded={menuOpen}
               data-testid="button-bottom-nav-menu"
           >
              <Menu aria-hidden={true} className="w-5 h-5" />
